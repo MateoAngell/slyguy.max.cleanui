@@ -1,5 +1,6 @@
 import re
 from xml.dom.minidom import parseString
+import xml.etree.ElementTree as ET
 
 from kodi_six import xbmc
 from slyguy import plugin, gui, userdata, signals, inputstream, log, mem_cache
@@ -24,6 +25,9 @@ def before_dispatch():
 @plugin.route('')
 def index(**kwargs):
     if api.logged_in:
+        # Si nunca se seleccionó perfil, forzar la selección antes de abrir la UI
+        if not userdata.get('profile', {}).get('id'):
+            _select_profile()
         return clean_ui_home(**kwargs)
 
     folder = plugin.Folder(cacheToDisc=False)
@@ -438,6 +442,7 @@ def _set_profile(profile, switching=True):
 @plugin.plugin_request()
 def mpd_request(_data, _path, **kwargs):
     data = _data.decode('utf8')
+    _log_mpd_audio_tracks(data, 'ORIGINAL')
     root = parseString(data.encode('utf8'))
     wv_secure = is_wv_secure()
 
@@ -505,8 +510,65 @@ def mpd_request(_data, _path, **kwargs):
                         elem2.firstChild.nodeValue = new_cenc
                         log.info('Dash Fix: cenc:pssh {} -> {}'.format(current_cenc, new_cenc))
 
+    _log_mpd_audio_tracks(root.toprettyxml(encoding='utf-8'), 'FINAL')
+
     with open(_path, 'wb') as f:
         f.write(root.toprettyxml(encoding='utf-8'))
+
+
+def _local_name(tag):
+    return tag.rsplit('}', 1)[-1]
+
+
+def _log_mpd_audio_tracks(mpd_data, stage):
+    if isinstance(mpd_data, bytes):
+        mpd_data = mpd_data.decode('utf-8', 'replace')
+
+    try:
+        root = ET.fromstring(mpd_data)
+    except Exception as exc:
+        log.warning('[CLEANUI] MPD %s: XML inválido: %s', stage, exc)
+        return
+
+    for period_index, period in enumerate(
+        node for node in root.iter() if _local_name(node.tag) == 'Period'
+    ):
+        for adaptation_index, adaptation in enumerate(
+            node for node in period if _local_name(node.tag) == 'AdaptationSet'
+        ):
+            representations = [
+                node for node in adaptation if _local_name(node.tag) == 'Representation'
+            ]
+
+            is_audio = (
+                adaptation.get('contentType') == 'audio'
+                or adaptation.get('mimeType', '').startswith('audio/')
+                or any(rep.get('mimeType', '').startswith('audio/') for rep in representations)
+            )
+
+            if not is_audio:
+                continue
+
+            roles = [node.get('value') for node in adaptation if _local_name(node.tag) == 'Role']
+            labels = [(node.text or '').strip() for node in adaptation if _local_name(node.tag) == 'Label']
+
+            log.info(
+                '[CLEANUI] MPD %s period=%d adaptation=%d '
+                'id=%s lang=%s mimeType=%s codecs=%s roles=%s labels=%s',
+                stage, period_index, adaptation_index,
+                adaptation.get('id'), adaptation.get('lang'),
+                adaptation.get('mimeType'), adaptation.get('codecs'),
+                roles, labels,
+            )
+
+            for rep in representations:
+                log.info(
+                    '[CLEANUI] MPD %s representation id=%s lang=%s mimeType=%s codecs=%s bandwidth=%s',
+                    stage,
+                    rep.get('id'), rep.get('lang'),
+                    rep.get('mimeType'), rep.get('codecs'),
+                    rep.get('bandwidth'),
+                )
 
 
 @plugin.route()
@@ -520,7 +582,9 @@ def play(id=None, edit_id=None, **kwargs):
     )
 
     # Audio en español latino por defecto
-    item.proxy_data['default_language'] = 'es-419'
+    # NOTA: slyguy utiliza fix_language() que convierte cualquier español
+    # no-ES a 'es-AR'. Usamos 'es-AR' para que lang_allowed() coincida.
+    item.proxy_data['default_language'] = 'es-AR'
 
     if data.get('drm'):
         item.inputstream = inputstream.Widevine(license_key = data['drm']['schemes']['widevine']['licenseUrl'])

@@ -1,5 +1,6 @@
 from .. import plugin as core
 from .models import Card, Rail, Screen
+from slyguy import mem_cache
 
 
 # HBO Max no expone un endpoint para recuperar metadatos de una película
@@ -18,6 +19,7 @@ class UIRepository(object):
     # Pantallas principales (Home)
     # ------------------------------------------------------------------
 
+    @mem_cache.cached(60 * 5)
     def build_home(self):
         routes = self._menu_routes()
         if not routes:
@@ -37,6 +39,7 @@ class UIRepository(object):
             screen_kind='home',
         )
 
+    @mem_cache.cached(60 * 5)
     def build_movies_home(self):
         return self._build_media_home(
             kind=Card.MOVIE,
@@ -44,6 +47,7 @@ class UIRepository(object):
             screen_kind='movies',
         )
 
+    @mem_cache.cached(60 * 5)
     def build_series_home(self):
         return self._build_media_home(
             kind=Card.SHOW,
@@ -51,6 +55,7 @@ class UIRepository(object):
             screen_kind='series',
         )
 
+    @mem_cache.cached(60 * 2)
     def build_collection(self, id, title):
         data = self.api.collection(id)
         cards = self._cards_from_rows(data.get('items', []))
@@ -553,6 +558,7 @@ class UIRepository(object):
             or {}
         )
 
+    @mem_cache.cached(60 * 10)
     def _menu_routes(self):
         """Get navigation routes from the web-menu-bar collection."""
         data = self.api.collection('web-menu-bar')

@@ -1,0 +1,135 @@
+================================================================================
+AUDITORÍA: HBO Max Clean UI v0.1.2
+================================================================================
+Fecha: 2026-07-20
+Propósito: Detectar problemas de rendimiento, idioma, y estabilidad
+Basado en: Log de Kodi, código fuente, y prueba en laptop
+
+================================================================================
+1. IDIOMA - Español latino (es-419) NO funciona
+================================================================================
+Problema: El audio sale en inglés aunque se configuró es-419 en plugin.py.
+El código actual en play() es:
+
+  item.proxy_data['default_language'] = 'es-419'
+
+CAUSA: proxy_data requiere que el proxy de slyguy entienda y SOPORTE
+el campo 'default_language'. Si el manifest MPD no tiene audio en es-419,
+el proxy lo ignora. Revisando el flujo:
+
+1. plugin.play() setea proxy_data['default_language'] = 'es-419'
+2. El proxy (script.module.slyguy) procesa el MPD
+3. Si el MPD tiene audio en es-419, debería seleccionarlo
+4. Si NO tiene es-419, cae al default (inglés)
+
+SOLUCIÓN PROPUESTA (a verificar):
+- En play(), imprimir los idiomas de audio disponibles del manifest
+- El proxy_data['default_language'] podría llamarse distinto (verify en slyguy)
+- Alternativa: pasar 'es-419' como language en la URL del manifest
+
+================================================================================
+2. RENDIMIENTO - Interfaz lenta
+================================================================================
+Síntomas: Navegación lenta comparada con Disney+. Tarda en cargar rails.
+
+CAUSAS IDENTIFICADAS:
+
+A. API calls excesivas en build_home():
+   build_home() → _menu_routes() → api.collection('web-menu-bar')
+                 → api.route(route) para la PRIMERA ruta
+                 → _screen_from_page() que para cada rail sin items
+                   llama api.collection(id) ADICIONAL
+
+   Esto significa: 1 (menu) + 1 (route) + N (collections por rail) requests
+
+B. Sin caché en repository:
+   - build_home() llama api.route() cada vez que abres la home
+   - _menu_routes() tiene caché en add_menu_items() pero repository.py
+     NO usa mem_cache
+   - Cada vez que navegas a Home se refetcha TODO
+
+C. HBO Max API ya es lenta de por sí (comparada con Disney+ GraphQL)
+
+SOLUCIÓN:
+- Agregar @mem_cache.cached() a build_home() (30-60 seg)
+- Agregar @mem_cache.cached() a _menu_routes() en repository.py
+- Agregar @mem_cache.cached() a build_movies_home() y build_series_home()
+- cacheToDisc=False en algunas operaciones reduce I/O
+
+================================================================================
+3. ERRORES EN LOG
+================================================================================
+Del log de Kodi se observan:
+
+A. [CLEANUI] Rail descartados:
+   Muchos rails se descartan porque no tienen tarjetas válidas.
+   Esto es normal por los tipos de datos mixtos de HBO Max, pero
+   ralentiza el parseo.
+
+B. "GetDirectory - Error getting plugin://slyguy.max.cleanui/"
+   Ocurre al cerrar la ventana y el plugin intenta refrescar.
+   No es crítico pero ensucia el log.
+
+C. No hay errores de ImportError o TypeError actualmente (fixeado).
+
+================================================================================
+4. CACHÉ RECOMENDADO EN REPOSITORY.PY
+================================================================================
+Agregar en repository.py (importar mem_cache de slyguy):
+
+  from slyguy import mem_cache
+
+  @mem_cache.cached(60*5)  # 5 minutos
+  def build_home(self):
+      ...
+
+  @mem_cache.cached(60*5)
+  def build_movies_home(self):
+      ...
+
+  @mem_cache.cached(60*5)
+  def build_series_home(self):
+      ...
+
+  @mem_cache.cached(60*30)
+  def _menu_routes(self):
+      ...
+
+================================================================================
+5. REGRESIÓN: profile selector no aparecía al inicio
+================================================================================
+Se arregló en v0.1.2 agregando en index():
+
+  if not userdata.get('profile', {}).get('id'):
+      _select_profile()
+
+Verificar que funcione.
+
+================================================================================
+6. COSAS A REVISAR EN DISNEY+ CLEAN UI (referencia)
+================================================================================
+Disney+ anda mejor porque:
+- Usa API GraphQL con batching (múltiples queries en un request)
+- El repository de Disney+ tiene mem_cache en build_home y build_series
+- Disney+ tiene menos rails (más curados) que HBO Max
+- Las imágenes de Disney+ son más pequeñas (menos bytes)
+
+================================================================================
+7. PLAN DE ACCIÓN
+================================================================================
+Prioridad alta:
+  1. [] Cachear build_home() con mem_cache (5 min)
+  2. [] Cachear _menu_routes() en repository.py (30 min)
+  3. [] Cachear build_movies_home() y build_series_home() (5 min)
+
+Prioridad media:
+  4. [] Verificar idioma: ¿existe audio es-419 en los manifests?
+  5. [] Verificar nombre exacto de proxy_data key (default_language vs language)
+
+Prioridad baja:
+  6. [] Limpiar rails vacíos antes de construir la Screen
+  7. [] Reducir PAGE_SIZE en api.py de 50 a 20 para respuestas más rápidas
+
+================================================================================
+FIN DE AUDITORÍA
+================================================================================
