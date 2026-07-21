@@ -206,14 +206,16 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
                 '',
             )
 
-        profile_avatar = userdata.get('avatar', '') or ''
+        profile_data = userdata.get('profile') or {}
+        profile_avatar = profile_data.get('avatar', '') or ''
+        profile_name = profile_data.get('name', '') or ''
         self.setProperty(
             '{}.profile.avatar'.format(prefix),
             profile_avatar,
         )
         self.setProperty(
             '{}.profile.name'.format(prefix),
-            userdata.get('profile', '') or '',
+            profile_name,
         )
         self.setProperty(
             '{}.profile.has_avatar'.format(prefix),
