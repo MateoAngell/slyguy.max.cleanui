@@ -7,3 +7,6 @@ APP_VERSION_URL = 'https://i.mjh.nz/.apk/max.version'
 APP_VERSION_FALLBACK = '5.12.0.71'
 PAGE_SIZE = 50
 L3_MAX_HEIGHT = 580  #TODO: confirm actual limit for L3 or find better way (cenc data / lowest quality set?)
+
+# Constante requerida por ui.adapter.py (HBO Max no tiene continue watching)
+CONTINUE_WATCHING_ID = ''
