@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window type="dialog" id="13001">
   <defaultcontrol>1003</defaultcontrol>
-  <backgroundcolor>FF000000</backgroundcolor>
+  <backgroundcolor>FF0F0F0F</backgroundcolor>
 
   <controls>
     <!-- Fanart background -->
@@ -15,8 +15,7 @@
     <control type="image">
       <left>0</left><top>0</top>
       <width>1920</width><height>1080</height>
-      <texture>white.png</texture>
-      <colordiffuse>CC000000</colordiffuse>
+      <texture>gradient-vertical.png</texture>
     </control>
 
     <!-- Poster -->
@@ -51,7 +50,7 @@
       <left>380</left><top>230</top>
       <width>1450</width><height>30</height>
       <font>font18</font>
-      <textcolor>FFAAAAAA</textcolor>
+      <textcolor>CCFFFFFF</textcolor>
       <label>$INFO[Window.Property(cleanui.detail.meta)]</label>
     </control>
 
@@ -60,7 +59,7 @@
       <left>380</left><top>262</top>
       <width>1450</width><height>25</height>
       <font>font16</font>
-      <textcolor>FF888888</textcolor>
+      <textcolor>A6FFFFFF</textcolor>
       <label>$INFO[Window.Property(cleanui.detail.genre)]</label>
     </control>
 
@@ -69,12 +68,12 @@
       <left>380</left><top>292</top>
       <width>1450</width><height>125</height>
       <font>font16</font>
-      <textcolor>FFCCCCCC</textcolor>
+      <textcolor>C8FFFFFF</textcolor>
       <autoscroll>yes</autoscroll>
       <label>$INFO[Window.Property(cleanui.detail.plot)]</label>
     </control>
 
-    <!-- Back button -->
+    <!-- Back button (pill del player real: rgba(0,0,0,.7)) -->
     <control type="button" id="1003">
       <left>380</left><top>430</top>
       <width>90</width><height>55</height>
@@ -82,9 +81,9 @@
       <align>center</align>
       <aligny>center</aligny>
       <texturefocus colordiffuse="FFFFFFFF">white.png</texturefocus>
-      <texturenofocus colordiffuse="AA252A35">white.png</texturenofocus>
+      <texturenofocus colordiffuse="B3000000">white.png</texturenofocus>
       <textcolor>FFFFFFFF</textcolor>
-      <focusedcolor>FF10131A</focusedcolor>
+      <focusedcolor>FFFFFFFF</focusedcolor>
       <label>&#8249;</label>
       <onleft>1003</onleft>
       <onright condition="Control.IsVisible(1000)">1000</onright>
@@ -104,9 +103,9 @@
       <align>center</align>
       <aligny>center</aligny>
       <texturefocus colordiffuse="FFFFFFFF">white.png</texturefocus>
-      <texturenofocus colordiffuse="AA252A35">white.png</texturenofocus>
-      <textcolor>FFFFFFFF</textcolor>
-      <focusedcolor>FF10131A</focusedcolor>
+      <texturenofocus colordiffuse="F2DDDDDD">white.png</texturenofocus>
+      <textcolor>FF000000</textcolor>
+      <focusedcolor>FF000000</focusedcolor>
       <label>Reproducir</label>
       <onleft>1003</onleft>
       <onright condition="Control.IsVisible(1001)">1001</onright>
@@ -126,10 +125,10 @@
       <font>font20</font>
       <align>center</align>
       <aligny>center</aligny>
-      <texturefocus colordiffuse="FFFFFFFF">white.png</texturefocus>
-      <texturenofocus colordiffuse="AA252A35">white.png</texturenofocus>
+      <texturefocus colordiffuse="BF3E3E3E">white.png</texturefocus>
+      <texturenofocus colordiffuse="BF3E3E3E">white.png</texturenofocus>
       <textcolor>FFFFFFFF</textcolor>
-      <focusedcolor>FF10131A</focusedcolor>
+      <focusedcolor>FFFFFFFF</focusedcolor>
       <label>Trailer</label>
       <onleft condition="Control.IsVisible(1000)">1000</onleft>
       <onleft condition="!Control.IsVisible(1000)">1003</onleft>
@@ -149,10 +148,10 @@
       <font>font20</font>
       <align>center</align>
       <aligny>center</aligny>
-      <texturefocus colordiffuse="FFFFFFFF">white.png</texturefocus>
-      <texturenofocus colordiffuse="AA252A35">white.png</texturenofocus>
+      <texturefocus colordiffuse="BF3E3E3E">white.png</texturefocus>
+      <texturenofocus colordiffuse="BF3E3E3E">white.png</texturenofocus>
       <textcolor>FFFFFFFF</textcolor>
-      <focusedcolor>FF10131A</focusedcolor>
+      <focusedcolor>FFFFFFFF</focusedcolor>
       <label>Mi Lista</label>
       <onleft condition="Control.IsVisible(1001)">1001</onleft>
       <onleft condition="!Control.IsVisible(1001) + Control.IsVisible(1000)">1000</onleft>
@@ -216,7 +215,7 @@
               <left>0</left><top>298</top>
               <width>250</width><height>30</height>
               <font>font18</font>
-              <textcolor>FFCCCCCC</textcolor>
+              <textcolor>C8FFFFFF</textcolor>
               <align>center</align>
               <scroll>true</scroll>
               <label>$INFO[ListItem.Label]</label>
@@ -235,7 +234,7 @@
               <left>0</left><top>190</top>
               <width>250</width><height>120</height>
               <font>font16</font>
-              <textcolor>FFAAAAAA</textcolor>
+              <textcolor>CCFFFFFF</textcolor>
               <label>$INFO[ListItem.Plot]</label>
               <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
             </control>
@@ -252,7 +251,7 @@
             <control type="image">
               <left>4</left><top>4</top>
               <width>250</width><height>141</height>
-              <colordiffuse>FF1A1A2E</colordiffuse>
+              <colordiffuse>FF191919</colordiffuse>
               <texture diffuse="rounded-mask.png">white.png</texture>
               <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
             </control>
@@ -334,7 +333,7 @@
               <left>0</left><top>190</top>
               <width>250</width><height>120</height>
               <font>font16</font>
-              <textcolor>FFAAAAAA</textcolor>
+              <textcolor>CCFFFFFF</textcolor>
               <label>$INFO[ListItem.Plot]</label>
               <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
             </control>
@@ -351,7 +350,7 @@
             <control type="image">
               <left>4</left><top>4</top>
               <width>250</width><height>141</height>
-              <colordiffuse>FF1A1A2E</colordiffuse>
+              <colordiffuse>FF191919</colordiffuse>
               <texture diffuse="rounded-mask.png">white.png</texture>
               <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
             </control>
@@ -427,7 +426,7 @@
               <left>0</left><top>298</top>
               <width>250</width><height>30</height>
               <font>font18</font>
-              <textcolor>FFCCCCCC</textcolor>
+              <textcolor>C8FFFFFF</textcolor>
               <align>center</align>
               <scroll>true</scroll>
               <label>$INFO[ListItem.Label]</label>
@@ -446,7 +445,7 @@
               <left>0</left><top>190</top>
               <width>250</width><height>120</height>
               <font>font16</font>
-              <textcolor>FFAAAAAA</textcolor>
+              <textcolor>CCFFFFFF</textcolor>
               <label>$INFO[ListItem.Plot]</label>
               <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
             </control>
@@ -463,7 +462,7 @@
             <control type="image">
               <left>4</left><top>4</top>
               <width>250</width><height>141</height>
-              <colordiffuse>FF1A1A2E</colordiffuse>
+              <colordiffuse>FF191919</colordiffuse>
               <texture diffuse="rounded-mask.png">white.png</texture>
               <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
             </control>
@@ -545,7 +544,7 @@
               <left>0</left><top>190</top>
               <width>250</width><height>120</height>
               <font>font16</font>
-              <textcolor>FFAAAAAA</textcolor>
+              <textcolor>CCFFFFFF</textcolor>
               <label>$INFO[ListItem.Plot]</label>
               <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
             </control>
@@ -562,7 +561,7 @@
             <control type="image">
               <left>4</left><top>4</top>
               <width>250</width><height>141</height>
-              <colordiffuse>FF1A1A2E</colordiffuse>
+              <colordiffuse>FF191919</colordiffuse>
               <texture diffuse="rounded-mask.png">white.png</texture>
               <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
             </control>
@@ -638,7 +637,7 @@
               <left>0</left><top>298</top>
               <width>250</width><height>30</height>
               <font>font18</font>
-              <textcolor>FFCCCCCC</textcolor>
+              <textcolor>C8FFFFFF</textcolor>
               <align>center</align>
               <scroll>true</scroll>
               <label>$INFO[ListItem.Label]</label>
@@ -657,7 +656,7 @@
               <left>0</left><top>190</top>
               <width>250</width><height>120</height>
               <font>font16</font>
-              <textcolor>FFAAAAAA</textcolor>
+              <textcolor>CCFFFFFF</textcolor>
               <label>$INFO[ListItem.Plot]</label>
               <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
             </control>
@@ -674,7 +673,7 @@
             <control type="image">
               <left>4</left><top>4</top>
               <width>250</width><height>141</height>
-              <colordiffuse>FF1A1A2E</colordiffuse>
+              <colordiffuse>FF191919</colordiffuse>
               <texture diffuse="rounded-mask.png">white.png</texture>
               <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
             </control>
@@ -756,7 +755,7 @@
               <left>0</left><top>190</top>
               <width>250</width><height>120</height>
               <font>font16</font>
-              <textcolor>FFAAAAAA</textcolor>
+              <textcolor>CCFFFFFF</textcolor>
               <label>$INFO[ListItem.Plot]</label>
               <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
             </control>
@@ -773,7 +772,7 @@
             <control type="image">
               <left>4</left><top>4</top>
               <width>250</width><height>141</height>
-              <colordiffuse>FF1A1A2E</colordiffuse>
+              <colordiffuse>FF191919</colordiffuse>
               <texture diffuse="rounded-mask.png">white.png</texture>
               <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
             </control>
@@ -849,7 +848,7 @@
               <left>0</left><top>298</top>
               <width>250</width><height>30</height>
               <font>font18</font>
-              <textcolor>FFCCCCCC</textcolor>
+              <textcolor>C8FFFFFF</textcolor>
               <align>center</align>
               <scroll>true</scroll>
               <label>$INFO[ListItem.Label]</label>
@@ -868,7 +867,7 @@
               <left>0</left><top>190</top>
               <width>250</width><height>120</height>
               <font>font16</font>
-              <textcolor>FFAAAAAA</textcolor>
+              <textcolor>CCFFFFFF</textcolor>
               <label>$INFO[ListItem.Plot]</label>
               <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
             </control>
@@ -885,7 +884,7 @@
             <control type="image">
               <left>4</left><top>4</top>
               <width>250</width><height>141</height>
-              <colordiffuse>FF1A1A2E</colordiffuse>
+              <colordiffuse>FF191919</colordiffuse>
               <texture diffuse="rounded-mask.png">white.png</texture>
               <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
             </control>
@@ -967,7 +966,7 @@
               <left>0</left><top>190</top>
               <width>250</width><height>120</height>
               <font>font16</font>
-              <textcolor>FFAAAAAA</textcolor>
+              <textcolor>CCFFFFFF</textcolor>
               <label>$INFO[ListItem.Plot]</label>
               <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
             </control>
@@ -984,7 +983,7 @@
             <control type="image">
               <left>4</left><top>4</top>
               <width>250</width><height>141</height>
-              <colordiffuse>FF1A1A2E</colordiffuse>
+              <colordiffuse>FF191919</colordiffuse>
               <texture diffuse="rounded-mask.png">white.png</texture>
               <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
             </control>

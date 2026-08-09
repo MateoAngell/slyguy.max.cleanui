@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window type="dialog" id="13000">
     <defaultcontrol>3000</defaultcontrol>
-    <backgroundcolor>FF000000</backgroundcolor>
+    <backgroundcolor>FF0F0F0F</backgroundcolor>
 
     <controls>
         <!-- Hero background -->
@@ -12,51 +12,52 @@
             <texture>$INFO[Window.Property(cleanui.hero.fanart)]</texture>
         </control>
 
+        <!-- Veil: degradado vertical (transparente arriba -> negro abajo), como el hero real de HBO Max -->
         <control type="image">
             <left>0</left><top>0</top>
             <width>1920</width><height>1080</height>
-            <texture>white.png</texture>
-            <colordiffuse>CC000000</colordiffuse>
+            <texture>gradient-vertical.png</texture>
         </control>
 
-        <!-- Poster -->
+        <!-- Poster: oculto (el hero real de HBO Max no muestra poster; texto sobre fondo full-bleed) -->
         <control type="image" id="2001">
             <left>60</left><top>50</top>
             <width>240</width><height>350</height>
             <aspectratio>keep</aspectratio>
             <texture>$INFO[Window.Property(cleanui.hero.poster)]</texture>
+            <visible>false</visible>
+        </control>
+
+        <!-- Meta (reji: año, género) -->
+        <control type="label" id="2003">
+            <left>50</left><top>165</top>
+            <width>1530</width><height>30</height>
+            <font>font18</font>
+            <textcolor>CCFFFFFF</textcolor>
+            <label>$INFO[Window.Property(cleanui.hero.meta)]</label>
         </control>
 
         <!-- Title -->
         <control type="label" id="2002">
-            <left>330</left><top>55</top>
-            <width>1240</width><height>55</height>
-            <font>font40</font>
+            <left>50</left><top>200</top>
+            <width>1450</width><height>66</height>
+            <font>font48</font>
             <textcolor>FFFFFFFF</textcolor>
             <scroll condition="Control.HasFocus(2002)">true</scroll>
             <label>$INFO[Window.Property(cleanui.hero.title)]</label>
         </control>
 
-        <!-- Meta -->
-        <control type="label" id="2003">
-            <left>330</left><top>118</top>
-            <width>1530</width><height>30</height>
-            <font>font20</font>
-            <textcolor>FFAAAAAA</textcolor>
-            <label>$INFO[Window.Property(cleanui.hero.meta)]</label>
-        </control>
-
         <!-- Plot -->
         <control type="textbox" id="2004">
-            <left>330</left><top>155</top>
-            <width>1530</width><height>190</height>
+            <left>50</left><top>283</top>
+            <width>1250</width><height>150</height>
             <font>font20</font>
-            <textcolor>FFCCCCCC</textcolor>
+            <textcolor>C8FFFFFF</textcolor>
             <autoscroll>yes</autoscroll>
             <label>$INFO[Window.Property(cleanui.hero.plot)]</label>
         </control>
 
-                <!-- Disney+ navigation buttons -->
+                <!-- HBO Max tab: PELÍCULAS (nav transparente, subraya azul al foco) -->
         <control type="button" id="3001">
             <left>1300</left>
             <top>40</top>
@@ -66,13 +67,21 @@
             <align>center</align>
             <aligny>center</aligny>
             <label>PELÍCULAS</label>
-            <texturefocus colordiffuse="FFFFFFFF">rounded-rect.png</texturefocus>
-            <texturenofocus colordiffuse="DD202838">rounded-rect.png</texturenofocus>
+            <texturefocus>transparent.png</texturefocus>
+            <texturenofocus>transparent.png</texturenofocus>
             <textcolor>FFFFFFFF</textcolor>
-            <focusedcolor>FF10131A</focusedcolor>
+            <focusedcolor>FFFFFFFF</focusedcolor>
             <onleft>3003</onleft>
             <onright>3002</onright>
             <ondown>4000</ondown>
+        </control>
+        <!-- Subraya azul al foco -->
+        <control type="image">
+            <left>1300</left><top>112</top>
+            <width>160</width><height>5</height>
+            <texture>white.png</texture>
+            <colordiffuse>FF71B8F2</colordiffuse>
+            <visible>Control.HasFocus(3001)</visible>
         </control>
         <control type="button" id="3002">
             <left>1476</left>
@@ -83,15 +92,23 @@
             <align>center</align>
             <aligny>center</aligny>
             <label>SERIES</label>
-            <texturefocus colordiffuse="FFFFFFFF">rounded-rect.png</texturefocus>
-            <texturenofocus colordiffuse="DD202838">rounded-rect.png</texturenofocus>
+            <texturefocus>transparent.png</texturefocus>
+            <texturenofocus>transparent.png</texturenofocus>
             <textcolor>FFFFFFFF</textcolor>
-            <focusedcolor>FF10131A</focusedcolor>
+            <focusedcolor>FFFFFFFF</focusedcolor>
             <onleft>3001</onleft>
             <onright>3000</onright>
             <ondown>4000</ondown>
         </control>
-        <!-- Disney+ menu -->
+        <!-- Subraya azul al foco -->
+        <control type="image">
+            <left>1476</left><top>112</top>
+            <width>130</width><height>5</height>
+            <texture>white.png</texture>
+            <colordiffuse>FF71B8F2</colordiffuse>
+            <visible>Control.HasFocus(3002)</visible>
+        </control>
+        <!-- HBO Max menu -->
         <control type="button" id="3000">
             <left>1622</left>
             <top>40</top>
@@ -101,13 +118,21 @@
             <align>center</align>
             <aligny>center</aligny>
             <label>MENÚ</label>
-            <texturefocus colordiffuse="FFFFFFFF">rounded-rect.png</texturefocus>
-            <texturenofocus colordiffuse="DD202838">rounded-rect.png</texturenofocus>
+            <texturefocus>transparent.png</texturefocus>
+            <texturenofocus>transparent.png</texturenofocus>
             <textcolor>FFFFFFFF</textcolor>
-            <focusedcolor>FF10131A</focusedcolor>
+            <focusedcolor>FFFFFFFF</focusedcolor>
             <onleft>3002</onleft>
             <onright>3003</onright>
             <ondown>4000</ondown>
+        </control>
+        <!-- Subraya azul al foco -->
+        <control type="image">
+            <left>1622</left><top>112</top>
+            <width>138</width><height>5</height>
+            <texture>white.png</texture>
+            <colordiffuse>FF71B8F2</colordiffuse>
+            <visible>Control.HasFocus(3000)</visible>
         </control>
         <!-- Profile avatar -->
         <control type="group">
@@ -185,8 +210,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail0.visible),true)</visible>
                     <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>4</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio align="center" aligny="center">scale</aspectratio>
                             <texture background="true"
                                 diffuse="rounded-mask.png">$INFO[ListItem.Property(cleanui.display_art)]</texture>
@@ -197,23 +227,32 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </itemlayout>
                     <focusedlayout width="300" height="310">
-                        <!-- Borde de 4 px, completamente dentro de la celda -->
+                        <!-- Base tile real (rgba(36,36,36,.70)) para el foco -->
                         <control type="image">
-                            <left>51</left><top>0</top>
-                            <width>198</width><height>274</height>
-                            <texture diffuse="rounded-mask.png">white.png</texture>
+                            <left>53</left><top>0</top>
+                            <width>194</width><height>284</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+                        <!-- Borde casi-blanco #E6E6E6 (focus ring de la web) -->
+                        <control type="image">
+                            <left>53</left><top>0</top>
+                            <width>194</width><height>284</height>
+                            <aspectratio>scale</aspectratio>
+                            <bordersize>2</bordersize>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
+                            <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4000)</visible>
                         </control>
-                        <!-- Mismo tamaño y posición que el item sin foco: no existe zoom -->
+                        <!-- Poster con leve zoom (~4 px, como el hover real) -->
                         <control type="image">
-                            <left>55</left><top>4</top>
-                            <width>190</width><height>266</height>
+                            <left>53</left><top>0</top>
+                            <width>194</width><height>284</height>
                             <aspectratio align="center" aligny="center">scale</aspectratio>
                             <texture background="true"
                                 diffuse="rounded-mask.png">$INFO[ListItem.Property(cleanui.display_art)]</texture>
@@ -303,8 +342,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail1.visible),true) + !String.IsEqual(Window.Property(cleanui.screen.kind),home)</visible>
                     <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>4</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio align="center" aligny="center">scale</aspectratio>
                             <texture background="true"
                                 diffuse="rounded-mask.png">$INFO[ListItem.Property(cleanui.display_art)]</texture>
@@ -315,23 +359,32 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </itemlayout>
                     <focusedlayout width="300" height="310">
-                        <!-- Borde blanco detras del poster -->
+                        <!-- Base tile real (rgba(36,36,36,.70)) para el foco -->
                         <control type="image">
-                            <left>51</left><top>0</top>
-                            <width>198</width><height>274</height>
-                            <texture diffuse="rounded-mask.png">white.png</texture>
+                            <left>53</left><top>0</top>
+                            <width>194</width><height>284</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+                        <!-- Borde casi-blanco #E6E6E6 (focus ring de la web) -->
+                        <control type="image">
+                            <left>53</left><top>0</top>
+                            <width>194</width><height>284</height>
+                            <aspectratio>scale</aspectratio>
+                            <bordersize>2</bordersize>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
+                            <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4101)</visible>
                         </control>
-                        <!-- Poster sin zoom -->
+                        <!-- Poster con leve zoom (~4 px, como el hover real) -->
                         <control type="image">
-                            <left>55</left><top>4</top>
-                            <width>190</width><height>266</height>
+                            <left>53</left><top>0</top>
+                            <width>194</width><height>284</height>
                             <aspectratio align="center" aligny="center">scale</aspectratio>
                             <texture background="true"
                                 diffuse="rounded-mask.png">$INFO[ListItem.Property(cleanui.display_art)]</texture>
@@ -372,8 +425,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail2.visible),true)</visible>
 <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>2</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio>scale</aspectratio>
                             <texture diffuse="rounded-mask.png">$INFO[ListItem.Art(poster)]</texture>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -391,7 +449,7 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -400,7 +458,7 @@
                             <left>0</left><top>168</top>
                             <width>290</width><height>30</height>
                             <font>font18</font>
-                            <textcolor>FFCCCCCC</textcolor>
+                            <textcolor>CCFFFFFF</textcolor>
                             <align>center</align>
                             <scroll>true</scroll>
                             <label>$INFO[ListItem.Label]</label>
@@ -447,7 +505,7 @@
                             <width>198</width><height>274</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4002) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
@@ -463,7 +521,7 @@
                             <width>298</width><height>168</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4002) + String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
@@ -499,7 +557,7 @@
                         <control type="image">
                             <left>4</left><top>4</top>
                             <width>290</width><height>163</height>
-                            <texture diffuse="rounded-mask.png" colordiffuse="FF1A1A2E">white.png</texture>
+                            <texture diffuse="rounded-mask.png" colordiffuse="FF191919">white.png</texture>
                             <visible>Control.HasFocus(4002) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
                         </control>
                         <!-- Brand con logo: fondo oscuro -->
@@ -553,8 +611,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail3.visible),true)</visible>
 <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>2</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio>scale</aspectratio>
                             <texture diffuse="rounded-mask.png">$INFO[ListItem.Art(poster)]</texture>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -572,7 +635,7 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -581,7 +644,7 @@
                             <left>0</left><top>168</top>
                             <width>290</width><height>30</height>
                             <font>font18</font>
-                            <textcolor>FFCCCCCC</textcolor>
+                            <textcolor>CCFFFFFF</textcolor>
                             <align>center</align>
                             <scroll>true</scroll>
                             <label>$INFO[ListItem.Label]</label>
@@ -626,7 +689,7 @@
                             <width>198</width><height>274</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4003) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
@@ -642,7 +705,7 @@
                             <width>298</width><height>168</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4003) + String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
@@ -678,7 +741,7 @@
                         <control type="image">
                             <left>4</left><top>4</top>
                             <width>290</width><height>163</height>
-                            <texture diffuse="rounded-mask.png" colordiffuse="FF1A1A2E">white.png</texture>
+                            <texture diffuse="rounded-mask.png" colordiffuse="FF191919">white.png</texture>
                             <visible>Control.HasFocus(4003) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
                         </control>
                         <!-- Brand con logo: fondo oscuro -->
@@ -732,8 +795,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail4.visible),true)</visible>
 <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>2</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio>scale</aspectratio>
                             <texture diffuse="rounded-mask.png">$INFO[ListItem.Art(poster)]</texture>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -751,7 +819,7 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -760,7 +828,7 @@
                             <left>0</left><top>168</top>
                             <width>290</width><height>30</height>
                             <font>font18</font>
-                            <textcolor>FFCCCCCC</textcolor>
+                            <textcolor>CCFFFFFF</textcolor>
                             <align>center</align>
                             <scroll>true</scroll>
                             <label>$INFO[ListItem.Label]</label>
@@ -805,7 +873,7 @@
                             <width>198</width><height>274</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4004) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
@@ -821,7 +889,7 @@
                             <width>298</width><height>168</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4004) + String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
@@ -857,7 +925,7 @@
                         <control type="image">
                             <left>4</left><top>4</top>
                             <width>290</width><height>163</height>
-                            <texture diffuse="rounded-mask.png" colordiffuse="FF1A1A2E">white.png</texture>
+                            <texture diffuse="rounded-mask.png" colordiffuse="FF191919">white.png</texture>
                             <visible>Control.HasFocus(4004) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
                         </control>
                         <!-- Brand con logo: fondo oscuro -->
@@ -911,8 +979,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail5.visible),true)</visible>
 <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>2</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio>scale</aspectratio>
                             <texture diffuse="rounded-mask.png">$INFO[ListItem.Art(poster)]</texture>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -930,7 +1003,7 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -939,7 +1012,7 @@
                             <left>0</left><top>168</top>
                             <width>290</width><height>30</height>
                             <font>font18</font>
-                            <textcolor>FFCCCCCC</textcolor>
+                            <textcolor>CCFFFFFF</textcolor>
                             <align>center</align>
                             <scroll>true</scroll>
                             <label>$INFO[ListItem.Label]</label>
@@ -984,7 +1057,7 @@
                             <width>198</width><height>274</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4005) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
@@ -1000,7 +1073,7 @@
                             <width>298</width><height>168</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4005) + String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
@@ -1036,7 +1109,7 @@
                         <control type="image">
                             <left>4</left><top>4</top>
                             <width>290</width><height>163</height>
-                            <texture diffuse="rounded-mask.png" colordiffuse="FF1A1A2E">white.png</texture>
+                            <texture diffuse="rounded-mask.png" colordiffuse="FF191919">white.png</texture>
                             <visible>Control.HasFocus(4005) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
                         </control>
                         <!-- Brand con logo: fondo oscuro -->
@@ -1090,8 +1163,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail6.visible),true)</visible>
 <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>2</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio>scale</aspectratio>
                             <texture diffuse="rounded-mask.png">$INFO[ListItem.Art(poster)]</texture>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -1109,7 +1187,7 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -1118,7 +1196,7 @@
                             <left>0</left><top>168</top>
                             <width>290</width><height>30</height>
                             <font>font18</font>
-                            <textcolor>FFCCCCCC</textcolor>
+                            <textcolor>CCFFFFFF</textcolor>
                             <align>center</align>
                             <scroll>true</scroll>
                             <label>$INFO[ListItem.Label]</label>
@@ -1163,7 +1241,7 @@
                             <width>198</width><height>274</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4006) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
@@ -1179,7 +1257,7 @@
                             <width>298</width><height>168</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4006) + String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
@@ -1215,7 +1293,7 @@
                         <control type="image">
                             <left>4</left><top>4</top>
                             <width>290</width><height>163</height>
-                            <texture diffuse="rounded-mask.png" colordiffuse="FF1A1A2E">white.png</texture>
+                            <texture diffuse="rounded-mask.png" colordiffuse="FF191919">white.png</texture>
                             <visible>Control.HasFocus(4006) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
                         </control>
                         <!-- Brand con logo: fondo oscuro -->
@@ -1269,8 +1347,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail7.visible),true)</visible>
 <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>2</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio>scale</aspectratio>
                             <texture diffuse="rounded-mask.png">$INFO[ListItem.Art(poster)]</texture>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -1288,7 +1371,7 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -1297,7 +1380,7 @@
                             <left>0</left><top>168</top>
                             <width>290</width><height>30</height>
                             <font>font18</font>
-                            <textcolor>FFCCCCCC</textcolor>
+                            <textcolor>CCFFFFFF</textcolor>
                             <align>center</align>
                             <scroll>true</scroll>
                             <label>$INFO[ListItem.Label]</label>
@@ -1342,7 +1425,7 @@
                             <width>198</width><height>274</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4007) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
@@ -1358,7 +1441,7 @@
                             <width>298</width><height>168</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4007) + String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
@@ -1394,7 +1477,7 @@
                         <control type="image">
                             <left>4</left><top>4</top>
                             <width>290</width><height>163</height>
-                            <texture diffuse="rounded-mask.png" colordiffuse="FF1A1A2E">white.png</texture>
+                            <texture diffuse="rounded-mask.png" colordiffuse="FF191919">white.png</texture>
                             <visible>Control.HasFocus(4007) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
                         </control>
                         <!-- Brand con logo: fondo oscuro -->
@@ -1448,8 +1531,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail8.visible),true)</visible>
 <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>2</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio>scale</aspectratio>
                             <texture diffuse="rounded-mask.png">$INFO[ListItem.Art(poster)]</texture>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -1467,7 +1555,7 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -1476,7 +1564,7 @@
                             <left>0</left><top>168</top>
                             <width>290</width><height>30</height>
                             <font>font18</font>
-                            <textcolor>FFCCCCCC</textcolor>
+                            <textcolor>CCFFFFFF</textcolor>
                             <align>center</align>
                             <scroll>true</scroll>
                             <label>$INFO[ListItem.Label]</label>
@@ -1521,7 +1609,7 @@
                             <width>198</width><height>274</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4008) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
@@ -1537,7 +1625,7 @@
                             <width>298</width><height>168</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4008) + String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
@@ -1573,7 +1661,7 @@
                         <control type="image">
                             <left>4</left><top>4</top>
                             <width>290</width><height>163</height>
-                            <texture diffuse="rounded-mask.png" colordiffuse="FF1A1A2E">white.png</texture>
+                            <texture diffuse="rounded-mask.png" colordiffuse="FF191919">white.png</texture>
                             <visible>Control.HasFocus(4008) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
                         </control>
                         <!-- Brand con logo: fondo oscuro -->
@@ -1627,8 +1715,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail9.visible),true)</visible>
 <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>2</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio>scale</aspectratio>
                             <texture diffuse="rounded-mask.png">$INFO[ListItem.Art(poster)]</texture>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -1646,7 +1739,7 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -1655,7 +1748,7 @@
                             <left>0</left><top>168</top>
                             <width>290</width><height>30</height>
                             <font>font18</font>
-                            <textcolor>FFCCCCCC</textcolor>
+                            <textcolor>CCFFFFFF</textcolor>
                             <align>center</align>
                             <scroll>true</scroll>
                             <label>$INFO[ListItem.Label]</label>
@@ -1700,7 +1793,7 @@
                             <width>198</width><height>274</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4009) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
@@ -1716,7 +1809,7 @@
                             <width>298</width><height>168</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4009) + String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
@@ -1752,7 +1845,7 @@
                         <control type="image">
                             <left>4</left><top>4</top>
                             <width>290</width><height>163</height>
-                            <texture diffuse="rounded-mask.png" colordiffuse="FF1A1A2E">white.png</texture>
+                            <texture diffuse="rounded-mask.png" colordiffuse="FF191919">white.png</texture>
                             <visible>Control.HasFocus(4009) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
                         </control>
                         <!-- Brand con logo: fondo oscuro -->
@@ -1806,8 +1899,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail10.visible),true)</visible>
 <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>2</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio>scale</aspectratio>
                             <texture diffuse="rounded-mask.png">$INFO[ListItem.Art(poster)]</texture>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -1825,7 +1923,7 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -1834,7 +1932,7 @@
                             <left>0</left><top>168</top>
                             <width>290</width><height>30</height>
                             <font>font18</font>
-                            <textcolor>FFCCCCCC</textcolor>
+                            <textcolor>CCFFFFFF</textcolor>
                             <align>center</align>
                             <scroll>true</scroll>
                             <label>$INFO[ListItem.Label]</label>
@@ -1879,7 +1977,7 @@
                             <width>198</width><height>274</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4010) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
@@ -1895,7 +1993,7 @@
                             <width>298</width><height>168</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4010) + String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
@@ -1931,7 +2029,7 @@
                         <control type="image">
                             <left>4</left><top>4</top>
                             <width>290</width><height>163</height>
-                            <texture diffuse="rounded-mask.png" colordiffuse="FF1A1A2E">white.png</texture>
+                            <texture diffuse="rounded-mask.png" colordiffuse="FF191919">white.png</texture>
                             <visible>Control.HasFocus(4010) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
                         </control>
                         <!-- Brand con logo: fondo oscuro -->
@@ -1985,8 +2083,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail11.visible),true)</visible>
 <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>2</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio>scale</aspectratio>
                             <texture diffuse="rounded-mask.png">$INFO[ListItem.Art(poster)]</texture>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -2004,7 +2107,7 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -2013,7 +2116,7 @@
                             <left>0</left><top>168</top>
                             <width>290</width><height>30</height>
                             <font>font18</font>
-                            <textcolor>FFCCCCCC</textcolor>
+                            <textcolor>CCFFFFFF</textcolor>
                             <align>center</align>
                             <scroll>true</scroll>
                             <label>$INFO[ListItem.Label]</label>
@@ -2058,7 +2161,7 @@
                             <width>198</width><height>274</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4011) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
@@ -2074,7 +2177,7 @@
                             <width>298</width><height>168</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4011) + String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
@@ -2110,7 +2213,7 @@
                         <control type="image">
                             <left>4</left><top>4</top>
                             <width>290</width><height>163</height>
-                            <texture diffuse="rounded-mask.png" colordiffuse="FF1A1A2E">white.png</texture>
+                            <texture diffuse="rounded-mask.png" colordiffuse="FF191919">white.png</texture>
                             <visible>Control.HasFocus(4011) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
                         </control>
                         <!-- Brand con logo: fondo oscuro -->
@@ -2164,8 +2267,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail12.visible),true)</visible>
 <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>2</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio>scale</aspectratio>
                             <texture diffuse="rounded-mask.png">$INFO[ListItem.Art(poster)]</texture>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -2183,7 +2291,7 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -2192,7 +2300,7 @@
                             <left>0</left><top>168</top>
                             <width>290</width><height>30</height>
                             <font>font18</font>
-                            <textcolor>FFCCCCCC</textcolor>
+                            <textcolor>CCFFFFFF</textcolor>
                             <align>center</align>
                             <scroll>true</scroll>
                             <label>$INFO[ListItem.Label]</label>
@@ -2237,7 +2345,7 @@
                             <width>198</width><height>274</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4012) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
@@ -2253,7 +2361,7 @@
                             <width>298</width><height>168</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4012) + String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
@@ -2289,7 +2397,7 @@
                         <control type="image">
                             <left>4</left><top>4</top>
                             <width>290</width><height>163</height>
-                            <texture diffuse="rounded-mask.png" colordiffuse="FF1A1A2E">white.png</texture>
+                            <texture diffuse="rounded-mask.png" colordiffuse="FF191919">white.png</texture>
                             <visible>Control.HasFocus(4012) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
                         </control>
                         <!-- Brand con logo: fondo oscuro -->
@@ -2343,8 +2451,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail13.visible),true)</visible>
 <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>2</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio>scale</aspectratio>
                             <texture diffuse="rounded-mask.png">$INFO[ListItem.Art(poster)]</texture>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -2362,7 +2475,7 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -2371,7 +2484,7 @@
                             <left>0</left><top>168</top>
                             <width>290</width><height>30</height>
                             <font>font18</font>
-                            <textcolor>FFCCCCCC</textcolor>
+                            <textcolor>CCFFFFFF</textcolor>
                             <align>center</align>
                             <scroll>true</scroll>
                             <label>$INFO[ListItem.Label]</label>
@@ -2416,7 +2529,7 @@
                             <width>198</width><height>274</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4013) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
@@ -2432,7 +2545,7 @@
                             <width>298</width><height>168</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4013) + String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
@@ -2468,7 +2581,7 @@
                         <control type="image">
                             <left>4</left><top>4</top>
                             <width>290</width><height>163</height>
-                            <texture diffuse="rounded-mask.png" colordiffuse="FF1A1A2E">white.png</texture>
+                            <texture diffuse="rounded-mask.png" colordiffuse="FF191919">white.png</texture>
                             <visible>Control.HasFocus(4013) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
                         </control>
                         <!-- Brand con logo: fondo oscuro -->
@@ -2522,8 +2635,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail14.visible),true)</visible>
 <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>2</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio>scale</aspectratio>
                             <texture diffuse="rounded-mask.png">$INFO[ListItem.Art(poster)]</texture>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -2541,7 +2659,7 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -2550,7 +2668,7 @@
                             <left>0</left><top>168</top>
                             <width>290</width><height>30</height>
                             <font>font18</font>
-                            <textcolor>FFCCCCCC</textcolor>
+                            <textcolor>CCFFFFFF</textcolor>
                             <align>center</align>
                             <scroll>true</scroll>
                             <label>$INFO[ListItem.Label]</label>
@@ -2595,7 +2713,7 @@
                             <width>198</width><height>274</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4014) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
@@ -2611,7 +2729,7 @@
                             <width>298</width><height>168</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4014) + String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
@@ -2647,7 +2765,7 @@
                         <control type="image">
                             <left>4</left><top>4</top>
                             <width>290</width><height>163</height>
-                            <texture diffuse="rounded-mask.png" colordiffuse="FF1A1A2E">white.png</texture>
+                            <texture diffuse="rounded-mask.png" colordiffuse="FF191919">white.png</texture>
                             <visible>Control.HasFocus(4014) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
                         </control>
                         <!-- Brand con logo: fondo oscuro -->
@@ -2701,8 +2819,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail15.visible),true)</visible>
 <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>2</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio>scale</aspectratio>
                             <texture diffuse="rounded-mask.png">$INFO[ListItem.Art(poster)]</texture>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -2720,7 +2843,7 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -2729,7 +2852,7 @@
                             <left>0</left><top>168</top>
                             <width>290</width><height>30</height>
                             <font>font18</font>
-                            <textcolor>FFCCCCCC</textcolor>
+                            <textcolor>CCFFFFFF</textcolor>
                             <align>center</align>
                             <scroll>true</scroll>
                             <label>$INFO[ListItem.Label]</label>
@@ -2774,7 +2897,7 @@
                             <width>198</width><height>274</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4015) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
@@ -2790,7 +2913,7 @@
                             <width>298</width><height>168</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4015) + String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
@@ -2826,7 +2949,7 @@
                         <control type="image">
                             <left>4</left><top>4</top>
                             <width>290</width><height>163</height>
-                            <texture diffuse="rounded-mask.png" colordiffuse="FF1A1A2E">white.png</texture>
+                            <texture diffuse="rounded-mask.png" colordiffuse="FF191919">white.png</texture>
                             <visible>Control.HasFocus(4015) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
                         </control>
                         <!-- Brand con logo: fondo oscuro -->
@@ -2880,8 +3003,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail16.visible),true)</visible>
 <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>2</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio>scale</aspectratio>
                             <texture diffuse="rounded-mask.png">$INFO[ListItem.Art(poster)]</texture>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -2899,7 +3027,7 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -2908,7 +3036,7 @@
                             <left>0</left><top>168</top>
                             <width>290</width><height>30</height>
                             <font>font18</font>
-                            <textcolor>FFCCCCCC</textcolor>
+                            <textcolor>CCFFFFFF</textcolor>
                             <align>center</align>
                             <scroll>true</scroll>
                             <label>$INFO[ListItem.Label]</label>
@@ -2953,7 +3081,7 @@
                             <width>198</width><height>274</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4016) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
@@ -2969,7 +3097,7 @@
                             <width>298</width><height>168</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4016) + String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
@@ -3005,7 +3133,7 @@
                         <control type="image">
                             <left>4</left><top>4</top>
                             <width>290</width><height>163</height>
-                            <texture diffuse="rounded-mask.png" colordiffuse="FF1A1A2E">white.png</texture>
+                            <texture diffuse="rounded-mask.png" colordiffuse="FF191919">white.png</texture>
                             <visible>Control.HasFocus(4016) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
                         </control>
                         <!-- Brand con logo: fondo oscuro -->
@@ -3059,8 +3187,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail17.visible),true)</visible>
 <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>2</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio>scale</aspectratio>
                             <texture diffuse="rounded-mask.png">$INFO[ListItem.Art(poster)]</texture>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -3078,7 +3211,7 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -3087,7 +3220,7 @@
                             <left>0</left><top>168</top>
                             <width>290</width><height>30</height>
                             <font>font18</font>
-                            <textcolor>FFCCCCCC</textcolor>
+                            <textcolor>CCFFFFFF</textcolor>
                             <align>center</align>
                             <scroll>true</scroll>
                             <label>$INFO[ListItem.Label]</label>
@@ -3132,7 +3265,7 @@
                             <width>198</width><height>274</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4017) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
@@ -3148,7 +3281,7 @@
                             <width>298</width><height>168</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4017) + String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
@@ -3184,7 +3317,7 @@
                         <control type="image">
                             <left>4</left><top>4</top>
                             <width>290</width><height>163</height>
-                            <texture diffuse="rounded-mask.png" colordiffuse="FF1A1A2E">white.png</texture>
+                            <texture diffuse="rounded-mask.png" colordiffuse="FF191919">white.png</texture>
                             <visible>Control.HasFocus(4017) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
                         </control>
                         <!-- Brand con logo: fondo oscuro -->
@@ -3238,8 +3371,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail18.visible),true)</visible>
 <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>2</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio>scale</aspectratio>
                             <texture diffuse="rounded-mask.png">$INFO[ListItem.Art(poster)]</texture>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -3257,7 +3395,7 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -3266,7 +3404,7 @@
                             <left>0</left><top>168</top>
                             <width>290</width><height>30</height>
                             <font>font18</font>
-                            <textcolor>FFCCCCCC</textcolor>
+                            <textcolor>CCFFFFFF</textcolor>
                             <align>center</align>
                             <scroll>true</scroll>
                             <label>$INFO[ListItem.Label]</label>
@@ -3311,7 +3449,7 @@
                             <width>198</width><height>274</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4018) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
@@ -3327,7 +3465,7 @@
                             <width>298</width><height>168</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4018) + String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
@@ -3363,7 +3501,7 @@
                         <control type="image">
                             <left>4</left><top>4</top>
                             <width>290</width><height>163</height>
-                            <texture diffuse="rounded-mask.png" colordiffuse="FF1A1A2E">white.png</texture>
+                            <texture diffuse="rounded-mask.png" colordiffuse="FF191919">white.png</texture>
                             <visible>Control.HasFocus(4018) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
                         </control>
                         <!-- Brand con logo: fondo oscuro -->
@@ -3417,8 +3555,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail19.visible),true)</visible>
 <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>2</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio>scale</aspectratio>
                             <texture diffuse="rounded-mask.png">$INFO[ListItem.Art(poster)]</texture>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -3436,7 +3579,7 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -3445,7 +3588,7 @@
                             <left>0</left><top>168</top>
                             <width>290</width><height>30</height>
                             <font>font18</font>
-                            <textcolor>FFCCCCCC</textcolor>
+                            <textcolor>CCFFFFFF</textcolor>
                             <align>center</align>
                             <scroll>true</scroll>
                             <label>$INFO[ListItem.Label]</label>
@@ -3490,7 +3633,7 @@
                             <width>198</width><height>274</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4019) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
@@ -3506,7 +3649,7 @@
                             <width>298</width><height>168</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4019) + String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
@@ -3542,7 +3685,7 @@
                         <control type="image">
                             <left>4</left><top>4</top>
                             <width>290</width><height>163</height>
-                            <texture diffuse="rounded-mask.png" colordiffuse="FF1A1A2E">white.png</texture>
+                            <texture diffuse="rounded-mask.png" colordiffuse="FF191919">white.png</texture>
                             <visible>Control.HasFocus(4019) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
                         </control>
                         <!-- Brand con logo: fondo oscuro -->
@@ -3596,8 +3739,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail20.visible),true)</visible>
 <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>2</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio>scale</aspectratio>
                             <texture diffuse="rounded-mask.png">$INFO[ListItem.Art(poster)]</texture>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -3615,7 +3763,7 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -3624,7 +3772,7 @@
                             <left>0</left><top>168</top>
                             <width>290</width><height>30</height>
                             <font>font18</font>
-                            <textcolor>FFCCCCCC</textcolor>
+                            <textcolor>CCFFFFFF</textcolor>
                             <align>center</align>
                             <scroll>true</scroll>
                             <label>$INFO[ListItem.Label]</label>
@@ -3669,7 +3817,7 @@
                             <width>198</width><height>274</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4020) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
@@ -3685,7 +3833,7 @@
                             <width>298</width><height>168</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4020) + String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
@@ -3721,7 +3869,7 @@
                         <control type="image">
                             <left>4</left><top>4</top>
                             <width>290</width><height>163</height>
-                            <texture diffuse="rounded-mask.png" colordiffuse="FF1A1A2E">white.png</texture>
+                            <texture diffuse="rounded-mask.png" colordiffuse="FF191919">white.png</texture>
                             <visible>Control.HasFocus(4020) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
                         </control>
                         <!-- Brand con logo: fondo oscuro -->
@@ -3775,8 +3923,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail21.visible),true)</visible>
 <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>2</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio>scale</aspectratio>
                             <texture diffuse="rounded-mask.png">$INFO[ListItem.Art(poster)]</texture>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -3794,7 +3947,7 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -3803,7 +3956,7 @@
                             <left>0</left><top>168</top>
                             <width>290</width><height>30</height>
                             <font>font18</font>
-                            <textcolor>FFCCCCCC</textcolor>
+                            <textcolor>CCFFFFFF</textcolor>
                             <align>center</align>
                             <scroll>true</scroll>
                             <label>$INFO[ListItem.Label]</label>
@@ -3848,7 +4001,7 @@
                             <width>198</width><height>274</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4021) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
@@ -3864,7 +4017,7 @@
                             <width>298</width><height>168</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4021) + String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
@@ -3900,7 +4053,7 @@
                         <control type="image">
                             <left>4</left><top>4</top>
                             <width>290</width><height>163</height>
-                            <texture diffuse="rounded-mask.png" colordiffuse="FF1A1A2E">white.png</texture>
+                            <texture diffuse="rounded-mask.png" colordiffuse="FF191919">white.png</texture>
                             <visible>Control.HasFocus(4021) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
                         </control>
                         <!-- Brand con logo: fondo oscuro -->
@@ -3954,8 +4107,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail22.visible),true)</visible>
 <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>2</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio>scale</aspectratio>
                             <texture diffuse="rounded-mask.png">$INFO[ListItem.Art(poster)]</texture>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -3973,7 +4131,7 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -3982,7 +4140,7 @@
                             <left>0</left><top>168</top>
                             <width>290</width><height>30</height>
                             <font>font18</font>
-                            <textcolor>FFCCCCCC</textcolor>
+                            <textcolor>CCFFFFFF</textcolor>
                             <align>center</align>
                             <scroll>true</scroll>
                             <label>$INFO[ListItem.Label]</label>
@@ -4027,7 +4185,7 @@
                             <width>198</width><height>274</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4022) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
@@ -4043,7 +4201,7 @@
                             <width>298</width><height>168</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4022) + String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
@@ -4079,7 +4237,7 @@
                         <control type="image">
                             <left>4</left><top>4</top>
                             <width>290</width><height>163</height>
-                            <texture diffuse="rounded-mask.png" colordiffuse="FF1A1A2E">white.png</texture>
+                            <texture diffuse="rounded-mask.png" colordiffuse="FF191919">white.png</texture>
                             <visible>Control.HasFocus(4022) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
                         </control>
                         <!-- Brand con logo: fondo oscuro -->
@@ -4133,8 +4291,13 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail23.visible),true)</visible>
 <itemlayout width="300" height="310">
                         <control type="image">
-                            <left>55</left><top>2</top>
-                            <width>190</width><height>266</height>
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
+                            <texture colordiffuse="B2242424">white.png</texture>
+                        </control>
+<control type="image">
+                            <left>57</left><top>2</top>
+                            <width>186</width><height>276</height>
                             <aspectratio>scale</aspectratio>
                             <texture diffuse="rounded-mask.png">$INFO[ListItem.Art(poster)]</texture>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -4152,7 +4315,7 @@
                             <font>font16</font>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <textcolor>FFE5E7EB</textcolor>
+                            <textcolor>FFFFFFFF</textcolor>
                             <scroll>false</scroll>
                             <label>$INFO[ListItem.Label]</label>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
@@ -4161,7 +4324,7 @@
                             <left>0</left><top>168</top>
                             <width>290</width><height>30</height>
                             <font>font18</font>
-                            <textcolor>FFCCCCCC</textcolor>
+                            <textcolor>CCFFFFFF</textcolor>
                             <align>center</align>
                             <scroll>true</scroll>
                             <label>$INFO[ListItem.Label]</label>
@@ -4206,7 +4369,7 @@
                             <width>198</width><height>274</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4023) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
@@ -4222,7 +4385,7 @@
                             <width>298</width><height>168</height>
                             <aspectratio>scale</aspectratio>
                             <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
+                            <bordertexture colordiffuse="FFE6E6E6">rounded-border.png</bordertexture>
                             <texture colordiffuse="00FFFFFF">white.png</texture>
                             <visible>Control.HasFocus(4023) + String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
@@ -4258,7 +4421,7 @@
                         <control type="image">
                             <left>4</left><top>4</top>
                             <width>290</width><height>163</height>
-                            <texture diffuse="rounded-mask.png" colordiffuse="FF1A1A2E">white.png</texture>
+                            <texture diffuse="rounded-mask.png" colordiffuse="FF191919">white.png</texture>
                             <visible>Control.HasFocus(4023) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
                         </control>
                         <!-- Brand con logo: fondo oscuro -->
