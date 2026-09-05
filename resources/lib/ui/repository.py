@@ -1,12 +1,37 @@
 from .. import plugin as core
 from .models import Card, Rail, Screen
-from slyguy import mem_cache
+from slyguy import userdata
+from collections import OrderedDict
+from copy import deepcopy
+from functools import wraps
+from time import monotonic
+from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode
+from . import constants as C
+import xbmc
 
 
 # HBO Max no expone un endpoint para recuperar metadatos de una película
 # a partir de su ID. Los rows ya cargados se conservan durante la sesión
 # para poder construir posteriormente su detalle.
-_RAW_ITEMS = {}
+def cached_screen(seconds):
+    """Bounded per-session cache; windows always receive independent models."""
+    def decorate(method):
+        @wraps(method)
+        def wrapped(self, *args, **kwargs):
+            self._check_profile()
+            key = (method.__name__, args, tuple(sorted(kwargs.items())))
+            cached = self._cache.get(key)
+            if cached and monotonic() - cached[0] < seconds:
+                self._cache.move_to_end(key)
+                return deepcopy(cached[1])
+            result = method(self, *args, **kwargs)
+            self._cache[key] = (monotonic(), deepcopy(result))
+            self._cache.move_to_end(key)
+            while len(self._cache) > 12:
+                self._cache.popitem(last=False)
+            return result
+        return wrapped
+    return decorate
 
 
 class UIRepository(object):
@@ -14,12 +39,26 @@ class UIRepository(object):
 
     def __init__(self, api_instance=None):
         self.api = api_instance or core.api
+        self._cache = OrderedDict()
+        self._raw_items = OrderedDict()
+        self._profile_id = (userdata.get('profile') or {}).get('id')
+
+    def _check_profile(self):
+        profile_id = (userdata.get('profile') or {}).get('id')
+        if profile_id != self._profile_id:
+            self._cache.clear()
+            self._raw_items.clear()
+            self._profile_id = profile_id
+
+    def refresh_continue_watching(self, screen):
+        # This integration does not implement history synchronization.
+        return False
 
     # ------------------------------------------------------------------
     # Pantallas principales (Home)
     # ------------------------------------------------------------------
 
-    @mem_cache.cached(60 * 5)
+    @cached_screen(60 * 5)
     def build_home(self):
         routes = self._menu_routes()
         if not routes:
@@ -31,15 +70,16 @@ class UIRepository(object):
                 screen_kind='home',
             )
 
-        data = self.api.route(routes[0])
+        data = self._route(routes[0])
         return self._screen_from_page(
             data=data,
             screen_type=Screen.HOME,
             title=data.get('title') or 'HBO Max',
             screen_kind='home',
+            route=routes[0],
         )
 
-    @mem_cache.cached(60 * 5)
+    @cached_screen(60 * 5)
     def build_movies_home(self):
         return self._build_media_home(
             kind=Card.MOVIE,
@@ -47,7 +87,7 @@ class UIRepository(object):
             screen_kind='movies',
         )
 
-    @mem_cache.cached(60 * 5)
+    @cached_screen(60 * 5)
     def build_series_home(self):
         return self._build_media_home(
             kind=Card.SHOW,
@@ -55,10 +95,11 @@ class UIRepository(object):
             screen_kind='series',
         )
 
-    @mem_cache.cached(60 * 2)
-    def build_collection(self, id, title):
-        data = self.api.collection(id)
+    @cached_screen(60 * 2)
+    def build_collection(self, id, title, page=1):
+        data = self.api.collection(id, page=page)
         cards = self._cards_from_rows(data.get('items', []))
+        self._add_next_page(cards, data, 'collection', (id, title, page + 1))
         rails = []
         if cards:
             rails.append(Rail(
@@ -80,7 +121,8 @@ class UIRepository(object):
     # ------------------------------------------------------------------
 
     def build_movie_detail(self, id):
-        raw = _RAW_ITEMS.get(str(id))
+        self._check_profile()
+        raw = self._raw_items.get(str(id))
         hero = None
         if raw:
             hero = self._card_from_raw(raw)
@@ -112,8 +154,7 @@ class UIRepository(object):
     def build_show_detail(self, id):
         data = self.api.series(id)
 
-        hero_item = core.parse_row({'show': data})
-        hero = self.card_from_item(hero_item, row={'show': data})
+        hero = self._card_from_raw({'show': data})
 
         if hero is None:
             hero = Card(
@@ -198,7 +239,7 @@ class UIRepository(object):
             screen_kind='show',
         )
 
-    def build_season_detail(self, show_id, season_id):
+    def build_season_detail(self, show_id, season_id, page=1):
         series_data = self.api.series(show_id)
 
         try:
@@ -214,11 +255,9 @@ class UIRepository(object):
                 season_number = row.get('seasonNumber')
                 break
 
-        data = self.api.season(show_id, season_number)
+        data = self.api.season(show_id, season_number, page=page)
         episodes = self._cards_from_rows(data.get('items', []))
-        for ep in episodes:
-            if ep.kind not in (Card.EPISODE, Card.VIDEO):
-                ep.kind = Card.EPISODE
+        self._add_next_page(episodes, data, 'season_detail', (show_id, season_id, page + 1))
 
         show_art = self._normalize_art(
             core.get_art(series_data.get('images', []))
@@ -274,12 +313,13 @@ class UIRepository(object):
     # Búsqueda y listas del usuario
     # ------------------------------------------------------------------
 
-    def build_search(self, query):
-        data = self.api.search(query=query, page=1)
+    def build_search(self, query, page=1):
+        data = self.api.search(query=query, page=page)
         cards = self._cards_from_rows(
             data.get('items', []),
             from_search=True,
         )
+        self._add_next_page(cards, data, 'search', (query, page + 1))
 
         rails = []
         if cards:
@@ -298,14 +338,17 @@ class UIRepository(object):
             screen_kind='search',
         )
 
-    def build_watchlist_screen(self):
+    def build_watchlist_screen(self, page=1):
         data = self.api.route('my-stuff')
         collection = core._find_collection(
             data,
             'my-stuff-page-rail-my-list',
         )
+        if collection and collection.get('id'):
+            collection = self.api.collection(collection['id'], page=page)
         rows = collection.get('items', []) if collection else []
         cards = self._cards_from_rows(rows, from_watchlist=True)
+        self._add_next_page(cards, collection or {}, 'watchlist_screen', (page + 1,))
 
         rails = []
         if cards:
@@ -376,7 +419,10 @@ class UIRepository(object):
             play_path = path or core.plugin.url_for(core.play, id=content_id)
             open_path = core.plugin.url_for(core.clean_ui_movie, id=content_id)
             if row:
-                _RAW_ITEMS[deeplink_id] = row
+                self._raw_items[deeplink_id] = row
+                self._raw_items.move_to_end(deeplink_id)
+                while len(self._raw_items) > 500:
+                    self._raw_items.popitem(last=False)
 
         elif mediatype == 'tvshow':
             kind = Card.SHOW
@@ -462,7 +508,17 @@ class UIRepository(object):
     def _card_from_raw(self, raw_item, from_search=False,
                        from_watchlist=False):
         """Convert raw HBO Max API data to a Card."""
-        if not raw_item:
+        if not isinstance(raw_item, dict):
+            return None
+
+        # The original parser mutates data and evaluates name even when title
+        # exists. Normalize an isolated row, leaving SlyGuy's parser intact.
+        raw_item = deepcopy(raw_item)
+        data = self._row_data(raw_item)
+        if not isinstance(data, dict):
+            return None
+        data.setdefault('name', data.get('title') or '')
+        if not data['name']:
             return None
 
         item = core.parse_row(
@@ -510,6 +566,21 @@ class UIRepository(object):
             'banner': banner,
             'clearlogo': clearlogo,
         })
+        for key, width in (('poster', 360), ('thumb', 600), ('fanart', 1280),
+                           ('banner', 1280), ('clearlogo', 600)):
+            url = art.get(key)
+            if not url:
+                continue
+            parts = urlsplit(url)
+            query = dict(parse_qsl(parts.query, keep_blank_values=True))
+            # Only transform the unsigned image endpoints already resized by
+            # the core parser; never rewrite arbitrary/signed media URLs.
+            if parts.scheme in ('https', 'http') and not any(
+                k.lower() in ('signature', 'sig', 'token', 'policy', 'expires')
+                or k.lower().startswith('x-amz-') for k in query
+            ):
+                query['w'] = str(width)
+                art[key] = urlunsplit(parts._replace(query=urlencode(query)))
         return art
 
     # ------------------------------------------------------------------
@@ -535,12 +606,17 @@ class UIRepository(object):
     def _cards_from_rows(self, rows, from_search=False,
                          from_watchlist=False):
         cards = []
+        self._check_profile()
         for row in rows or []:
-            card = self._card_from_raw(
-                row,
-                from_search=from_search,
-                from_watchlist=from_watchlist,
-            )
+            try:
+                card = self._card_from_raw(
+                    row,
+                    from_search=from_search,
+                    from_watchlist=from_watchlist,
+                )
+            except (KeyError, TypeError, ValueError, AttributeError):
+                xbmc.log('[CLEANUI] Skipped incomplete catalog item', xbmc.LOGWARNING)
+                continue
             if card is not None:
                 cards.append(card)
         return cards
@@ -558,7 +634,7 @@ class UIRepository(object):
             or {}
         )
 
-    @mem_cache.cached(60 * 10)
+    @cached_screen(60 * 10)
     def _menu_routes(self):
         """Get navigation routes from the web-menu-bar collection."""
         data = self.api.collection('web-menu-bar')
@@ -587,115 +663,95 @@ class UIRepository(object):
                 routes.append(route)
         return routes
 
-    def _screen_from_page(self, data, screen_type, title, screen_kind):
-        """Convert an HBO Max route page into a Screen."""
+    @cached_screen(120)
+    def _route(self, route):
+        return self.api.route(route)
+
+    @cached_screen(120)
+    def _collection(self, collection_id):
+        return self.api.collection(collection_id)
+
+    @staticmethod
+    def _more_card(builder, args, label='Ver más'):
+        card = Card(label=label, kind='page', source_item=(builder, args))
+        return card
+
+    def _add_next_page(self, cards, data, builder, args):
+        meta = data.get('meta') or {}
+        try:
+            more = int(meta.get('itemsCurrentPage', 1)) < int(meta.get('itemsTotalPages', 1))
+        except (TypeError, ValueError):
+            more = False
+        if more:
+            cards.append(self._more_card(builder, args, 'Página siguiente'))
+
+    def build_next(self, card):
+        builder, args = card.source_item
+        allowed = {'collection', 'season_detail', 'search', 'route_page', 'watchlist_screen'}
+        if builder not in allowed:
+            raise ValueError('Unsupported page')
+        return getattr(self, 'build_' + builder)(*args)
+
+    def build_route_page(self, route, offset=0, kind=None, title='HBO Max', screen_kind='home'):
+        return self._screen_from_page(self._route(route), Screen.HOME if screen_kind == 'home'
+                                      else Screen.COLLECTION, title, screen_kind,
+                                      route=route, offset=offset, kind=kind)
+
+    def _screen_from_page(self, data, screen_type, title, screen_kind,
+                          route=None, offset=0, kind=None):
         hero = None
         rails = []
-
-        for row in data.get('items', []):
-            collection = row.get('collection')
-            if not collection:
+        rows = data.get('items') or []
+        next_offset = None
+        # A bounded number of network requests per screen, even for sparse pages.
+        scanned = 0
+        for index in range(offset, len(rows)):
+            row = rows[index]
+            collection = row.get('collection') if isinstance(row, dict) else None
+            if not isinstance(collection, dict) or row.get('hidden'):
                 continue
-
-            component = collection.get('component') or {}
-            component_id = component.get('id')
-            rows = collection.get('items', [])
-
-            # If no inline items, fetch from collection API
-            if not rows and collection.get('id'):
+            if len(rails) >= C.MAX_RAILS_HOME - 1 or scanned >= C.MAX_RAILS_HOME:
+                next_offset = index
+                break
+            scanned += 1
+            items = collection.get('items') or []
+            if not items and collection.get('id'):
                 try:
-                    collection_data = self.api.collection(
-                        collection.get('id')
-                    )
-                    rows = collection_data.get('items', [])
+                    items = self._collection(collection['id']).get('items') or []
                 except Exception:
-                    rows = []
-
-            if component_id == 'hero':
-                hero_cards = self._cards_from_rows(rows)
-                if hero_cards and hero is None:
-                    hero = hero_cards[0]
+                    xbmc.log('[CLEANUI] Collection unavailable', xbmc.LOGWARNING)
+                    continue
+            # Preview a bounded number of cards; full collections remain reachable.
+            cards = self._cards_from_rows(items[:20])
+            if kind:
+                cards = [card for card in cards if card.kind == kind]
+            if not cards:
                 continue
-
-            if component_id == 'tab-group':
-                tab_cards = self._cards_from_rows(rows)
-                if tab_cards and hero is None:
-                    hero = tab_cards[0]
-                if tab_cards:
-                    rails.append(Rail(
-                        title=collection.get('title') or '',
-                        items=tab_cards,
-                        style=Rail.POSTER,
-                        rail_id=str(collection.get('id') or ''),
-                    ))
-                continue
-
-            rail = self._rail_from_items(
-                items=rows,
-                title=collection.get('title') or '',
-                style=Rail.POSTER,
-                rail_id=str(collection.get('id') or ''),
-            )
-            if rail:
-                rails.append(rail)
-
-        # Fallback hero from first rail item
-        if hero is None:
-            for rail in rails:
-                if rail.items:
-                    hero = rail.items[0]
-                    break
-
-        return Screen(
-            screen_type=screen_type,
-            title=title or '',
-            hero=hero,
-            rails=rails,
-            screen_kind=screen_kind,
-        )
+            component = (collection.get('component') or {}).get('id')
+            if hero is None:
+                hero = cards[0]
+            if collection.get('id'):
+                cards.append(self._more_card('collection',
+                    (str(collection['id']), collection.get('title') or '', 1),
+                    'Ver colección completa'))
+            rails.append(Rail(title=collection.get('title') or ('Destacados' if component == 'hero' else ''),
+                              items=cards, style=Rail.POSTER,
+                              rail_id=str(collection.get('id') or '')))
+        if next_offset is not None and route:
+            rails.append(Rail(title='Más categorías', style=Rail.POSTER, items=[
+                self._more_card('route_page', (route, next_offset, kind, title, screen_kind),
+                                'Ver más categorías')]))
+        return Screen(screen_type=screen_type, title=title or '', hero=hero,
+                      rails=rails, screen_kind=screen_kind)
 
     def _build_media_home(self, kind, title, screen_kind):
-        """Build a media-specific home (movies/series) filtering by Card kind."""
-        rails = []
-        hero = None
-
-        for route in self._menu_routes():
-            try:
-                data = self.api.route(route)
-            except Exception:
-                continue
-
-            page = self._screen_from_page(
-                data=data,
-                screen_type=Screen.COLLECTION,
-                title=data.get('title') or title,
-                screen_kind=screen_kind,
-            )
-
-            for src_rail in page.rails:
-                cards = [
-                    card for card in src_rail.items
-                    if card.kind == kind
-                ]
-                if not cards:
-                    continue
-                if hero is None:
-                    hero = cards[0]
-                rails.append(Rail(
-                    title=src_rail.title,
-                    items=cards,
-                    style=src_rail.style,
-                    rail_id=src_rail.rail_id,
-                ))
-
-        return Screen(
-            screen_type=Screen.COLLECTION,
-            title=title,
-            hero=hero,
-            rails=rails,
-            screen_kind=screen_kind,
-        )
-
+        routes = self._menu_routes()
+        words = ('movie', 'film', 'pelicula', 'película') if kind == Card.MOVIE else ('series', 'show')
+        selected = next((route for route in routes if any(word in route.lower() for word in words)), None)
+        route = selected or (routes[0] if routes else None)
+        if not route:
+            return Screen(Screen.COLLECTION, title=title, screen_kind=screen_kind)
+        return self.build_route_page(route, 0, None if selected else kind, title, screen_kind)
 
 # Alias para compatibilidad con el controlador
 Repository = UIRepository

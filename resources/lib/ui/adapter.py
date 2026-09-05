@@ -62,7 +62,7 @@ class UIAdapter(object):
 
         # En Home, unicamente Continue Watching es panoramico.
         if screen_kind == C.SCREEN_HOME:
-            if rail_id == CONTINUE_WATCHING_ID:
+            if CONTINUE_WATCHING_ID and rail_id == CONTINUE_WATCHING_ID:
                 return C.STYLE_LANDSCAPE
             return C.STYLE_POSTER
 

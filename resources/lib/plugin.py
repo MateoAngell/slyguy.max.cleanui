@@ -28,6 +28,8 @@ def index(**kwargs):
         # Si nunca se seleccionó perfil, forzar la selección antes de abrir la UI
         if not userdata.get('profile', {}).get('id'):
             _select_profile()
+            if not (userdata.get('profile') or {}).get('id'):
+                return plugin.Folder(cacheToDisc=False)
         return clean_ui_home(**kwargs)
 
     folder = plugin.Folder(cacheToDisc=False)
@@ -42,37 +44,32 @@ def index(**kwargs):
 
 @plugin.route()
 def clean_ui_home(**kwargs):
-    from .ui.controller import UIController
-    controller = UIController()
-    return controller.open_home()
+    from .ui.session import run
+    return run('open_home')
 
 
 @plugin.route()
 def clean_ui_movie(id, **kwargs):
-    from .ui.controller import UIController
-    controller = UIController()
-    return controller.open_movie(id)
+    from .ui.session import run
+    return run('open_movie', id)
 
 
 @plugin.route()
 def clean_ui_show(id, **kwargs):
-    from .ui.controller import UIController
-    controller = UIController()
-    return controller.open_show(id)
+    from .ui.session import run
+    return run('open_show', id)
 
 
 @plugin.route()
 def clean_ui_season(show_id, season_id, **kwargs):
-    from .ui.controller import UIController
-    controller = UIController()
-    return controller.open_season(show_id, season_id)
+    from .ui.session import run
+    return run('open_season', show_id, season_id)
 
 
 @plugin.route()
 def clean_ui_search(**kwargs):
-    from .ui.controller import UIController
-    controller = UIController()
-    return controller.open_search()
+    from .ui.session import run
+    return run('open_search')
 
 
 # ============================================================

@@ -58,10 +58,7 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
         self._last_focus_key = None
         self._last_activation = None
         self._populate()
-        xbmc.sleep(80)
-        try:
-            self.setFocus(self.getControl(C.CONTROL_PROFILE))
-        except RuntimeError:
+        if not self._restore_state():
             self._focus_first()
         self._last_focus_key = None
         self._refresh_hero_from_focus()
@@ -178,8 +175,6 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
         screens (which need poster layout). Home keeps 4001 (landscape for
         Continue Watching).
         """
-        if rail_index == 1 and self.screen_kind != 'home':
-            return 4101
         return C.CONTROL_RAIL_FIRST + rail_index
 
     def _populate(self):
@@ -439,6 +434,8 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
         self._set_hero_from_card(card)
 
     def _set_hero_from_card(self, card):
+        if card.kind == 'page':
+            return
         prefix = C.PROP_PREFIX
         art = card.art or {}
         info = card.info or {}
@@ -749,6 +746,9 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
         )
 
         try:
+            if card.kind == 'page' and self.controller:
+                self.controller.open_next_page(card, self)
+                return
             if card.kind in (C.KIND_EPISODE, C.KIND_VIDEO):
                 self._play(card.play_path)
                 return
@@ -758,7 +758,7 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
                 and card.deeplink_id
                 and self.controller
             ):
-                self.controller.open_movie(card.deeplink_id)
+                self.controller.open_movie(card.deeplink_id, card)
                 return
 
             if (
@@ -838,7 +838,7 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
         options = [
             'Buscar',
             'Mi lista',
-            'Continuar viendo',
+            'Inicio',
             'Ajustes',
             'Cerrar sesión',
         ]
@@ -865,7 +865,8 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
 
         if choice == 2:
             if self.controller:
-                self.controller.open_continue_watching(self)
+                self.controller._open_home_like(self.controller.repository.build_home,
+                                               'open_home', 'home', self)
             return
 
         if choice == 3:

@@ -36,7 +36,7 @@ CONTROL_PROFILE = 3003
 CONTROL_RAIL_FIRST = 4000
 
 # Max rails per window. Home must contain XML controls 4000-4023.
-MAX_RAILS_HOME = 24
+MAX_RAILS_HOME = 8
 MAX_RAILS_DETAIL = 4
 
 # Fetch extra containers because heroes, brands, sports and premium

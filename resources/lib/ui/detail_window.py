@@ -207,7 +207,8 @@ class DetailWindow(xbmcgui.WindowXMLDialog):
         watch_act = ''
         for lb, act in (h.context or []):
             s = (lb or '').lower()
-            if 'watchlist' in s or 'lista' in s or 'guardar' in s:
+            if ('watchlist' in s or 'lista' in s or 'guardar' in s
+                    or 'add_watchlist' in act or 'delete_watchlist' in act):
                 watch_act = act
                 break
         self.setProperty('{}.detail.watchlist_action'.format(p), watch_act)
@@ -395,6 +396,10 @@ class DetailWindow(xbmcgui.WindowXMLDialog):
         return False
 
     def _close_current_window(self):
+        if getattr(self, '_page_history', None):
+            self.screen = self._page_history.pop()
+            self.onInit()
+            return
         if self.controller:
             self.controller.close_child_window(self)
         else:
@@ -462,6 +467,14 @@ class DetailWindow(xbmcgui.WindowXMLDialog):
 
     def _open_selected(self, cid):
         try:
+            position = self.getControl(cid).getSelectedPosition()
+            card = self.screen.rails[cid - C.CONTROL_RAIL_FIRST].items[position]
+            if card.kind == 'page' and self.controller:
+                self.controller.open_next_page(card, self)
+                return
+        except (IndexError, RuntimeError):
+            return
+        try:
             item = self.getControl(cid).getSelectedItem()
         except RuntimeError:
             return
@@ -484,7 +497,7 @@ class DetailWindow(xbmcgui.WindowXMLDialog):
 
         # Movie: open detail via controller
         if kind == C.KIND_MOVIE and deeplink_id:
-            self.controller.open_movie(deeplink_id)
+            self.controller.open_movie(deeplink_id, card)
             return
 
         # Show: open detail

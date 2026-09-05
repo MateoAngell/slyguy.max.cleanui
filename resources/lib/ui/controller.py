@@ -166,12 +166,6 @@ class UIController(object):
         # Durante una reconstrucción de la pila tras reproducción, todavía
         # puede faltar por restaurar una pantalla padre. No descubrir Videos
         # entre una restauración y la siguiente.
-        if (
-            self._processing_playback
-            and self._restored_stack
-            and len(self._restored_stack) > 1
-        ):
-            return
         self._transition_release_target = None
         xbmc.log(
             '[CLEANUI] Ventana padre recuperó foco; retirando cortina',
@@ -230,7 +224,6 @@ class UIController(object):
             self._transition_curtain is not None
             and self._processing_playback
             and self._restored_stack
-            and len(self._restored_stack) == 1
             and not self.exit_requested
         ):
             self._transition_release_target = window
@@ -308,6 +301,7 @@ class UIController(object):
             and len(self._restored_stack) > 1
         )
         if restoring_parent:
+            self.begin_transition()
             xbmc.log(
                 '[CLEANUI] Manteniendo transición hasta restaurar '
                 'la pantalla anterior',
@@ -1153,7 +1147,9 @@ class UIController(object):
             self._show_error('open_home')
             return False
 
-    def open_movie(self, deeplinkid):
+    def open_movie(self, deeplinkid, card=None):
+        if card is not None and isinstance(card.source_item, dict):
+            self.repository._raw_items[str(deeplinkid)] = card.source_item
         return self._open_detail(
             self.repository.build_movie_detail,
             'open_movie',
@@ -1197,6 +1193,9 @@ class UIController(object):
         screen_kind='home',
         source_window=None,
     ):
+        if (source_window and source_window.screen_kind == screen_kind
+                and screen_kind in ('movies', 'series')):
+            return True
         try:
             with gui.busy():
                 screen = builder()
@@ -1213,11 +1212,16 @@ class UIController(object):
             # interfaz en Chromecast). Se guarda el Screen actual en la pila
             # para que BACK recargue la seccion anterior.
             if source_window and source_window in self._windows:
+                if screen_kind == 'home':
+                    self._home_stack = []
+                    return source_window.replace_screen(screen, screen_kind)
                 if getattr(source_window, 'screen', None):
+                    source_window.capture_state()
                     self._home_stack.append((
                         source_window.screen,
                         source_window.screen_kind,
                     ))
+                    self._home_stack = self._home_stack[-6:]
                 return source_window.replace_screen(
                     screen,
                     screen_kind,
@@ -1301,7 +1305,9 @@ class UIController(object):
         try:
             from slyguy import userdata
             import resources.lib.plugin as core
-            previous_profile_id = userdata.get('profile_id') or ''
+            if userdata.get('kid_lockdown', False):
+                return False
+            previous_profile_id = (userdata.get('profile') or {}).get('id', '')
             xbmc.log(
                 '[CLEANUI] Abriendo selector de perfil; perfil actual={}'.format(
                     previous_profile_id
@@ -1309,7 +1315,7 @@ class UIController(object):
                 xbmc.LOGINFO,
             )
             changed = core._select_profile()
-            current_profile_id = userdata.get('profile_id') or ''
+            current_profile_id = (userdata.get('profile') or {}).get('id', '')
             if changed is False:
                 xbmc.log(
                     '[CLEANUI] Selección de perfil cancelada',
@@ -1332,6 +1338,8 @@ class UIController(object):
             # Las pantallas guardadas pertenecen al perfil anterior y no
             # deben poder restaurarse mediante BACK.
             self._home_stack = []
+            from slyguy import mem_cache
+            mem_cache.empty()
             # Un Repository nuevo evita conservar modelos o resultados
             # visuales del perfil anterior. Las cachés válidas de red
             # continúan gestionadas por API.
@@ -1375,10 +1383,12 @@ class UIController(object):
 
             if source_window and source_window in self._windows:
                 if getattr(source_window, 'screen', None):
+                    source_window.capture_state()
                     self._home_stack.append((
                         source_window.screen,
                         source_window.screen_kind,
                     ))
+                    self._home_stack = self._home_stack[-6:]
                 return source_window.replace_screen(
                     screen,
                     'collection',
@@ -1400,4 +1410,25 @@ class UIController(object):
 
         except Exception:
             self._show_error('open_collection')
+            return False
+
+    def open_next_page(self, card, source_window):
+        try:
+            with gui.busy():
+                screen = self.repository.build_next(card)
+            if isinstance(source_window, HomeWindow):
+                source_window.capture_state()
+                self._home_stack.append((source_window.screen, source_window.screen_kind))
+                self._home_stack = self._home_stack[-6:]
+                return source_window.replace_screen(screen, screen.screen_kind)
+            # Replace paginated search/episode content in the existing dialog.
+            source_window.capture_state()
+            history = getattr(source_window, '_page_history', [])
+            history.append(source_window.screen)
+            source_window._page_history = history[-6:]
+            source_window.screen = screen
+            source_window.onInit()
+            return True
+        except Exception:
+            self._show_error('open_next_page')
             return False
