@@ -1,4 +1,42 @@
-# Max Clean UI — revisión 0.1.6
+# Max Clean UI — revisión 0.2.0
+
+## Primera adaptación HBO Max para TV
+
+Esta actualización modifica el mismo add-on, no crea una aplicación externa.
+La referencia visual fue la web de HBO Max: perfiles, Inicio, Series y fichas.
+Se adaptan a mando el menú superior, la paleta negra/blanca, las tarjetas,
+los perfiles circulares, las fichas y el selector de temporadas con episodios.
+HBO y Niños y Familia se muestran únicamente si el servicio ofrece su destino.
+
+La interfaz se aloja en una extensión de biblioteca dentro del mismo add-on.
+Así termina la petición de carpeta antes de mantener abierta la ventana visual.
+La biblioteca se invoca por ID para preservar identidad y dependencias en Kodi.
+Cancelar el diálogo de reproducción ya no añade una espera de 60 segundos.
+Las transiciones no abren una cortina modal negra que dependa de recibir foco.
+La propiedad de sesión se libera al cancelar perfiles, salir o fallar la carga.
+
+Los archivos originales api.py, plugin.py, constants.py y settings.py no cambian
+respecto a 0.1.6. El cambio de perfil delega el PIN y la autenticación al núcleo
+original. No se modifican DRM, manifiestos de reproducción ni configuración de audio.
+
+## Verificación y límites de esta entrega
+
+Pruebas automatizadas locales: 96 casos con dobles de Kodi, más la prueba de
+distribución. Se comprueban XML, sintaxis Python, paquete y paridad del núcleo.
+No se ha ejecutado ni renderizado esta versión en Kodi o en un Chromecast real.
+No se presentan mediciones de rendimiento en el dispositivo que no se han hecho.
+
+No es todavía una réplica completa de la aplicación oficial: búsqueda utiliza el
+teclado de Kodi, Mi lista conserva carriles y no la cuadrícula con pestañas de la
+web, y faltan las pestañas de géneros y otros detalles de composición. No se han
+añadido creación/edición de perfiles, gestión de suscripciones ni calificaciones
+sin soporte del add-on. No hay previsualización automática de vídeo.
+
+Prueba de aceptación en TV: cancelar Continuar viendo, entrar en serie y cambiar
+temporada, volver una vez con Atrás, reproducir/detener y cerrar/reabrir el add-on.
+Conservar la versión anterior permite volver atrás si aparece una regresión.
+
+## Historial: revisión 0.1.6
 
 ## Corrección tras la prueba en Chromecast
 

@@ -251,6 +251,29 @@ class UIRepository(object):
             screen_kind='show',
         )
 
+    def build_show_episodes(self, show_id, season_id=None, page=1):
+        """Series detail with a real season selector and the selected episodes."""
+        screen = self.build_show_detail(show_id)
+        seasons = [card for rail in screen.rails for card in rail.items
+                   if card.kind == Card.SEASON]
+        screen.season_choices = seasons
+        if not seasons:
+            return screen
+        selected = next((card for card in seasons if str(card.season_id) == str(season_id)), seasons[0])
+        episode_screen = self.build_season_detail(show_id, selected.season_id, page)
+        screen.rails = episode_screen.rails
+        screen.selected_season = selected
+        for rail in screen.rails:
+            for card in rail.items:
+                if card.kind == 'page':
+                    card.source_item = ('show_episodes', (show_id, selected.season_id, page + 1))
+        first = next((card for rail in screen.rails for card in rail.items
+                      if card.kind == Card.EPISODE and card.play_path), None)
+        if first:
+            screen.hero.play_path = first.play_path
+            screen.play_label = 'Ver T{} E{}'.format(selected.season_id, first.info.get('episode') or 1)
+        return screen
+
     def build_season_detail(self, show_id, season_id, page=1):
         series_data = self.api.series(show_id)
 
@@ -628,7 +651,7 @@ class UIRepository(object):
     @cached_screen(60 * 10)
     def _menu_routes(self):
         """Get navigation routes from the web-menu-bar collection."""
-        data = self.api.collection('web-menu-bar')
+        data = self._collection('web-menu-bar')
         routes = []
         for row in data.get('items', []):
             if row.get('hidden'):
@@ -654,6 +677,31 @@ class UIRepository(object):
                 routes.append(route)
         return routes
 
+    def navigation_targets(self):
+        """Expose only destinations actually supplied by the service menu."""
+        targets = {}
+        for row in self._collection('web-menu-bar').get('items', []):
+            if row.get('hidden'):
+                continue
+            entry = row.get('collection') or {}
+            name = '{} {}'.format(entry.get('name', ''), entry.get('title', '')).lower()
+            key = ('hbo' if 'hbo' in name else
+                   'kids' if any(x in name for x in ('kids', 'family', 'niños', 'familia')) else None)
+            if key:
+                for item in entry.get('items') or []:
+                    routes = (item.get('link') or {}).get('linkedContentRoutes') or []
+                    if routes and routes[0].get('url'):
+                        targets[key] = routes[0]['url'].lstrip('/')
+                        break
+        return targets
+
+    def build_navigation_section(self, key):
+        route = self.navigation_targets().get(key)
+        if not route:
+            raise ValueError('This section is not available in the service menu')
+        return self.build_route_page(route, title='HBO' if key == 'hbo' else 'Niños y Familia',
+                                     screen_kind=key)
+
     @cached_screen(120, copy_models=False)
     def _route(self, route):
         return self.api.route(route)
@@ -678,7 +726,7 @@ class UIRepository(object):
 
     def build_next(self, card):
         builder, args = card.source_item
-        allowed = {'collection', 'season_detail', 'search', 'route_page', 'watchlist_screen'}
+        allowed = {'collection', 'season_detail', 'show_episodes', 'search', 'route_page', 'watchlist_screen'}
         if builder not in allowed:
             raise ValueError('Unsupported page')
         return getattr(self, 'build_' + builder)(*args)

@@ -1,7 +1,7 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <window type="dialog" id="13000">
     <defaultcontrol>3000</defaultcontrol>
-    <backgroundcolor>FF0F0F0F</backgroundcolor>
+    <backgroundcolor>FF000000</backgroundcolor>
     <controls>
         <control type="image" id="2000">
             <left>0</left>
@@ -28,154 +28,40 @@
             <visible>false</visible>
         </control>
         <control type="label" id="2003">
-            <left>50</left>
-            <top>165</top>
-            <width>1530</width>
-            <height>30</height>
+            <left>60</left>
+            <top>365</top>
+            <width>960</width>
+            <height>36</height>
             <font>font18</font>
             <textcolor>CCFFFFFF</textcolor>
             <label>$INFO[Window.Property(cleanui.hero.meta)]</label>
         </control>
         <control type="label" id="2002">
-            <left>50</left>
-            <top>200</top>
-            <width>1450</width>
-            <height>66</height>
+            <left>60</left>
+            <top>215</top>
+            <width>960</width>
+            <height>125</height>
             <font>font48</font>
             <textcolor>FFFFFFFF</textcolor>
             <scroll condition="Control.HasFocus(2002)">true</scroll>
             <label>$INFO[Window.Property(cleanui.hero.title)]</label>
+            <visible>String.IsEmpty(Window.Property(cleanui.hero.logo))</visible>
         </control>
         <control type="textbox" id="2004">
-            <left>50</left>
-            <top>283</top>
-            <width>1250</width>
-            <height>150</height>
-            <font>font20</font>
+            <left>60</left>
+            <top>425</top>
+            <width>920</width>
+            <height>140</height>
+            <font>font24</font>
             <textcolor>C8FFFFFF</textcolor>
             <autoscroll>false</autoscroll>
             <label>$INFO[Window.Property(cleanui.hero.plot)]</label>
         </control>
-        <control type="button" id="3001">
-            <left>1300</left>
-            <top>40</top>
-            <width>160</width>
-            <height>72</height>
-            <font>font20</font>
-            <align>center</align>
-            <aligny>center</aligny>
-            <label>PELÍCULAS</label>
-            <texturefocus>transparent.png</texturefocus>
-            <texturenofocus>transparent.png</texturenofocus>
-            <textcolor>FFFFFFFF</textcolor>
-            <focusedcolor>FFFFFFFF</focusedcolor>
-            <onleft>3003</onleft>
-            <onright>3002</onright>
-            <ondown>4000</ondown>
-        </control>
-        <control type="image">
-            <left>1300</left>
-            <top>112</top>
-            <width>160</width>
-            <height>5</height>
-            <texture>white.png</texture>
-            <colordiffuse>FF71B8F2</colordiffuse>
-            <visible>Control.HasFocus(3001)</visible>
-        </control>
-        <control type="button" id="3002">
-            <left>1476</left>
-            <top>40</top>
-            <width>130</width>
-            <height>72</height>
-            <font>font20</font>
-            <align>center</align>
-            <aligny>center</aligny>
-            <label>SERIES</label>
-            <texturefocus>transparent.png</texturefocus>
-            <texturenofocus>transparent.png</texturenofocus>
-            <textcolor>FFFFFFFF</textcolor>
-            <focusedcolor>FFFFFFFF</focusedcolor>
-            <onleft>3001</onleft>
-            <onright>3000</onright>
-            <ondown>4000</ondown>
-        </control>
-        <control type="image">
-            <left>1476</left>
-            <top>112</top>
-            <width>130</width>
-            <height>5</height>
-            <texture>white.png</texture>
-            <colordiffuse>FF71B8F2</colordiffuse>
-            <visible>Control.HasFocus(3002)</visible>
-        </control>
-        <control type="button" id="3000">
-            <left>1622</left>
-            <top>40</top>
-            <width>138</width>
-            <height>72</height>
-            <font>font20</font>
-            <align>center</align>
-            <aligny>center</aligny>
-            <label>MENÚ</label>
-            <texturefocus>transparent.png</texturefocus>
-            <texturenofocus>transparent.png</texturenofocus>
-            <textcolor>FFFFFFFF</textcolor>
-            <focusedcolor>FFFFFFFF</focusedcolor>
-            <onleft>3002</onleft>
-            <onright>3003</onright>
-            <ondown>4000</ondown>
-        </control>
-        <control type="image">
-            <left>1622</left>
-            <top>112</top>
-            <width>138</width>
-            <height>5</height>
-            <texture>white.png</texture>
-            <colordiffuse>FF71B8F2</colordiffuse>
-            <visible>Control.HasFocus(3000)</visible>
-        </control>
-        <control type="group">
-            <left>1808</left>
-            <top>22</top>
-            <width>96</width>
-            <height>96</height>
-            <control type="button" id="3003">
-                <left>0</left>
-                <top>0</top>
-                <width>92</width>
-                <height>92</height>
-                <label />
-                <texturefocus>transparent.png</texturefocus>
-                <texturenofocus>transparent.png</texturenofocus>
-                <onleft>3000</onleft>
-                <onright>3001</onright>
-                <onup>3003</onup>
-                <ondown>4000</ondown>
-                <hinttext>$INFO[Window.Property(cleanui.profile.name)]</hinttext>
-            </control>
-            <control type="image">
-                <left>5</left>
-                <top>5</top>
-                <width>82</width>
-                <height>82</height>
-                <texture background="true" diffuse="rounded-mask.png">$INFO[Window.Property(cleanui.profile.avatar)]</texture>
-                <aspectratio align="center" aligny="center">scale</aspectratio>
-                <visible>String.IsEqual(Window.Property(cleanui.profile.has_avatar),true)</visible>
-            </control>
-            <control type="image">
-                <left>1</left>
-                <top>1</top>
-                <width>90</width>
-                <height>90</height>
-                <texture colordiffuse="FFFFFFFF">profile-focus-ring.png</texture>
-                <visible>Control.HasFocus(3003)</visible>
-            </control>
-        </control>
         <control type="grouplist" id="5100">
             <left>50</left>
-            <top>450</top>
+            <top>665</top>
             <width>1820</width>
-            <height>610</height>
+            <height>395</height>
             <orientation>vertical</orientation>
             <itemgap>8</itemgap>
             <scroll>true</scroll>
@@ -204,7 +90,7 @@
                     <scrolltime>160</scrolltime>
                     <focusposition>0</focusposition>
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail0.visible),true)</visible>
-                    <onup>3000</onup>
+                    <onup>3010</onup>
                     <ondown>4001</ondown>
                     <itemlayout width="308" height="220" condition="String.IsEqual(Window.Property(cleanui.home.rail0.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail0.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail0.style),brand)">
                         <control type="image">
@@ -325,7 +211,7 @@
                             <height>170</height>
                             <visible>Control.HasFocus(4000)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -397,7 +283,7 @@
                             <height>296</height>
                             <visible>Control.HasFocus(4000)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -578,7 +464,7 @@
                             <height>170</height>
                             <visible>Control.HasFocus(4001)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -650,7 +536,7 @@
                             <height>296</height>
                             <visible>Control.HasFocus(4001)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -831,7 +717,7 @@
                             <height>170</height>
                             <visible>Control.HasFocus(4002)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -903,7 +789,7 @@
                             <height>296</height>
                             <visible>Control.HasFocus(4002)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -1084,7 +970,7 @@
                             <height>170</height>
                             <visible>Control.HasFocus(4003)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -1156,7 +1042,7 @@
                             <height>296</height>
                             <visible>Control.HasFocus(4003)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -1337,7 +1223,7 @@
                             <height>170</height>
                             <visible>Control.HasFocus(4004)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -1409,7 +1295,7 @@
                             <height>296</height>
                             <visible>Control.HasFocus(4004)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -1590,7 +1476,7 @@
                             <height>170</height>
                             <visible>Control.HasFocus(4005)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -1662,7 +1548,7 @@
                             <height>296</height>
                             <visible>Control.HasFocus(4005)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -1843,7 +1729,7 @@
                             <height>170</height>
                             <visible>Control.HasFocus(4006)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -1915,7 +1801,7 @@
                             <height>296</height>
                             <visible>Control.HasFocus(4006)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -2096,7 +1982,7 @@
                             <height>170</height>
                             <visible>Control.HasFocus(4007)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -2168,7 +2054,7 @@
                             <height>296</height>
                             <visible>Control.HasFocus(4007)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -2203,6 +2089,279 @@
                     </focusedlayout>
                 </control>
             </control>
+        </control>
+        <control type="image" id="2005">
+            <left>60</left>
+            <top>190</top>
+            <width>620</width>
+            <height>160</height>
+            <aspectratio>keep</aspectratio>
+            <texture background="true">$INFO[Window.Property(cleanui.hero.logo)]</texture>
+            <visible>!String.IsEmpty(Window.Property(cleanui.hero.logo))</visible>
+        </control>
+        <control type="label">
+            <left>60</left>
+            <top>24</top>
+            <width>220</width>
+            <height>65</height>
+            <font>font32</font>
+            <label>HBO max</label>
+            <textcolor>FFFFFFFF</textcolor>
+            <aligny>center</aligny>
+            <scroll>false</scroll>
+        </control>
+        <control type="button" id="3010">
+            <left>510</left>
+            <top>24</top>
+            <width>110</width>
+            <height>64</height>
+            <font>font24</font>
+            <label>Inicio</label>
+            <align>center</align>
+            <aligny>center</aligny>
+            <textcolor>FFDDDDDD</textcolor>
+            <focusedcolor>FFFFFFFF</focusedcolor>
+            <texturefocus>transparent.png</texturefocus>
+            <texturenofocus>transparent.png</texturenofocus>
+            <onleft>3000</onleft>
+            <onright>3010</onright>
+            <ondown>4000</ondown>
+        </control>
+        <control type="image">
+            <left>510</left>
+            <top>88</top>
+            <width>110</width>
+            <height>3</height>
+            <aspectratio>stretch</aspectratio>
+            <texture>white.png</texture>
+            <visible>Control.HasFocus(3010) | String.IsEqual(Window.Property(cleanui.section),home)</visible>
+        </control>
+        <control type="button" id="3002">
+            <left>630</left>
+            <top>24</top>
+            <width>110</width>
+            <height>64</height>
+            <font>font24</font>
+            <label>Series</label>
+            <align>center</align>
+            <aligny>center</aligny>
+            <textcolor>FFDDDDDD</textcolor>
+            <focusedcolor>FFFFFFFF</focusedcolor>
+            <texturefocus>transparent.png</texturefocus>
+            <texturenofocus>transparent.png</texturenofocus>
+            <onleft>3000</onleft>
+            <onright>3010</onright>
+            <ondown>4000</ondown>
+        </control>
+        <control type="image">
+            <left>630</left>
+            <top>88</top>
+            <width>110</width>
+            <height>3</height>
+            <aspectratio>stretch</aspectratio>
+            <texture>white.png</texture>
+            <visible>Control.HasFocus(3002) | String.IsEqual(Window.Property(cleanui.section),series)</visible>
+        </control>
+        <control type="button" id="3001">
+            <left>750</left>
+            <top>24</top>
+            <width>155</width>
+            <height>64</height>
+            <font>font24</font>
+            <label>Películas</label>
+            <align>center</align>
+            <aligny>center</aligny>
+            <textcolor>FFDDDDDD</textcolor>
+            <focusedcolor>FFFFFFFF</focusedcolor>
+            <texturefocus>transparent.png</texturefocus>
+            <texturenofocus>transparent.png</texturenofocus>
+            <onleft>3000</onleft>
+            <onright>3010</onright>
+            <ondown>4000</ondown>
+        </control>
+        <control type="image">
+            <left>750</left>
+            <top>88</top>
+            <width>155</width>
+            <height>3</height>
+            <aspectratio>stretch</aspectratio>
+            <texture>white.png</texture>
+            <visible>Control.HasFocus(3001) | String.IsEqual(Window.Property(cleanui.section),movies)</visible>
+        </control>
+        <control type="button" id="3013">
+            <left>915</left>
+            <top>24</top>
+            <width>100</width>
+            <height>64</height>
+            <font>font24</font>
+            <label>HBO</label>
+            <align>center</align>
+            <aligny>center</aligny>
+            <textcolor>FFDDDDDD</textcolor>
+            <focusedcolor>FFFFFFFF</focusedcolor>
+            <texturefocus>transparent.png</texturefocus>
+            <texturenofocus>transparent.png</texturenofocus>
+            <onleft>3000</onleft>
+            <onright>3010</onright>
+            <ondown>4000</ondown>
+            <visible>String.IsEqual(Window.Property(cleanui.nav.hbo),true)</visible>
+        </control>
+        <control type="image">
+            <left>915</left>
+            <top>88</top>
+            <width>100</width>
+            <height>3</height>
+            <aspectratio>stretch</aspectratio>
+            <texture>white.png</texture>
+            <visible>Control.HasFocus(3013) | String.IsEqual(Window.Property(cleanui.section),hbo)</visible>
+        </control>
+        <control type="button" id="3014">
+            <left>1025</left>
+            <top>24</top>
+            <width>235</width>
+            <height>64</height>
+            <font>font24</font>
+            <label>Niños y Familia</label>
+            <align>center</align>
+            <aligny>center</aligny>
+            <textcolor>FFDDDDDD</textcolor>
+            <focusedcolor>FFFFFFFF</focusedcolor>
+            <texturefocus>transparent.png</texturefocus>
+            <texturenofocus>transparent.png</texturenofocus>
+            <onleft>3000</onleft>
+            <onright>3010</onright>
+            <ondown>4000</ondown>
+            <visible>String.IsEqual(Window.Property(cleanui.nav.kids),true)</visible>
+        </control>
+        <control type="image">
+            <left>1025</left>
+            <top>88</top>
+            <width>235</width>
+            <height>3</height>
+            <aspectratio>stretch</aspectratio>
+            <texture>white.png</texture>
+            <visible>Control.HasFocus(3014) | String.IsEqual(Window.Property(cleanui.section),kids)</visible>
+        </control>
+        <control type="button" id="3011">
+            <left>1370</left>
+            <top>24</top>
+            <width>130</width>
+            <height>64</height>
+            <font>font24</font>
+            <label>Buscar</label>
+            <align>center</align>
+            <aligny>center</aligny>
+            <textcolor>FFDDDDDD</textcolor>
+            <focusedcolor>FFFFFFFF</focusedcolor>
+            <texturefocus>transparent.png</texturefocus>
+            <texturenofocus>transparent.png</texturenofocus>
+            <onleft>3000</onleft>
+            <onright>3010</onright>
+            <ondown>4000</ondown>
+        </control>
+        <control type="image">
+            <left>1370</left>
+            <top>88</top>
+            <width>130</width>
+            <height>3</height>
+            <aspectratio>stretch</aspectratio>
+            <texture>white.png</texture>
+            <visible>Control.HasFocus(3011) | String.IsEqual(Window.Property(cleanui.section),search)</visible>
+        </control>
+        <control type="button" id="3012">
+            <left>1510</left>
+            <top>24</top>
+            <width>135</width>
+            <height>64</height>
+            <font>font24</font>
+            <label>Mi lista</label>
+            <align>center</align>
+            <aligny>center</aligny>
+            <textcolor>FFDDDDDD</textcolor>
+            <focusedcolor>FFFFFFFF</focusedcolor>
+            <texturefocus>transparent.png</texturefocus>
+            <texturenofocus>transparent.png</texturenofocus>
+            <onleft>3000</onleft>
+            <onright>3010</onright>
+            <ondown>4000</ondown>
+        </control>
+        <control type="image">
+            <left>1510</left>
+            <top>88</top>
+            <width>135</width>
+            <height>3</height>
+            <aspectratio>stretch</aspectratio>
+            <texture>white.png</texture>
+            <visible>Control.HasFocus(3012) | String.IsEqual(Window.Property(cleanui.section),watchlist)</visible>
+        </control>
+        <control type="button" id="3003">
+            <left>1660</left>
+            <top>24</top>
+            <width>76</width>
+            <height>64</height>
+            <font>font24</font>
+            <label />
+            <align>center</align>
+            <aligny>center</aligny>
+            <textcolor>FFDDDDDD</textcolor>
+            <focusedcolor>FFFFFFFF</focusedcolor>
+            <texturefocus>transparent.png</texturefocus>
+            <texturenofocus>transparent.png</texturenofocus>
+            <onleft>3000</onleft>
+            <onright>3010</onright>
+            <ondown>4000</ondown>
+        </control>
+        <control type="image">
+            <left>1660</left>
+            <top>88</top>
+            <width>76</width>
+            <height>3</height>
+            <aspectratio>stretch</aspectratio>
+            <texture>white.png</texture>
+            <visible>Control.HasFocus(3003) | String.IsEqual(Window.Property(cleanui.section),profile)</visible>
+        </control>
+        <control type="button" id="3000">
+            <left>1770</left>
+            <top>24</top>
+            <width>70</width>
+            <height>64</height>
+            <font>font24</font>
+            <label>⋯</label>
+            <align>center</align>
+            <aligny>center</aligny>
+            <textcolor>FFDDDDDD</textcolor>
+            <focusedcolor>FFFFFFFF</focusedcolor>
+            <texturefocus>transparent.png</texturefocus>
+            <texturenofocus>transparent.png</texturenofocus>
+            <onleft>3000</onleft>
+            <onright>3010</onright>
+            <ondown>4000</ondown>
+        </control>
+        <control type="image">
+            <left>1770</left>
+            <top>88</top>
+            <width>70</width>
+            <height>3</height>
+            <aspectratio>stretch</aspectratio>
+            <texture>white.png</texture>
+            <visible>Control.HasFocus(3000) | String.IsEqual(Window.Property(cleanui.section),menu)</visible>
+        </control>
+        <control type="image">
+            <left>1668</left>
+            <top>28</top>
+            <width>60</width>
+            <height>60</height>
+            <aspectratio>keep</aspectratio>
+            <texture diffuse="circle-mask.png" background="true">$INFO[Window.Property(cleanui.profile.avatar)]</texture>
+        </control>
+        <control type="image">
+            <left>1665</left>
+            <top>25</top>
+            <width>66</width>
+            <height>66</height>
+            <aspectratio>keep</aspectratio>
+            <texture>profile-focus-ring.png</texture>
+            <visible>Control.HasFocus(3003)</visible>
         </control>
     </controls>
 </window>

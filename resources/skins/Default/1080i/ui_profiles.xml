@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window type="dialog" id="13002">
+    <defaultcontrol>4100</defaultcontrol>
+    <backgroundcolor>FF080B0E</backgroundcolor>
+    <controls>
+        <control type="image">
+            <left>0</left>
+            <top>0</top>
+            <width>1920</width>
+            <height>1080</height>
+            <aspectratio>keep</aspectratio>
+            <texture>gradient-vertical.png</texture>
+        </control>
+        <control type="label">
+            <left>200</left>
+            <top>180</top>
+            <width>1520</width>
+            <height>65</height>
+            <font>font48</font>
+            <label>¿Quién está viendo?</label>
+            <textcolor>FFFFFFFF</textcolor>
+            <aligny>center</aligny>
+            <scroll>false</scroll>
+            <align>center</align>
+        </control>
+        <control type="list" id="4100">
+            <left>260</left>
+            <top>380</top>
+            <width>1400</width>
+            <height>330</height>
+            <orientation>horizontal</orientation>
+            <scrolltime>150</scrolltime>
+            <onup>4100</onup>
+            <ondown>1003</ondown>
+            <onleft>4100</onleft>
+            <onright>4100</onright>
+            <itemlayout width="280" height="330">
+                <control type="image">
+                    <left>30</left>
+                    <top>10</top>
+                    <width>220</width>
+                    <height>220</height>
+                    <aspectratio>keep</aspectratio>
+                    <texture diffuse="circle-mask.png" background="true">$INFO[ListItem.Art(thumb)]</texture>
+                </control>
+                <control type="label">
+                    <left>10</left>
+                    <top>250</top>
+                    <width>260</width>
+                    <height>50</height>
+                    <font>font28</font>
+                    <label>$INFO[ListItem.Label]</label>
+                    <textcolor>FFFFFFFF</textcolor>
+                    <aligny>center</aligny>
+                    <scroll>false</scroll>
+                    <align>center</align>
+                </control>
+            </itemlayout>
+            <focusedlayout width="280" height="330">
+                <control type="image">
+                    <left>30</left>
+                    <top>10</top>
+                    <width>220</width>
+                    <height>220</height>
+                    <aspectratio>keep</aspectratio>
+                    <texture diffuse="circle-mask.png" background="true">$INFO[ListItem.Art(thumb)]</texture>
+                </control>
+                <control type="image">
+                    <left>24</left>
+                    <top>4</top>
+                    <width>232</width>
+                    <height>232</height>
+                    <aspectratio>keep</aspectratio>
+                    <texture>profile-focus-ring.png</texture>
+                    <visible>Control.HasFocus(4100)</visible>
+                </control>
+                <control type="label">
+                    <left>10</left>
+                    <top>250</top>
+                    <width>260</width>
+                    <height>50</height>
+                    <font>font28</font>
+                    <label>$INFO[ListItem.Label]</label>
+                    <textcolor>FFFFFFFF</textcolor>
+                    <aligny>center</aligny>
+                    <scroll>false</scroll>
+                    <align>center</align>
+                </control>
+            </focusedlayout>
+        </control>
+        <control type="button" id="1003">
+            <left>820</left>
+            <top>780</top>
+            <width>280</width>
+            <height>64</height>
+            <font>font24</font>
+            <label>Volver</label>
+            <align>center</align>
+            <aligny>center</aligny>
+            <textcolor>FFDDDDDD</textcolor>
+            <focusedcolor>FF101010</focusedcolor>
+            <texturefocus colordiffuse="FFFFFFFF">rounded-rect.png</texturefocus>
+            <texturenofocus colordiffuse="FF303030">rounded-rect.png</texturenofocus>
+            <onup>4100</onup>
+            <onleft>1003</onleft>
+            <onright>1003</onright>
+        </control>
+    </controls>
+</window>

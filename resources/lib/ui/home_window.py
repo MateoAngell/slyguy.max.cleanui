@@ -179,6 +179,26 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
 
     def _populate(self):
         prefix = C.PROP_PREFIX
+        self.setProperty('cleanui.section', self.screen_kind)
+        targets = {}
+        repository = getattr(self.controller, 'repository', None)
+        if repository and hasattr(repository, 'navigation_targets'):
+            try:
+                targets = repository.navigation_targets()
+            except Exception:
+                self._log_error('navigation_targets')
+        for key in ('hbo', 'kids'):
+            self.setProperty('cleanui.nav.' + key, 'true' if key in targets else 'false')
+        header = [C.CONTROL_HOME, C.CONTROL_SERIES, C.CONTROL_MOVIES]
+        header += [cid for key, cid in (('hbo', C.CONTROL_HBO), ('kids', C.CONTROL_KIDS)) if key in targets]
+        header += [C.CONTROL_SEARCH, C.CONTROL_MY_LIST, C.CONTROL_PROFILE, C.CONTROL_MENU]
+        for i, cid in enumerate(header):
+            try:
+                control = self.getControl(cid)
+                control.controlLeft(self.getControl(header[(i - 1) % len(header)]))
+                control.controlRight(self.getControl(header[(i + 1) % len(header)]))
+            except (AttributeError, RuntimeError):
+                pass
 
         previous_fanart = self.getProperty(
             '{}.hero.fanart'.format(prefix)
@@ -186,6 +206,7 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
         for property_name in (
             'title',
             'poster',
+            'logo',
             'plot',
             'meta',
         ):
@@ -452,6 +473,7 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
         prefix = C.PROP_PREFIX
         art = card.art or {}
         info = card.info or {}
+        self.setProperty('cleanui.hero.logo', art.get('clearlogo') or '')
 
         self.setProperty(
             '{}.hero.title'.format(prefix),
@@ -622,6 +644,20 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
         # and can reopen it (or activate a different control after replacement).
 
     def _activate_control(self, control_id):
+        if control_id in (C.CONTROL_HOME, C.CONTROL_SEARCH, C.CONTROL_MY_LIST,
+                          C.CONTROL_HBO, C.CONTROL_KIDS):
+            if not self.controller or self._is_duplicate_activation(control_id):
+                return
+            if control_id == C.CONTROL_SEARCH:
+                self.controller.open_search()
+            elif control_id == C.CONTROL_MY_LIST:
+                self.controller.open_watchlist(self)
+            else:
+                key = {C.CONTROL_HOME: 'home', C.CONTROL_HBO: 'hbo', C.CONTROL_KIDS: 'kids'}[control_id]
+                builder = (self.controller.repository.build_home if key == 'home' else
+                           lambda: self.controller.repository.build_navigation_section(key))
+                self.controller._open_home_like(builder, 'navigation_' + key, key, self)
+            return
         if control_id == C.CONTROL_PROFILE:
             now = time.monotonic()
             if now < self._profile_block_until:
@@ -805,10 +841,8 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
             'Cerrar sesión',
         ]
 
-        choice = xbmcgui.Dialog().select(
-            'Menú de HBO Max',
-            options,
-        )
+        from .choice_window import choose
+        choice = choose(self.controller.addon_path, 'Menú de HBO Max', options)
 
         if choice < 0:
             return

@@ -78,27 +78,19 @@ class UIController(object):
         )
 
         xbmcgui.Dialog().ok(
-            'Disney+ Clean UI',
+            'HBO Max Clean UI',
             'No se pudo abrir esta pantalla.\n\n'
             'Revisa kodi.log y busca [CLEANUI].',
         )
 
     def begin_transition(self):
-        """Cubre la interfaz nativa de Kodi durante una transición."""
-        if self._transition_curtain is not None:
-            return
-        try:
-            curtain = _TransitionCurtain()
-            self._transition_curtain = curtain
-            curtain.show()
-            xbmc.sleep(30)
-        except Exception:
-            self._transition_curtain = None
-            xbmc.log(
-                '[CLEANUI] No se pudo mostrar la cortina de transición:\n'
-                '{}'.format(traceback.format_exc()),
-                xbmc.LOGWARNING,
-            )
+        """Do not put a focus-consuming black dialog above live navigation.
+
+        Kodi need not send onFocus when revealing an already focused parent.
+        A curtain waiting for that event can therefore remain indefinitely.
+        Native dialogs reveal their parent directly instead.
+        """
+        self.end_transition()
 
     def end_transition(self):
         """Retira la cortina cuando la siguiente interfaz ya está preparada."""
@@ -188,7 +180,7 @@ class UIController(object):
         # Regreso normal a una ventana ya apilada (padre Clean UI vivo debajo):
         # no mostrar cortina negra, porque revelaría la ventana de Vídeos y
         # produciría el flash negro. Kodi revela al padre directamente.
-        if len(self._windows) > 1 and not self._processing_playback:
+        if len(self._windows) > 1:
             try:
                 window.close()
             except Exception:
@@ -601,8 +593,16 @@ class UIController(object):
             )
 
             xbmc.executebuiltin(
-                'PlayMedia("{}",0)'.format(safe_path)
+                'PlayMedia("{}",0)'.format(safe_path),
+                True,
             )
+
+            # Wait for Kodi's resume dialog and plugin resolution themselves.
+            # Cancel returns without a player; do not wait another 60 seconds.
+            if not self._player_is_playing(player):
+                xbmc.log('[CLEANUI] PlayMedia terminó sin reproducción; '
+                         'restaurando la pantalla guardada', xbmc.LOGINFO)
+                return False
 
             video_ready_ticks = 0
             first_video_tick = None
@@ -1147,6 +1147,13 @@ class UIController(object):
             self._show_error('open_home')
             return False
 
+    def select_start_profile(self):
+        from slyguy import userdata
+        from .profile_window import choose_profile
+        if userdata.get('kid_lockdown', False):
+            return True
+        return choose_profile(self.addon_path)
+
     def open_movie(self, deeplinkid, card=None):
         if card is not None and isinstance(card.source_item, dict):
             self.repository._raw_items[str(deeplinkid)] = card.source_item
@@ -1158,10 +1165,18 @@ class UIController(object):
 
     def open_show(self, showid):
         return self._open_detail(
-            self.repository.build_show_detail,
+            self.repository.build_show_episodes,
             'open_show',
             showid,
         )
+
+    def switch_season(self, source_window, season):
+        with gui.busy():
+            screen = self.repository.build_show_episodes(season.show_id, season.season_id)
+        source_window.screen = screen
+        source_window._page_history = []
+        source_window._last_activation = None
+        source_window.onInit()
 
     def open_season(self, showid, seasonid):
         return self._open_detail(
@@ -1314,7 +1329,8 @@ class UIController(object):
                 ),
                 xbmc.LOGINFO,
             )
-            changed = core._select_profile()
+            from .profile_window import choose_profile
+            changed = choose_profile(self.addon_path)
             current_profile_id = (userdata.get('profile') or {}).get('id', '')
             if changed is False:
                 xbmc.log(

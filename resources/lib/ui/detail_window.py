@@ -190,6 +190,9 @@ class DetailWindow(xbmcgui.WindowXMLDialog):
             )
 
     def _set_hero(self):
+        selected = getattr(self.screen, 'selected_season', None)
+        self.setProperty('cleanui.detail.season_label', selected.label if selected else '')
+        self.setProperty('cleanui.detail.play_label', getattr(self.screen, 'play_label', 'Reproducir'))
         h = self.screen.hero
         if not h:
             return
@@ -380,6 +383,7 @@ class DetailWindow(xbmcgui.WindowXMLDialog):
             ('play_path', C.CONTROL_PLAY),
             ('trailer_path', C.CONTROL_TRAILER),
             ('watchlist_action', C.CONTROL_WATCHLIST),
+            ('season_label', 1004),
         ):
             if self.getProperty('{}.detail.{}'.format(C.PROP_PREFIX, name)):
                 result.append(cid)
@@ -441,6 +445,7 @@ class DetailWindow(xbmcgui.WindowXMLDialog):
             ('play_path', C.CONTROL_PLAY),
             ('trailer_path', C.CONTROL_TRAILER),
             ('watchlist_action', C.CONTROL_WATCHLIST),
+            ('season_label', 1004),
         ):
             condition = '!String.IsEmpty(Window.Property({}.detail.{}))'.format(
                 C.PROP_PREFIX, name)
@@ -497,6 +502,19 @@ class DetailWindow(xbmcgui.WindowXMLDialog):
             self.close()
 
     def onClick(self, cid):
+        if cid == 1004:
+            seasons = getattr(self.screen, 'season_choices', [])
+            if not seasons or not self.controller:
+                return
+            from .choice_window import choose
+            index = choose(self.controller.addon_path, 'Temporadas', [card.label for card in seasons])
+            if index >= 0:
+                try:
+                    self.controller.switch_season(self, seasons[index])
+                except Exception:
+                    self._log_error('switch_season')
+                    xbmcgui.Dialog().ok('HBO Max', 'No se pudo cargar esta temporada. Inténtalo de nuevo.')
+            return
         if cid == C.CONTROL_BACK:
             self._close_current_window()
             return

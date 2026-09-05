@@ -12,6 +12,7 @@ import re
 import sys
 import types
 import unittest
+from unittest.mock import patch
 import xml.etree.ElementTree as ET
 from urllib.parse import urlencode
 
@@ -269,7 +270,9 @@ class NavigationTests(unittest.TestCase):
         core._select_profile = lambda: userdata.update(profile={'id': 'two'})
         seen = []
         window = types.SimpleNamespace(replace_screen=lambda screen, kind: seen.append(kind) or True)
-        self.assertTrue(controller.select_profile(window))
+        with patch('resources.lib.ui.profile_window.choose_profile',
+                   side_effect=lambda path: userdata.update(profile={'id': 'two'}) or True):
+            self.assertTrue(controller.select_profile(window))
         self.assertEqual(seen, ['home'])
 
     def test_kids_lockdown_blocks_selector(self):

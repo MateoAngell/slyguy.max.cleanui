@@ -63,7 +63,7 @@ def window(kind, rails=(), actions=()):
     result.screen = support.Screen(kind)
     result.controller = None
     result.properties = {}
-    result.controls = {cid: Control(cid) for cid in (1000, 1001, 1002, 1003)}
+    result.controls = {cid: Control(cid) for cid in (1000, 1001, 1002, 1003, 1004)}
     for i in range(support.C.MAX_RAILS_DETAIL):
         result.controls[6000 + i] = Control(6000 + i)
         result.controls[4000 + i] = Control(4000 + i, 2 if i in rails else 0)
@@ -224,12 +224,12 @@ class CompactLayoutTests(unittest.TestCase):
                     self.assertIn('!String.IsEqual(ListItem.Property(cleanui.kind),movie)', visible, name)
                     self.assertIn('!String.IsEqual(ListItem.Property(cleanui.kind),show)', visible, name)
 
-    def test_only_actual_focused_row_gets_blue_frame(self):
+    def test_only_actual_focused_row_gets_white_frame(self):
         for name, root in self.layouts():
             for rail in root.findall('.//control[@type="fixedlist"]'):
                 for control in rail.findall('.//focusedlayout/control'):
                     texture = control.find('texture')
-                    if texture is not None and texture.get('colordiffuse') == 'FF71B8F2':
+                    if texture is not None and texture.get('colordiffuse') == 'FFFFFFFF':
                         self.assertEqual(control.findtext('visible'),
                                          'Control.HasFocus({})'.format(rail.get('id')), name)
 

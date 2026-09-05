@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window type="dialog" id="13003">
+  <defaultcontrol>4100</defaultcontrol>
+  <controls>
+    <control type="image"><left>0</left><top>0</top><width>1920</width><height>1080</height><texture colordiffuse="C0000000">white.png</texture></control>
+    <control type="image"><left>560</left><top>180</top><width>800</width><height>740</height><texture border="12" colordiffuse="FF17191C">rounded-rect.png</texture></control>
+    <control type="label"><left>620</left><top>225</top><width>680</width><height>65</height><font>font32</font><textcolor>FFFFFFFF</textcolor><label>$INFO[Window.Property(cleanui.choice.title)]</label></control>
+    <control type="list" id="4100">
+      <left>600</left><top>320</top><width>720</width><height>540</height><orientation>vertical</orientation><scrolltime>120</scrolltime><onup>4100</onup><ondown>4100</ondown><onleft>4100</onleft><onright>4100</onright>
+      <itemlayout width="720" height="76"><control type="label"><left>24</left><top>6</top><width>672</width><height>64</height><aligny>center</aligny><font>font28</font><textcolor>FFDDDDDD</textcolor><label>$INFO[ListItem.Label]</label></control></itemlayout>
+      <focusedlayout width="720" height="76"><control type="image"><left>0</left><top>4</top><width>720</width><height>68</height><texture border="8">rounded-rect.png</texture></control><control type="label"><left>24</left><top>6</top><width>672</width><height>64</height><aligny>center</aligny><font>font28</font><textcolor>FF101010</textcolor><label>$INFO[ListItem.Label]</label></control></focusedlayout>
+    </control>
+  </controls>
+</window>

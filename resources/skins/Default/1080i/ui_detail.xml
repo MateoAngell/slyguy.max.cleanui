@@ -1,7 +1,7 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <window type="dialog" id="13001">
     <defaultcontrol>1003</defaultcontrol>
-    <backgroundcolor>FF0F0F0F</backgroundcolor>
+    <backgroundcolor>FF000000</backgroundcolor>
     <controls>
         <control type="image" id="2000">
             <left>0</left>
@@ -26,63 +26,66 @@
             <aspectratio>keep</aspectratio>
             <texture background="true">$INFO[Window.Property(cleanui.detail.poster)]</texture>
             <bordersize>4</bordersize>
+            <visible>false</visible>
         </control>
         <control type="image" id="2005">
-            <left>380</left>
-            <top>50</top>
-            <width>520</width>
-            <height>120</height>
+            <left>60</left>
+            <top>190</top>
+            <width>620</width>
+            <height>160</height>
             <aspectratio>keep</aspectratio>
             <texture background="true">$INFO[Window.Property(cleanui.detail.logo)]</texture>
+            <visible>!String.IsEmpty(Window.Property(cleanui.detail.logo))</visible>
         </control>
         <control type="label" id="2002">
-            <left>380</left>
-            <top>175</top>
-            <width>1450</width>
-            <height>50</height>
-            <font>font32</font>
+            <left>60</left>
+            <top>215</top>
+            <width>960</width>
+            <height>125</height>
+            <font>font48</font>
             <textcolor>FFFFFFFF</textcolor>
             <scroll>false</scroll>
             <label>$INFO[Window.Property(cleanui.detail.title)]</label>
+            <visible>String.IsEmpty(Window.Property(cleanui.detail.logo))</visible>
         </control>
         <control type="label" id="2003">
-            <left>380</left>
-            <top>230</top>
-            <width>1450</width>
-            <height>30</height>
+            <left>60</left>
+            <top>365</top>
+            <width>960</width>
+            <height>36</height>
             <font>font18</font>
             <textcolor>CCFFFFFF</textcolor>
             <label>$INFO[Window.Property(cleanui.detail.meta)]</label>
         </control>
         <control type="label" id="2007">
-            <left>380</left>
-            <top>262</top>
-            <width>1450</width>
-            <height>25</height>
-            <font>font16</font>
+            <left>60</left>
+            <top>555</top>
+            <width>1100</width>
+            <height>32</height>
+            <font>font20</font>
             <textcolor>A6FFFFFF</textcolor>
             <label>$INFO[Window.Property(cleanui.detail.genre)]</label>
         </control>
         <control type="textbox" id="2004">
-            <left>380</left>
-            <top>292</top>
-            <width>1450</width>
-            <height>125</height>
-            <font>font16</font>
+            <left>60</left>
+            <top>425</top>
+            <width>920</width>
+            <height>110</height>
+            <font>font24</font>
             <textcolor>C8FFFFFF</textcolor>
             <autoscroll>false</autoscroll>
             <label>$INFO[Window.Property(cleanui.detail.plot)]</label>
         </control>
         <control type="button" id="1003">
-            <left>380</left>
-            <top>430</top>
-            <width>90</width>
-            <height>55</height>
+            <left>60</left>
+            <top>600</top>
+            <width>72</width>
+            <height>64</height>
             <font>font24</font>
             <align>center</align>
             <aligny>center</aligny>
-            <texturefocus colordiffuse="FF71B8F2">white.png</texturefocus>
-            <texturenofocus colordiffuse="B3000000">white.png</texturenofocus>
+            <texturefocus colordiffuse="FFFFFFFF" border="8">rounded-rect.png</texturefocus>
+            <texturenofocus colordiffuse="BF3E3E3E" border="8">rounded-rect.png</texturenofocus>
             <textcolor>FFFFFFFF</textcolor>
             <focusedcolor>FF101010</focusedcolor>
             <label>‹</label>
@@ -96,18 +99,18 @@
             <ondown condition="!Control.IsVisible(4000) + !Control.IsVisible(4001) + !Control.IsVisible(4002) + Control.IsVisible(4003)">4003</ondown>
         </control>
         <control type="button" id="1000">
-            <left>490</left>
-            <top>430</top>
-            <width>220</width>
-            <height>58</height>
+            <left>152</left>
+            <top>600</top>
+            <width>300</width>
+            <height>64</height>
             <font>font20</font>
             <align>center</align>
             <aligny>center</aligny>
-            <texturefocus colordiffuse="FF71B8F2">white.png</texturefocus>
-            <texturenofocus colordiffuse="F2DDDDDD">white.png</texturenofocus>
+            <texturefocus colordiffuse="FFFFFFFF" border="8">rounded-rect.png</texturefocus>
+            <texturenofocus colordiffuse="FFE5E5E5" border="8">rounded-rect.png</texturenofocus>
             <textcolor>FF000000</textcolor>
             <focusedcolor>FF101010</focusedcolor>
-            <label>Reproducir</label>
+            <label>$INFO[Window.Property(cleanui.detail.play_label)]</label>
             <onleft>1003</onleft>
             <onright condition="Control.IsVisible(1001)">1001</onright>
             <onright condition="!Control.IsVisible(1001) + Control.IsVisible(1002)">1002</onright>
@@ -119,15 +122,15 @@
             <visible>!String.IsEmpty(Window.Property(cleanui.detail.play_path))</visible>
         </control>
         <control type="button" id="1001">
-            <left>730</left>
-            <top>430</top>
-            <width>220</width>
-            <height>58</height>
+            <left>472</left>
+            <top>600</top>
+            <width>200</width>
+            <height>64</height>
             <font>font20</font>
             <align>center</align>
             <aligny>center</aligny>
-            <texturefocus colordiffuse="FF71B8F2">white.png</texturefocus>
-            <texturenofocus colordiffuse="BF3E3E3E">white.png</texturenofocus>
+            <texturefocus colordiffuse="FFFFFFFF" border="8">rounded-rect.png</texturefocus>
+            <texturenofocus colordiffuse="BF3E3E3E" border="8">rounded-rect.png</texturenofocus>
             <textcolor>FFFFFFFF</textcolor>
             <focusedcolor>FF101010</focusedcolor>
             <label>Trailer</label>
@@ -142,15 +145,15 @@
             <visible>!String.IsEmpty(Window.Property(cleanui.detail.trailer_path))</visible>
         </control>
         <control type="button" id="1002">
-            <left>970</left>
-            <top>430</top>
-            <width>220</width>
-            <height>58</height>
+            <left>692</left>
+            <top>600</top>
+            <width>200</width>
+            <height>64</height>
             <font>font20</font>
             <align>center</align>
             <aligny>center</aligny>
-            <texturefocus colordiffuse="FF71B8F2">white.png</texturefocus>
-            <texturenofocus colordiffuse="BF3E3E3E">white.png</texturenofocus>
+            <texturefocus colordiffuse="FFFFFFFF" border="8">rounded-rect.png</texturefocus>
+            <texturenofocus colordiffuse="BF3E3E3E" border="8">rounded-rect.png</texturenofocus>
             <textcolor>FFFFFFFF</textcolor>
             <focusedcolor>FF101010</focusedcolor>
             <label>Mi Lista</label>
@@ -164,11 +167,29 @@
             <ondown condition="!Control.IsVisible(4000) + !Control.IsVisible(4001) + !Control.IsVisible(4002) + Control.IsVisible(4003)">4003</ondown>
             <visible>!String.IsEmpty(Window.Property(cleanui.detail.watchlist_action))</visible>
         </control>
+        <control type="button" id="1004">
+            <left>925</left>
+            <top>600</top>
+            <width>300</width>
+            <height>64</height>
+            <font>font24</font>
+            <align>center</align>
+            <aligny>center</aligny>
+            <textcolor>FFFFFFFF</textcolor>
+            <focusedcolor>FF101010</focusedcolor>
+            <texturefocus border="8">rounded-rect.png</texturefocus>
+            <texturenofocus border="8" colordiffuse="BF3E3E3E">rounded-rect.png</texturenofocus>
+            <label>$INFO[Window.Property(cleanui.detail.season_label)]</label>
+            <visible>!String.IsEmpty(Window.Property(cleanui.detail.season_label))</visible>
+            <onleft>1003</onleft>
+            <onright>1004</onright>
+            <ondown>4000</ondown>
+        </control>
         <control type="grouplist" id="5000">
             <left>60</left>
-            <top>510</top>
+            <top>690</top>
             <width>1800</width>
-            <height>540</height>
+            <height>380</height>
             <orientation>vertical</orientation>
             <itemgap>8</itemgap>
             <scroll>true</scroll>
@@ -331,7 +352,7 @@
                             <height>170</height>
                             <visible>Control.HasFocus(4000)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -414,7 +435,7 @@
                             <height>296</height>
                             <visible>Control.HasFocus(4000)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -606,7 +627,7 @@
                             <height>170</height>
                             <visible>Control.HasFocus(4001)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -689,7 +710,7 @@
                             <height>296</height>
                             <visible>Control.HasFocus(4001)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -881,7 +902,7 @@
                             <height>170</height>
                             <visible>Control.HasFocus(4002)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -964,7 +985,7 @@
                             <height>296</height>
                             <visible>Control.HasFocus(4002)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -1156,7 +1177,7 @@
                             <height>170</height>
                             <visible>Control.HasFocus(4003)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -1239,7 +1260,7 @@
                             <height>296</height>
                             <visible>Control.HasFocus(4003)</visible>
                             <aspectratio>scale</aspectratio>
-                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                            <texture colordiffuse="FFFFFFFF">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -1275,6 +1296,17 @@
                 </control>
                 <visible>String.IsEqual(Window.Property(cleanui.detail.rail3.visible),true)</visible>
             </control>
+        </control>
+        <control type="label">
+            <left>60</left>
+            <top>24</top>
+            <width>220</width>
+            <height>65</height>
+            <font>font32</font>
+            <label>HBO max</label>
+            <textcolor>FFFFFFFF</textcolor>
+            <aligny>center</aligny>
+            <scroll>false</scroll>
         </control>
     </controls>
 </window>
