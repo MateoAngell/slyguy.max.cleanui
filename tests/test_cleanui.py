@@ -179,8 +179,63 @@ class CatalogTests(unittest.TestCase):
     def test_image_sizes_and_signed_urls(self):
         art = self.repo._normalize_art({'poster': 'https://image.test/a?w=600',
                                        'fanart': 'https://image.test/b?token=secret'})
-        self.assertIn('w=360', art['poster'])
+        self.assertEqual(art['poster'], 'https://image.test/a?w=600')
         self.assertEqual(art['fanart'], 'https://image.test/b?token=secret')
+
+    def test_artwork_uses_raw_query_without_appending_second_question_mark(self):
+        from resources.lib.ui.artwork import artwork_from_images
+        source = 'https://image.test/poster.jpg?host=images.test&crop=2%3A3&sig=abc%2Bdef'
+        row = movie()
+        row['show']['images'] = [{'kind': 'poster-with-logo', 'src': source}]
+        self.assertEqual(self.repo._card_from_raw(row).art['poster'], source)
+        self.assertEqual(artwork_from_images(row['show']['images'])['poster'], source)
+
+    def test_plain_artwork_retains_original_slyguy_thumbnail_width(self):
+        row = movie()
+        row['show']['images'] = [{'kind': 'poster-with-logo', 'src': 'https://image.test/cover.jpg'}]
+        self.assertEqual(self.repo._card_from_raw(row).art['poster'], 'https://image.test/cover.jpg?w=600')
+
+    def test_episode_inherits_unmodified_parent_logo_query(self):
+        logo = 'https://image.test/logo.png?host=cdn&sig=signed'
+        row = {'video': {'id': 'episode', 'name': 'Episode', 'videoType': 'EPISODE',
+               'edit': {'id': 'edit', 'duration': 1000},
+               'images': [{'kind': 'default', 'src': 'https://image.test/episode.jpg'}],
+               'show': {'id': 'show', 'name': 'Show',
+                        'images': [{'kind': 'logo-left', 'src': logo}]}}}
+        self.assertEqual(self.repo._card_from_raw(row).art['clearlogo'], logo)
+
+    def test_seasons_without_optional_counts_are_navigable(self):
+        data = self.api.series('show')
+        data['seasons'] = [{'seasonNumber': '2'}, {'seasonNumber': 1},
+                           {'seasonNumber': 3, 'videoCountByType': {'EPISODE': 0}}]
+        self.api.series = lambda unused: data
+        screen = self.repo.build_show_detail('show')
+        self.assertEqual([card.season_id for card in screen.rails[0].items], ['1', '2'])
+
+    def test_episode_with_parent_title_but_no_name_is_not_dropped(self):
+        row = {'video': {'id': 'episode', 'name': 'Episode', 'videoType': 'EPISODE',
+               'edit': {'id': 'edit', 'duration': 1000},
+               'show': {'id': 'show', 'title': 'Parent title', 'images': []}}}
+        cards = self.repo._cards_from_rows([row])
+        self.assertEqual(len(cards), 1)
+        self.assertEqual(cards[0].info['tvshowtitle'], 'Parent title')
+        self.assertNotIn('name', row['video']['show'])
+
+    def test_home_does_not_fetch_all_unloaded_collections(self):
+        self.api.route = lambda name: {'items': [{'collection': {'id': str(i)}} for i in range(12)]}
+        first = self.repo.build_home()
+        calls = [c for c in self.api.calls if c[0] == 'collection' and c[1] != 'web-menu-bar']
+        self.assertEqual(len(calls), 2)
+        self.assertEqual(first.rails[-1].items[0].source_item[1][1], 2)
+        second = self.repo.build_next(first.rails[-1].items[0])
+        self.assertEqual(second.rails[0].rail_id, '2')
+
+    def test_cached_screens_share_readonly_source_but_not_selection_state(self):
+        first = self.repo.build_home()
+        second = self.repo.build_home()
+        self.assertIs(first.rails[0].items[0].source_item, second.rails[0].items[0].source_item)
+        self.assertIsNot(first.rails[0].items, second.rails[0].items)
+        self.assertIsNot(first.rails[0].items[0].art, second.rails[0].items[0].art)
 
     def test_cache_and_raw_metadata_are_bounded(self):
         for i in range(520):

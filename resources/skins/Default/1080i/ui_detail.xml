@@ -42,7 +42,7 @@
             <height>50</height>
             <font>font32</font>
             <textcolor>FFFFFFFF</textcolor>
-            <scroll>true</scroll>
+            <scroll>false</scroll>
             <label>$INFO[Window.Property(cleanui.detail.title)]</label>
         </control>
         <control type="label" id="2003">
@@ -81,10 +81,10 @@
             <font>font24</font>
             <align>center</align>
             <aligny>center</aligny>
-            <texturefocus colordiffuse="FFFFFFFF">white.png</texturefocus>
+            <texturefocus colordiffuse="FF71B8F2">white.png</texturefocus>
             <texturenofocus colordiffuse="B3000000">white.png</texturenofocus>
             <textcolor>FFFFFFFF</textcolor>
-            <focusedcolor>FFFFFFFF</focusedcolor>
+            <focusedcolor>FF101010</focusedcolor>
             <label>‹</label>
             <onleft>1003</onleft>
             <onright condition="Control.IsVisible(1000)">1000</onright>
@@ -103,10 +103,10 @@
             <font>font20</font>
             <align>center</align>
             <aligny>center</aligny>
-            <texturefocus colordiffuse="FFFFFFFF">white.png</texturefocus>
+            <texturefocus colordiffuse="FF71B8F2">white.png</texturefocus>
             <texturenofocus colordiffuse="F2DDDDDD">white.png</texturenofocus>
             <textcolor>FF000000</textcolor>
-            <focusedcolor>FF000000</focusedcolor>
+            <focusedcolor>FF101010</focusedcolor>
             <label>Reproducir</label>
             <onleft>1003</onleft>
             <onright condition="Control.IsVisible(1001)">1001</onright>
@@ -126,10 +126,10 @@
             <font>font20</font>
             <align>center</align>
             <aligny>center</aligny>
-            <texturefocus colordiffuse="BF3E3E3E">white.png</texturefocus>
+            <texturefocus colordiffuse="FF71B8F2">white.png</texturefocus>
             <texturenofocus colordiffuse="BF3E3E3E">white.png</texturenofocus>
             <textcolor>FFFFFFFF</textcolor>
-            <focusedcolor>FFFFFFFF</focusedcolor>
+            <focusedcolor>FF101010</focusedcolor>
             <label>Trailer</label>
             <onleft condition="Control.IsVisible(1000)">1000</onleft>
             <onleft condition="!Control.IsVisible(1000)">1003</onleft>
@@ -149,10 +149,10 @@
             <font>font20</font>
             <align>center</align>
             <aligny>center</aligny>
-            <texturefocus colordiffuse="BF3E3E3E">white.png</texturefocus>
+            <texturefocus colordiffuse="FF71B8F2">white.png</texturefocus>
             <texturenofocus colordiffuse="BF3E3E3E">white.png</texturenofocus>
             <textcolor>FFFFFFFF</textcolor>
-            <focusedcolor>FFFFFFFF</focusedcolor>
+            <focusedcolor>FF101010</focusedcolor>
             <label>Mi Lista</label>
             <onleft condition="Control.IsVisible(1001)">1001</onleft>
             <onleft condition="!Control.IsVisible(1001) + Control.IsVisible(1000)">1000</onleft>
@@ -170,11 +170,11 @@
             <width>1800</width>
             <height>540</height>
             <orientation>vertical</orientation>
-            <itemgap>10</itemgap>
+            <itemgap>8</itemgap>
             <scroll>true</scroll>
-            <control type="group">
+            <control type="group" id="6000">
                 <width>1800</width>
-                <height>375</height>
+                <height>368</height>
                 <control type="label">
                     <left>0</left>
                     <top>0</top>
@@ -189,7 +189,7 @@
                     <left>0</left>
                     <top>40</top>
                     <width>1800</width>
-                    <height>335</height>
+                    <height>328</height>
                     <onleft>4000</onleft>
                     <onright>4000</onright>
                     <onup condition="Control.IsVisible(1002)">1002</onup>
@@ -198,230 +198,261 @@
                     <onup condition="!Control.IsVisible(1002) + !Control.IsVisible(1001) + !Control.IsVisible(1000)">1003</onup>
                     <ondown>4001</ondown>
                     <orientation>horizontal</orientation>
-                    <scrolltime>300</scrolltime>
+                    <scrolltime>160</scrolltime>
                     <focusposition>0</focusposition>
                     <visible>String.IsEqual(Window.Property(cleanui.detail.rail0.visible),true)</visible>
-                    <itemlayout width="260" height="330">
+                    <itemlayout width="308" height="280" condition="String.IsEqual(Window.Property(cleanui.detail.rail0.style),landscape) | String.IsEqual(Window.Property(cleanui.detail.rail0.style),episode) | String.IsEqual(Window.Property(cleanui.detail.rail0.style),brand)">
                         <control type="image">
-                            <left>15</left>
-                            <top>0</top>
-                            <width>220</width>
-                            <height>295</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture background="true">$INFO[ListItem.Art(poster)]</texture>
-                            <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.rail_style),episode) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
+                            <left>6</left>
+                            <top>4</top>
+                            <width>296</width>
+                            <height>170</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
-                            <left>0</left>
-                            <top>5</top>
-                            <width>250</width>
-                            <height>141</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
+                            <left>10</left>
+                            <top>8</top>
+                            <width>288</width>
+                            <height>162</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
+                        </control>
+                        <control type="image">
+                            <left>24</left>
+                            <top>22</top>
+                            <width>260</width>
+                            <height>134</height>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <aspectratio>keep</aspectratio>
+                            <texture background="true">$INFO[ListItem.Property(cleanui.brand_logo)]</texture>
+                        </control>
+                        <control type="image">
+                            <left>10</left>
+                            <top>126</top>
+                            <width>288</width>
+                            <height>44</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="DC121212">white.png</texture>
                         </control>
                         <control type="label">
-                            <left>0</left>
-                            <top>298</top>
-                            <width>250</width>
-                            <height>30</height>
+                            <left>16</left>
+                            <top>130</top>
+                            <width>276</width>
+                            <height>34</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
-                            <textcolor>C8FFFFFF</textcolor>
                             <align>center</align>
-                            <scroll>true</scroll>
+                            <aligny>center</aligny>
+                            <textcolor>FFFFFFFF</textcolor>
+                            <scroll condition="Control.HasFocus(4000)">false</scroll>
                             <label>$INFO[ListItem.Label]</label>
-                            <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.rail_style),episode) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
                         <control type="label">
-                            <left>0</left>
-                            <top>153</top>
-                            <width>250</width>
+                            <left>10</left>
+                            <top>182</top>
+                            <width>288</width>
                             <height>32</height>
-                            <font>font20</font>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.kind),episode)</visible>
+                            <font>font18</font>
+                            <align>center</align>
+                            <aligny>center</aligny>
                             <textcolor>FFFFFFFF</textcolor>
-                            <scroll>true</scroll>
+                            <scroll condition="Control.HasFocus(4000)">false</scroll>
                             <label>$INFO[ListItem.Label]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
                         </control>
                         <control type="textbox">
-                            <left>0</left>
-                            <top>190</top>
-                            <width>250</width>
-                            <height>120</height>
+                            <left>10</left>
+                            <top>220</top>
+                            <width>288</width>
+                            <height>52</height>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.kind),episode)</visible>
                             <font>font16</font>
                             <textcolor>CCFFFFFF</textcolor>
+                            <autoscroll>false</autoscroll>
                             <label>$INFO[ListItem.Plot]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
-                        </control>
-                        <control type="image">
-                            <left>4</left>
-                            <top>4</top>
-                            <width>250</width>
-                            <height>141</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture background="true" diffuse="rounded-mask.png">$INFO[ListItem.Property(cleanui.brand_background)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
-                        </control>
-                        <control type="image">
-                            <left>4</left>
-                            <top>4</top>
-                            <width>250</width>
-                            <height>141</height>
-                            <colordiffuse>FF191919</colordiffuse>
-                            <texture diffuse="rounded-mask.png">white.png</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
-                        </control>
-                        <control type="image">
-                            <left>14</left>
-                            <top>19</top>
-                            <width>230</width>
-                            <height>110</height>
-                            <aspectratio align="center" aligny="center">keep</aspectratio>
-                            <texture background="true">$INFO[ListItem.Property(cleanui.brand_logo)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
-                        </control>
-                        <control type="label">
-                            <left>0</left>
-                            <top>148</top>
-                            <width>250</width>
-                            <height>30</height>
-                            <font>font18</font>
-                            <textcolor>FFFFFFFF</textcolor>
-                            <align>center</align>
-                            <scroll>true</scroll>
-                            <label>$INFO[ListItem.Label]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="260" height="330">
+                    <itemlayout width="212" height="328" condition="![String.IsEqual(Window.Property(cleanui.detail.rail0.style),landscape) | String.IsEqual(Window.Property(cleanui.detail.rail0.style),episode) | String.IsEqual(Window.Property(cleanui.detail.rail0.style),brand)]">
                         <control type="image">
-                            <left>12</left>
-                            <top>-6</top>
-                            <width>226</width>
-                            <height>308</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture diffuse="rounded-mask.png" background="true">$INFO[ListItem.Art(poster)]</texture>
-                            <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.rail_style),episode) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
+                            <left>6</left>
+                            <top>4</top>
+                            <width>200</width>
+                            <height>296</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
-                            <left>12</left>
-                            <top>-6</top>
-                            <width>226</width>
-                            <height>308</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture diffuse="rounded-mask.png" background="true">$INFO[ListItem.Art(poster)]</texture>
-                            <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">white.png</bordertexture>
-                            <visible>Control.HasFocus(4000) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.rail_style),episode) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
-                        </control>
-                        <control type="image">
-                            <left>-5</left>
-                            <top>-1</top>
-                            <width>262</width>
-                            <height>148</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
+                            <left>10</left>
+                            <top>8</top>
+                            <width>192</width>
+                            <height>288</height>
+                            <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
                         </control>
                         <control type="image">
-                            <left>-5</left>
-                            <top>-1</top>
-                            <width>262</width>
-                            <height>148</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
-                            <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">white.png</bordertexture>
-                            <visible>Control.HasFocus(4000) + [String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)]</visible>
+                            <left>10</left>
+                            <top>252</top>
+                            <width>192</width>
+                            <height>44</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="DC121212">white.png</texture>
                         </control>
                         <control type="label">
-                            <left>0</left>
-                            <top>306</top>
-                            <width>250</width>
-                            <height>30</height>
+                            <left>16</left>
+                            <top>256</top>
+                            <width>180</width>
+                            <height>34</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
-                            <textcolor>FFFFFFFF</textcolor>
                             <align>center</align>
-                            <scroll>true</scroll>
+                            <aligny>center</aligny>
+                            <textcolor>FFFFFFFF</textcolor>
+                            <scroll condition="Control.HasFocus(4000)">false</scroll>
                             <label>$INFO[ListItem.Label]</label>
-                            <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.rail_style),episode) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
+                        </control>
+                    </itemlayout>
+                    <focusedlayout width="308" height="280" condition="String.IsEqual(Window.Property(cleanui.detail.rail0.style),landscape) | String.IsEqual(Window.Property(cleanui.detail.rail0.style),episode) | String.IsEqual(Window.Property(cleanui.detail.rail0.style),brand)">
+                        <control type="image">
+                            <left>6</left>
+                            <top>4</top>
+                            <width>296</width>
+                            <height>170</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF242424">white.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>6</left>
+                            <top>4</top>
+                            <width>296</width>
+                            <height>170</height>
+                            <visible>Control.HasFocus(4000)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>10</left>
+                            <top>8</top>
+                            <width>288</width>
+                            <height>162</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
+                        </control>
+                        <control type="image">
+                            <left>24</left>
+                            <top>22</top>
+                            <width>260</width>
+                            <height>134</height>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <aspectratio>keep</aspectratio>
+                            <texture background="true">$INFO[ListItem.Property(cleanui.brand_logo)]</texture>
+                        </control>
+                        <control type="image">
+                            <left>10</left>
+                            <top>126</top>
+                            <width>288</width>
+                            <height>44</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="DC121212">white.png</texture>
                         </control>
                         <control type="label">
-                            <left>0</left>
-                            <top>153</top>
-                            <width>250</width>
-                            <height>32</height>
-                            <font>font20</font>
+                            <left>16</left>
+                            <top>130</top>
+                            <width>276</width>
+                            <height>34</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
+                            <font>font18</font>
+                            <align>center</align>
+                            <aligny>center</aligny>
                             <textcolor>FFFFFFFF</textcolor>
-                            <scroll>true</scroll>
+                            <scroll condition="Control.HasFocus(4000)">true</scroll>
                             <label>$INFO[ListItem.Label]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
+                        </control>
+                        <control type="label">
+                            <left>10</left>
+                            <top>182</top>
+                            <width>288</width>
+                            <height>32</height>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.kind),episode)</visible>
+                            <font>font18</font>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                            <textcolor>FFFFFFFF</textcolor>
+                            <scroll condition="Control.HasFocus(4000)">true</scroll>
+                            <label>$INFO[ListItem.Label]</label>
                         </control>
                         <control type="textbox">
-                            <left>0</left>
-                            <top>190</top>
-                            <width>250</width>
-                            <height>120</height>
+                            <left>10</left>
+                            <top>220</top>
+                            <width>288</width>
+                            <height>52</height>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.kind),episode)</visible>
                             <font>font16</font>
                             <textcolor>CCFFFFFF</textcolor>
+                            <autoscroll>false</autoscroll>
                             <label>$INFO[ListItem.Plot]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
                         </control>
+                    </focusedlayout>
+                    <focusedlayout width="212" height="328" condition="![String.IsEqual(Window.Property(cleanui.detail.rail0.style),landscape) | String.IsEqual(Window.Property(cleanui.detail.rail0.style),episode) | String.IsEqual(Window.Property(cleanui.detail.rail0.style),brand)]">
                         <control type="image">
-                            <left>0</left>
-                            <top>0</top>
-                            <width>258</width>
-                            <height>149</height>
-                            <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
-                            <texture colordiffuse="00FFFFFF">white.png</texture>
-                            <visible>Control.HasFocus(4000) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
-                        </control>
-                        <control type="image">
-                            <left>4</left>
+                            <left>6</left>
                             <top>4</top>
-                            <width>250</width>
-                            <height>141</height>
-                            <colordiffuse>FF191919</colordiffuse>
-                            <texture diffuse="rounded-mask.png">white.png</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <width>200</width>
+                            <height>296</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
-                            <left>4</left>
+                            <left>6</left>
                             <top>4</top>
-                            <width>250</width>
-                            <height>141</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture background="true" diffuse="rounded-mask.png">$INFO[ListItem.Property(cleanui.brand_background)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <width>200</width>
+                            <height>296</height>
+                            <visible>Control.HasFocus(4000)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF71B8F2">white.png</texture>
                         </control>
                         <control type="image">
-                            <left>14</left>
-                            <top>19</top>
-                            <width>230</width>
-                            <height>110</height>
-                            <aspectratio align="center" aligny="center">keep</aspectratio>
-                            <texture background="true">$INFO[ListItem.Property(cleanui.brand_logo)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <left>10</left>
+                            <top>8</top>
+                            <width>192</width>
+                            <height>288</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
+                        </control>
+                        <control type="image">
+                            <left>10</left>
+                            <top>252</top>
+                            <width>192</width>
+                            <height>44</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="DC121212">white.png</texture>
                         </control>
                         <control type="label">
-                            <left>0</left>
-                            <top>148</top>
-                            <width>250</width>
-                            <height>30</height>
+                            <left>16</left>
+                            <top>256</top>
+                            <width>180</width>
+                            <height>34</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
-                            <textcolor>FFFFFFFF</textcolor>
                             <align>center</align>
-                            <scroll>true</scroll>
+                            <aligny>center</aligny>
+                            <textcolor>FFFFFFFF</textcolor>
+                            <scroll condition="Control.HasFocus(4000)">true</scroll>
                             <label>$INFO[ListItem.Label]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
                     </focusedlayout>
                 </control>
+                <visible>String.IsEqual(Window.Property(cleanui.detail.rail0.visible),true)</visible>
             </control>
-            <control type="group">
+            <control type="group" id="6001">
                 <width>1800</width>
-                <height>375</height>
+                <height>368</height>
                 <control type="label">
                     <left>0</left>
                     <top>0</top>
@@ -436,236 +467,267 @@
                     <left>0</left>
                     <top>40</top>
                     <width>1800</width>
-                    <height>335</height>
+                    <height>328</height>
                     <onleft>4001</onleft>
                     <onright>4001</onright>
                     <onup>4000</onup>
                     <ondown>4002</ondown>
                     <orientation>horizontal</orientation>
-                    <scrolltime>300</scrolltime>
+                    <scrolltime>160</scrolltime>
                     <focusposition>0</focusposition>
                     <visible>String.IsEqual(Window.Property(cleanui.detail.rail1.visible),true)</visible>
-                    <itemlayout width="260" height="330">
+                    <itemlayout width="308" height="280" condition="String.IsEqual(Window.Property(cleanui.detail.rail1.style),landscape) | String.IsEqual(Window.Property(cleanui.detail.rail1.style),episode) | String.IsEqual(Window.Property(cleanui.detail.rail1.style),brand)">
                         <control type="image">
-                            <left>15</left>
-                            <top>0</top>
-                            <width>220</width>
-                            <height>295</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture background="true">$INFO[ListItem.Art(poster)]</texture>
-                            <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.rail_style),episode) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
+                            <left>6</left>
+                            <top>4</top>
+                            <width>296</width>
+                            <height>170</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
-                            <left>0</left>
-                            <top>5</top>
-                            <width>250</width>
-                            <height>141</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
+                            <left>10</left>
+                            <top>8</top>
+                            <width>288</width>
+                            <height>162</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
+                        </control>
+                        <control type="image">
+                            <left>24</left>
+                            <top>22</top>
+                            <width>260</width>
+                            <height>134</height>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <aspectratio>keep</aspectratio>
+                            <texture background="true">$INFO[ListItem.Property(cleanui.brand_logo)]</texture>
+                        </control>
+                        <control type="image">
+                            <left>10</left>
+                            <top>126</top>
+                            <width>288</width>
+                            <height>44</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="DC121212">white.png</texture>
                         </control>
                         <control type="label">
-                            <left>0</left>
-                            <top>298</top>
-                            <width>250</width>
-                            <height>30</height>
+                            <left>16</left>
+                            <top>130</top>
+                            <width>276</width>
+                            <height>34</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
-                            <textcolor>C8FFFFFF</textcolor>
                             <align>center</align>
-                            <scroll>true</scroll>
+                            <aligny>center</aligny>
+                            <textcolor>FFFFFFFF</textcolor>
+                            <scroll condition="Control.HasFocus(4001)">false</scroll>
                             <label>$INFO[ListItem.Label]</label>
-                            <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.rail_style),episode) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
                         <control type="label">
-                            <left>0</left>
-                            <top>153</top>
-                            <width>250</width>
+                            <left>10</left>
+                            <top>182</top>
+                            <width>288</width>
                             <height>32</height>
-                            <font>font20</font>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.kind),episode)</visible>
+                            <font>font18</font>
+                            <align>center</align>
+                            <aligny>center</aligny>
                             <textcolor>FFFFFFFF</textcolor>
-                            <scroll>true</scroll>
+                            <scroll condition="Control.HasFocus(4001)">false</scroll>
                             <label>$INFO[ListItem.Label]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
                         </control>
                         <control type="textbox">
-                            <left>0</left>
-                            <top>190</top>
-                            <width>250</width>
-                            <height>120</height>
+                            <left>10</left>
+                            <top>220</top>
+                            <width>288</width>
+                            <height>52</height>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.kind),episode)</visible>
                             <font>font16</font>
                             <textcolor>CCFFFFFF</textcolor>
+                            <autoscroll>false</autoscroll>
                             <label>$INFO[ListItem.Plot]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
-                        </control>
-                        <control type="image">
-                            <left>4</left>
-                            <top>4</top>
-                            <width>250</width>
-                            <height>141</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture background="true" diffuse="rounded-mask.png">$INFO[ListItem.Property(cleanui.brand_background)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
-                        </control>
-                        <control type="image">
-                            <left>4</left>
-                            <top>4</top>
-                            <width>250</width>
-                            <height>141</height>
-                            <colordiffuse>FF191919</colordiffuse>
-                            <texture diffuse="rounded-mask.png">white.png</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
-                        </control>
-                        <control type="image">
-                            <left>14</left>
-                            <top>19</top>
-                            <width>230</width>
-                            <height>110</height>
-                            <aspectratio align="center" aligny="center">keep</aspectratio>
-                            <texture background="true">$INFO[ListItem.Property(cleanui.brand_logo)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
-                        </control>
-                        <control type="label">
-                            <left>0</left>
-                            <top>148</top>
-                            <width>250</width>
-                            <height>30</height>
-                            <font>font18</font>
-                            <textcolor>FFFFFFFF</textcolor>
-                            <align>center</align>
-                            <scroll>true</scroll>
-                            <label>$INFO[ListItem.Label]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="260" height="330">
+                    <itemlayout width="212" height="328" condition="![String.IsEqual(Window.Property(cleanui.detail.rail1.style),landscape) | String.IsEqual(Window.Property(cleanui.detail.rail1.style),episode) | String.IsEqual(Window.Property(cleanui.detail.rail1.style),brand)]">
                         <control type="image">
-                            <left>12</left>
-                            <top>-6</top>
-                            <width>226</width>
-                            <height>308</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture diffuse="rounded-mask.png" background="true">$INFO[ListItem.Art(poster)]</texture>
-                            <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.rail_style),episode) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
+                            <left>6</left>
+                            <top>4</top>
+                            <width>200</width>
+                            <height>296</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
-                            <left>12</left>
-                            <top>-6</top>
-                            <width>226</width>
-                            <height>308</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture diffuse="rounded-mask.png" background="true">$INFO[ListItem.Art(poster)]</texture>
-                            <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">white.png</bordertexture>
-                            <visible>Control.HasFocus(4001) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.rail_style),episode) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
-                        </control>
-                        <control type="image">
-                            <left>-5</left>
-                            <top>-1</top>
-                            <width>262</width>
-                            <height>148</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
+                            <left>10</left>
+                            <top>8</top>
+                            <width>192</width>
+                            <height>288</height>
+                            <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
                         </control>
                         <control type="image">
-                            <left>-5</left>
-                            <top>-1</top>
-                            <width>262</width>
-                            <height>148</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
-                            <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">white.png</bordertexture>
-                            <visible>Control.HasFocus(4001) + [String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)]</visible>
+                            <left>10</left>
+                            <top>252</top>
+                            <width>192</width>
+                            <height>44</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="DC121212">white.png</texture>
                         </control>
                         <control type="label">
-                            <left>0</left>
-                            <top>306</top>
-                            <width>250</width>
-                            <height>30</height>
+                            <left>16</left>
+                            <top>256</top>
+                            <width>180</width>
+                            <height>34</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
-                            <textcolor>FFFFFFFF</textcolor>
                             <align>center</align>
-                            <scroll>true</scroll>
+                            <aligny>center</aligny>
+                            <textcolor>FFFFFFFF</textcolor>
+                            <scroll condition="Control.HasFocus(4001)">false</scroll>
                             <label>$INFO[ListItem.Label]</label>
-                            <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.rail_style),episode) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
+                        </control>
+                    </itemlayout>
+                    <focusedlayout width="308" height="280" condition="String.IsEqual(Window.Property(cleanui.detail.rail1.style),landscape) | String.IsEqual(Window.Property(cleanui.detail.rail1.style),episode) | String.IsEqual(Window.Property(cleanui.detail.rail1.style),brand)">
+                        <control type="image">
+                            <left>6</left>
+                            <top>4</top>
+                            <width>296</width>
+                            <height>170</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF242424">white.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>6</left>
+                            <top>4</top>
+                            <width>296</width>
+                            <height>170</height>
+                            <visible>Control.HasFocus(4001)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>10</left>
+                            <top>8</top>
+                            <width>288</width>
+                            <height>162</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
+                        </control>
+                        <control type="image">
+                            <left>24</left>
+                            <top>22</top>
+                            <width>260</width>
+                            <height>134</height>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <aspectratio>keep</aspectratio>
+                            <texture background="true">$INFO[ListItem.Property(cleanui.brand_logo)]</texture>
+                        </control>
+                        <control type="image">
+                            <left>10</left>
+                            <top>126</top>
+                            <width>288</width>
+                            <height>44</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="DC121212">white.png</texture>
                         </control>
                         <control type="label">
-                            <left>0</left>
-                            <top>153</top>
-                            <width>250</width>
-                            <height>32</height>
-                            <font>font20</font>
+                            <left>16</left>
+                            <top>130</top>
+                            <width>276</width>
+                            <height>34</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
+                            <font>font18</font>
+                            <align>center</align>
+                            <aligny>center</aligny>
                             <textcolor>FFFFFFFF</textcolor>
-                            <scroll>true</scroll>
+                            <scroll condition="Control.HasFocus(4001)">true</scroll>
                             <label>$INFO[ListItem.Label]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
+                        </control>
+                        <control type="label">
+                            <left>10</left>
+                            <top>182</top>
+                            <width>288</width>
+                            <height>32</height>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.kind),episode)</visible>
+                            <font>font18</font>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                            <textcolor>FFFFFFFF</textcolor>
+                            <scroll condition="Control.HasFocus(4001)">true</scroll>
+                            <label>$INFO[ListItem.Label]</label>
                         </control>
                         <control type="textbox">
-                            <left>0</left>
-                            <top>190</top>
-                            <width>250</width>
-                            <height>120</height>
+                            <left>10</left>
+                            <top>220</top>
+                            <width>288</width>
+                            <height>52</height>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.kind),episode)</visible>
                             <font>font16</font>
                             <textcolor>CCFFFFFF</textcolor>
+                            <autoscroll>false</autoscroll>
                             <label>$INFO[ListItem.Plot]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
                         </control>
+                    </focusedlayout>
+                    <focusedlayout width="212" height="328" condition="![String.IsEqual(Window.Property(cleanui.detail.rail1.style),landscape) | String.IsEqual(Window.Property(cleanui.detail.rail1.style),episode) | String.IsEqual(Window.Property(cleanui.detail.rail1.style),brand)]">
                         <control type="image">
-                            <left>0</left>
-                            <top>0</top>
-                            <width>258</width>
-                            <height>149</height>
-                            <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
-                            <texture colordiffuse="00FFFFFF">white.png</texture>
-                            <visible>Control.HasFocus(4001) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
-                        </control>
-                        <control type="image">
-                            <left>4</left>
+                            <left>6</left>
                             <top>4</top>
-                            <width>250</width>
-                            <height>141</height>
-                            <colordiffuse>FF191919</colordiffuse>
-                            <texture diffuse="rounded-mask.png">white.png</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <width>200</width>
+                            <height>296</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
-                            <left>4</left>
+                            <left>6</left>
                             <top>4</top>
-                            <width>250</width>
-                            <height>141</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture background="true" diffuse="rounded-mask.png">$INFO[ListItem.Property(cleanui.brand_background)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <width>200</width>
+                            <height>296</height>
+                            <visible>Control.HasFocus(4001)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF71B8F2">white.png</texture>
                         </control>
                         <control type="image">
-                            <left>14</left>
-                            <top>19</top>
-                            <width>230</width>
-                            <height>110</height>
-                            <aspectratio align="center" aligny="center">keep</aspectratio>
-                            <texture background="true">$INFO[ListItem.Property(cleanui.brand_logo)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <left>10</left>
+                            <top>8</top>
+                            <width>192</width>
+                            <height>288</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
+                        </control>
+                        <control type="image">
+                            <left>10</left>
+                            <top>252</top>
+                            <width>192</width>
+                            <height>44</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="DC121212">white.png</texture>
                         </control>
                         <control type="label">
-                            <left>0</left>
-                            <top>148</top>
-                            <width>250</width>
-                            <height>30</height>
+                            <left>16</left>
+                            <top>256</top>
+                            <width>180</width>
+                            <height>34</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
-                            <textcolor>FFFFFFFF</textcolor>
                             <align>center</align>
-                            <scroll>true</scroll>
+                            <aligny>center</aligny>
+                            <textcolor>FFFFFFFF</textcolor>
+                            <scroll condition="Control.HasFocus(4001)">true</scroll>
                             <label>$INFO[ListItem.Label]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
                     </focusedlayout>
                 </control>
+                <visible>String.IsEqual(Window.Property(cleanui.detail.rail1.visible),true)</visible>
             </control>
-            <control type="group">
+            <control type="group" id="6002">
                 <width>1800</width>
-                <height>375</height>
+                <height>368</height>
                 <control type="label">
                     <left>0</left>
                     <top>0</top>
@@ -680,236 +742,267 @@
                     <left>0</left>
                     <top>40</top>
                     <width>1800</width>
-                    <height>335</height>
+                    <height>328</height>
                     <onleft>4002</onleft>
                     <onright>4002</onright>
                     <onup>4001</onup>
                     <ondown>4003</ondown>
                     <orientation>horizontal</orientation>
-                    <scrolltime>300</scrolltime>
+                    <scrolltime>160</scrolltime>
                     <focusposition>0</focusposition>
                     <visible>String.IsEqual(Window.Property(cleanui.detail.rail2.visible),true)</visible>
-                    <itemlayout width="260" height="330">
+                    <itemlayout width="308" height="280" condition="String.IsEqual(Window.Property(cleanui.detail.rail2.style),landscape) | String.IsEqual(Window.Property(cleanui.detail.rail2.style),episode) | String.IsEqual(Window.Property(cleanui.detail.rail2.style),brand)">
                         <control type="image">
-                            <left>15</left>
-                            <top>0</top>
-                            <width>220</width>
-                            <height>295</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture background="true">$INFO[ListItem.Art(poster)]</texture>
-                            <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.rail_style),episode) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
+                            <left>6</left>
+                            <top>4</top>
+                            <width>296</width>
+                            <height>170</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
-                            <left>0</left>
-                            <top>5</top>
-                            <width>250</width>
-                            <height>141</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
+                            <left>10</left>
+                            <top>8</top>
+                            <width>288</width>
+                            <height>162</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
+                        </control>
+                        <control type="image">
+                            <left>24</left>
+                            <top>22</top>
+                            <width>260</width>
+                            <height>134</height>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <aspectratio>keep</aspectratio>
+                            <texture background="true">$INFO[ListItem.Property(cleanui.brand_logo)]</texture>
+                        </control>
+                        <control type="image">
+                            <left>10</left>
+                            <top>126</top>
+                            <width>288</width>
+                            <height>44</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="DC121212">white.png</texture>
                         </control>
                         <control type="label">
-                            <left>0</left>
-                            <top>298</top>
-                            <width>250</width>
-                            <height>30</height>
+                            <left>16</left>
+                            <top>130</top>
+                            <width>276</width>
+                            <height>34</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
-                            <textcolor>C8FFFFFF</textcolor>
                             <align>center</align>
-                            <scroll>true</scroll>
+                            <aligny>center</aligny>
+                            <textcolor>FFFFFFFF</textcolor>
+                            <scroll condition="Control.HasFocus(4002)">false</scroll>
                             <label>$INFO[ListItem.Label]</label>
-                            <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.rail_style),episode) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
                         <control type="label">
-                            <left>0</left>
-                            <top>153</top>
-                            <width>250</width>
+                            <left>10</left>
+                            <top>182</top>
+                            <width>288</width>
                             <height>32</height>
-                            <font>font20</font>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.kind),episode)</visible>
+                            <font>font18</font>
+                            <align>center</align>
+                            <aligny>center</aligny>
                             <textcolor>FFFFFFFF</textcolor>
-                            <scroll>true</scroll>
+                            <scroll condition="Control.HasFocus(4002)">false</scroll>
                             <label>$INFO[ListItem.Label]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
                         </control>
                         <control type="textbox">
-                            <left>0</left>
-                            <top>190</top>
-                            <width>250</width>
-                            <height>120</height>
+                            <left>10</left>
+                            <top>220</top>
+                            <width>288</width>
+                            <height>52</height>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.kind),episode)</visible>
                             <font>font16</font>
                             <textcolor>CCFFFFFF</textcolor>
+                            <autoscroll>false</autoscroll>
                             <label>$INFO[ListItem.Plot]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
-                        </control>
-                        <control type="image">
-                            <left>4</left>
-                            <top>4</top>
-                            <width>250</width>
-                            <height>141</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture background="true" diffuse="rounded-mask.png">$INFO[ListItem.Property(cleanui.brand_background)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
-                        </control>
-                        <control type="image">
-                            <left>4</left>
-                            <top>4</top>
-                            <width>250</width>
-                            <height>141</height>
-                            <colordiffuse>FF191919</colordiffuse>
-                            <texture diffuse="rounded-mask.png">white.png</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
-                        </control>
-                        <control type="image">
-                            <left>14</left>
-                            <top>19</top>
-                            <width>230</width>
-                            <height>110</height>
-                            <aspectratio align="center" aligny="center">keep</aspectratio>
-                            <texture background="true">$INFO[ListItem.Property(cleanui.brand_logo)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
-                        </control>
-                        <control type="label">
-                            <left>0</left>
-                            <top>148</top>
-                            <width>250</width>
-                            <height>30</height>
-                            <font>font18</font>
-                            <textcolor>FFFFFFFF</textcolor>
-                            <align>center</align>
-                            <scroll>true</scroll>
-                            <label>$INFO[ListItem.Label]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="260" height="330">
+                    <itemlayout width="212" height="328" condition="![String.IsEqual(Window.Property(cleanui.detail.rail2.style),landscape) | String.IsEqual(Window.Property(cleanui.detail.rail2.style),episode) | String.IsEqual(Window.Property(cleanui.detail.rail2.style),brand)]">
                         <control type="image">
-                            <left>12</left>
-                            <top>-6</top>
-                            <width>226</width>
-                            <height>308</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture diffuse="rounded-mask.png" background="true">$INFO[ListItem.Art(poster)]</texture>
-                            <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.rail_style),episode) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
+                            <left>6</left>
+                            <top>4</top>
+                            <width>200</width>
+                            <height>296</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
-                            <left>12</left>
-                            <top>-6</top>
-                            <width>226</width>
-                            <height>308</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture diffuse="rounded-mask.png" background="true">$INFO[ListItem.Art(poster)]</texture>
-                            <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">white.png</bordertexture>
-                            <visible>Control.HasFocus(4002) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.rail_style),episode) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
-                        </control>
-                        <control type="image">
-                            <left>-5</left>
-                            <top>-1</top>
-                            <width>262</width>
-                            <height>148</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
+                            <left>10</left>
+                            <top>8</top>
+                            <width>192</width>
+                            <height>288</height>
+                            <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
                         </control>
                         <control type="image">
-                            <left>-5</left>
-                            <top>-1</top>
-                            <width>262</width>
-                            <height>148</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
-                            <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">white.png</bordertexture>
-                            <visible>Control.HasFocus(4002) + [String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)]</visible>
+                            <left>10</left>
+                            <top>252</top>
+                            <width>192</width>
+                            <height>44</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="DC121212">white.png</texture>
                         </control>
                         <control type="label">
-                            <left>0</left>
-                            <top>306</top>
-                            <width>250</width>
-                            <height>30</height>
+                            <left>16</left>
+                            <top>256</top>
+                            <width>180</width>
+                            <height>34</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
-                            <textcolor>FFFFFFFF</textcolor>
                             <align>center</align>
-                            <scroll>true</scroll>
+                            <aligny>center</aligny>
+                            <textcolor>FFFFFFFF</textcolor>
+                            <scroll condition="Control.HasFocus(4002)">false</scroll>
                             <label>$INFO[ListItem.Label]</label>
-                            <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.rail_style),episode) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
+                        </control>
+                    </itemlayout>
+                    <focusedlayout width="308" height="280" condition="String.IsEqual(Window.Property(cleanui.detail.rail2.style),landscape) | String.IsEqual(Window.Property(cleanui.detail.rail2.style),episode) | String.IsEqual(Window.Property(cleanui.detail.rail2.style),brand)">
+                        <control type="image">
+                            <left>6</left>
+                            <top>4</top>
+                            <width>296</width>
+                            <height>170</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF242424">white.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>6</left>
+                            <top>4</top>
+                            <width>296</width>
+                            <height>170</height>
+                            <visible>Control.HasFocus(4002)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>10</left>
+                            <top>8</top>
+                            <width>288</width>
+                            <height>162</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
+                        </control>
+                        <control type="image">
+                            <left>24</left>
+                            <top>22</top>
+                            <width>260</width>
+                            <height>134</height>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <aspectratio>keep</aspectratio>
+                            <texture background="true">$INFO[ListItem.Property(cleanui.brand_logo)]</texture>
+                        </control>
+                        <control type="image">
+                            <left>10</left>
+                            <top>126</top>
+                            <width>288</width>
+                            <height>44</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="DC121212">white.png</texture>
                         </control>
                         <control type="label">
-                            <left>0</left>
-                            <top>153</top>
-                            <width>250</width>
-                            <height>32</height>
-                            <font>font20</font>
+                            <left>16</left>
+                            <top>130</top>
+                            <width>276</width>
+                            <height>34</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
+                            <font>font18</font>
+                            <align>center</align>
+                            <aligny>center</aligny>
                             <textcolor>FFFFFFFF</textcolor>
-                            <scroll>true</scroll>
+                            <scroll condition="Control.HasFocus(4002)">true</scroll>
                             <label>$INFO[ListItem.Label]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
+                        </control>
+                        <control type="label">
+                            <left>10</left>
+                            <top>182</top>
+                            <width>288</width>
+                            <height>32</height>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.kind),episode)</visible>
+                            <font>font18</font>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                            <textcolor>FFFFFFFF</textcolor>
+                            <scroll condition="Control.HasFocus(4002)">true</scroll>
+                            <label>$INFO[ListItem.Label]</label>
                         </control>
                         <control type="textbox">
-                            <left>0</left>
-                            <top>190</top>
-                            <width>250</width>
-                            <height>120</height>
+                            <left>10</left>
+                            <top>220</top>
+                            <width>288</width>
+                            <height>52</height>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.kind),episode)</visible>
                             <font>font16</font>
                             <textcolor>CCFFFFFF</textcolor>
+                            <autoscroll>false</autoscroll>
                             <label>$INFO[ListItem.Plot]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
                         </control>
+                    </focusedlayout>
+                    <focusedlayout width="212" height="328" condition="![String.IsEqual(Window.Property(cleanui.detail.rail2.style),landscape) | String.IsEqual(Window.Property(cleanui.detail.rail2.style),episode) | String.IsEqual(Window.Property(cleanui.detail.rail2.style),brand)]">
                         <control type="image">
-                            <left>0</left>
-                            <top>0</top>
-                            <width>258</width>
-                            <height>149</height>
-                            <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
-                            <texture colordiffuse="00FFFFFF">white.png</texture>
-                            <visible>Control.HasFocus(4002) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
-                        </control>
-                        <control type="image">
-                            <left>4</left>
+                            <left>6</left>
                             <top>4</top>
-                            <width>250</width>
-                            <height>141</height>
-                            <colordiffuse>FF191919</colordiffuse>
-                            <texture diffuse="rounded-mask.png">white.png</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <width>200</width>
+                            <height>296</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
-                            <left>4</left>
+                            <left>6</left>
                             <top>4</top>
-                            <width>250</width>
-                            <height>141</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture background="true" diffuse="rounded-mask.png">$INFO[ListItem.Property(cleanui.brand_background)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <width>200</width>
+                            <height>296</height>
+                            <visible>Control.HasFocus(4002)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF71B8F2">white.png</texture>
                         </control>
                         <control type="image">
-                            <left>14</left>
-                            <top>19</top>
-                            <width>230</width>
-                            <height>110</height>
-                            <aspectratio align="center" aligny="center">keep</aspectratio>
-                            <texture background="true">$INFO[ListItem.Property(cleanui.brand_logo)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <left>10</left>
+                            <top>8</top>
+                            <width>192</width>
+                            <height>288</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
+                        </control>
+                        <control type="image">
+                            <left>10</left>
+                            <top>252</top>
+                            <width>192</width>
+                            <height>44</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="DC121212">white.png</texture>
                         </control>
                         <control type="label">
-                            <left>0</left>
-                            <top>148</top>
-                            <width>250</width>
-                            <height>30</height>
+                            <left>16</left>
+                            <top>256</top>
+                            <width>180</width>
+                            <height>34</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
-                            <textcolor>FFFFFFFF</textcolor>
                             <align>center</align>
-                            <scroll>true</scroll>
+                            <aligny>center</aligny>
+                            <textcolor>FFFFFFFF</textcolor>
+                            <scroll condition="Control.HasFocus(4002)">true</scroll>
                             <label>$INFO[ListItem.Label]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
                     </focusedlayout>
                 </control>
+                <visible>String.IsEqual(Window.Property(cleanui.detail.rail2.visible),true)</visible>
             </control>
-            <control type="group">
+            <control type="group" id="6003">
                 <width>1800</width>
-                <height>375</height>
+                <height>368</height>
                 <control type="label">
                     <left>0</left>
                     <top>0</top>
@@ -924,232 +1017,263 @@
                     <left>0</left>
                     <top>40</top>
                     <width>1800</width>
-                    <height>335</height>
+                    <height>328</height>
                     <onleft>4003</onleft>
                     <onright>4003</onright>
                     <onup>4002</onup>
                     <ondown>4003</ondown>
                     <orientation>horizontal</orientation>
-                    <scrolltime>300</scrolltime>
+                    <scrolltime>160</scrolltime>
                     <focusposition>0</focusposition>
                     <visible>String.IsEqual(Window.Property(cleanui.detail.rail3.visible),true)</visible>
-                    <itemlayout width="260" height="330">
+                    <itemlayout width="308" height="280" condition="String.IsEqual(Window.Property(cleanui.detail.rail3.style),landscape) | String.IsEqual(Window.Property(cleanui.detail.rail3.style),episode) | String.IsEqual(Window.Property(cleanui.detail.rail3.style),brand)">
                         <control type="image">
-                            <left>15</left>
-                            <top>0</top>
-                            <width>220</width>
-                            <height>295</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture background="true">$INFO[ListItem.Art(poster)]</texture>
-                            <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.rail_style),episode) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
+                            <left>6</left>
+                            <top>4</top>
+                            <width>296</width>
+                            <height>170</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
-                            <left>0</left>
-                            <top>5</top>
-                            <width>250</width>
-                            <height>141</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
+                            <left>10</left>
+                            <top>8</top>
+                            <width>288</width>
+                            <height>162</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
+                        </control>
+                        <control type="image">
+                            <left>24</left>
+                            <top>22</top>
+                            <width>260</width>
+                            <height>134</height>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <aspectratio>keep</aspectratio>
+                            <texture background="true">$INFO[ListItem.Property(cleanui.brand_logo)]</texture>
+                        </control>
+                        <control type="image">
+                            <left>10</left>
+                            <top>126</top>
+                            <width>288</width>
+                            <height>44</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="DC121212">white.png</texture>
                         </control>
                         <control type="label">
-                            <left>0</left>
-                            <top>298</top>
-                            <width>250</width>
-                            <height>30</height>
+                            <left>16</left>
+                            <top>130</top>
+                            <width>276</width>
+                            <height>34</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
-                            <textcolor>C8FFFFFF</textcolor>
                             <align>center</align>
-                            <scroll>true</scroll>
+                            <aligny>center</aligny>
+                            <textcolor>FFFFFFFF</textcolor>
+                            <scroll condition="Control.HasFocus(4003)">false</scroll>
                             <label>$INFO[ListItem.Label]</label>
-                            <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.rail_style),episode) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
                         </control>
                         <control type="label">
-                            <left>0</left>
-                            <top>153</top>
-                            <width>250</width>
+                            <left>10</left>
+                            <top>182</top>
+                            <width>288</width>
                             <height>32</height>
-                            <font>font20</font>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.kind),episode)</visible>
+                            <font>font18</font>
+                            <align>center</align>
+                            <aligny>center</aligny>
                             <textcolor>FFFFFFFF</textcolor>
-                            <scroll>true</scroll>
+                            <scroll condition="Control.HasFocus(4003)">false</scroll>
                             <label>$INFO[ListItem.Label]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
                         </control>
                         <control type="textbox">
-                            <left>0</left>
-                            <top>190</top>
-                            <width>250</width>
-                            <height>120</height>
+                            <left>10</left>
+                            <top>220</top>
+                            <width>288</width>
+                            <height>52</height>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.kind),episode)</visible>
                             <font>font16</font>
                             <textcolor>CCFFFFFF</textcolor>
+                            <autoscroll>false</autoscroll>
                             <label>$INFO[ListItem.Plot]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
-                        </control>
-                        <control type="image">
-                            <left>4</left>
-                            <top>4</top>
-                            <width>250</width>
-                            <height>141</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture background="true" diffuse="rounded-mask.png">$INFO[ListItem.Property(cleanui.brand_background)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
-                        </control>
-                        <control type="image">
-                            <left>4</left>
-                            <top>4</top>
-                            <width>250</width>
-                            <height>141</height>
-                            <colordiffuse>FF191919</colordiffuse>
-                            <texture diffuse="rounded-mask.png">white.png</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
-                        </control>
-                        <control type="image">
-                            <left>14</left>
-                            <top>19</top>
-                            <width>230</width>
-                            <height>110</height>
-                            <aspectratio align="center" aligny="center">keep</aspectratio>
-                            <texture background="true">$INFO[ListItem.Property(cleanui.brand_logo)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
-                        </control>
-                        <control type="label">
-                            <left>0</left>
-                            <top>148</top>
-                            <width>250</width>
-                            <height>30</height>
-                            <font>font18</font>
-                            <textcolor>FFFFFFFF</textcolor>
-                            <align>center</align>
-                            <scroll>true</scroll>
-                            <label>$INFO[ListItem.Label]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="260" height="330">
+                    <itemlayout width="212" height="328" condition="![String.IsEqual(Window.Property(cleanui.detail.rail3.style),landscape) | String.IsEqual(Window.Property(cleanui.detail.rail3.style),episode) | String.IsEqual(Window.Property(cleanui.detail.rail3.style),brand)]">
                         <control type="image">
-                            <left>12</left>
-                            <top>-6</top>
-                            <width>226</width>
-                            <height>308</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture diffuse="rounded-mask.png" background="true">$INFO[ListItem.Art(poster)]</texture>
-                            <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.rail_style),episode) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
+                            <left>6</left>
+                            <top>4</top>
+                            <width>200</width>
+                            <height>296</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
-                            <left>12</left>
-                            <top>-6</top>
-                            <width>226</width>
-                            <height>308</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture diffuse="rounded-mask.png" background="true">$INFO[ListItem.Art(poster)]</texture>
-                            <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">white.png</bordertexture>
-                            <visible>Control.HasFocus(4003) + !String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.rail_style),episode) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
-                        </control>
-                        <control type="image">
-                            <left>-5</left>
-                            <top>-1</top>
-                            <width>262</width>
-                            <height>148</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
+                            <left>10</left>
+                            <top>8</top>
+                            <width>192</width>
+                            <height>288</height>
+                            <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
                         </control>
                         <control type="image">
-                            <left>-5</left>
-                            <top>-1</top>
-                            <width>262</width>
-                            <height>148</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
-                            <bordersize>3</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">white.png</bordertexture>
-                            <visible>Control.HasFocus(4003) + [String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)]</visible>
+                            <left>10</left>
+                            <top>252</top>
+                            <width>192</width>
+                            <height>44</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="DC121212">white.png</texture>
                         </control>
                         <control type="label">
-                            <left>0</left>
-                            <top>306</top>
-                            <width>250</width>
-                            <height>30</height>
+                            <left>16</left>
+                            <top>256</top>
+                            <width>180</width>
+                            <height>34</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
-                            <textcolor>FFFFFFFF</textcolor>
                             <align>center</align>
-                            <scroll>true</scroll>
+                            <aligny>center</aligny>
+                            <textcolor>FFFFFFFF</textcolor>
+                            <scroll condition="Control.HasFocus(4003)">false</scroll>
                             <label>$INFO[ListItem.Label]</label>
-                            <visible>!String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.rail_style),episode) + !String.IsEqual(ListItem.Property(cleanui.rail_style),landscape)</visible>
+                        </control>
+                    </itemlayout>
+                    <focusedlayout width="308" height="280" condition="String.IsEqual(Window.Property(cleanui.detail.rail3.style),landscape) | String.IsEqual(Window.Property(cleanui.detail.rail3.style),episode) | String.IsEqual(Window.Property(cleanui.detail.rail3.style),brand)">
+                        <control type="image">
+                            <left>6</left>
+                            <top>4</top>
+                            <width>296</width>
+                            <height>170</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF242424">white.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>6</left>
+                            <top>4</top>
+                            <width>296</width>
+                            <height>170</height>
+                            <visible>Control.HasFocus(4003)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF71B8F2">white.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>10</left>
+                            <top>8</top>
+                            <width>288</width>
+                            <height>162</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
+                        </control>
+                        <control type="image">
+                            <left>24</left>
+                            <top>22</top>
+                            <width>260</width>
+                            <height>134</height>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <aspectratio>keep</aspectratio>
+                            <texture background="true">$INFO[ListItem.Property(cleanui.brand_logo)]</texture>
+                        </control>
+                        <control type="image">
+                            <left>10</left>
+                            <top>126</top>
+                            <width>288</width>
+                            <height>44</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="DC121212">white.png</texture>
                         </control>
                         <control type="label">
-                            <left>0</left>
-                            <top>153</top>
-                            <width>250</width>
-                            <height>32</height>
-                            <font>font20</font>
+                            <left>16</left>
+                            <top>130</top>
+                            <width>276</width>
+                            <height>34</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
+                            <font>font18</font>
+                            <align>center</align>
+                            <aligny>center</aligny>
                             <textcolor>FFFFFFFF</textcolor>
-                            <scroll>true</scroll>
+                            <scroll condition="Control.HasFocus(4003)">true</scroll>
                             <label>$INFO[ListItem.Label]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
+                        </control>
+                        <control type="label">
+                            <left>10</left>
+                            <top>182</top>
+                            <width>288</width>
+                            <height>32</height>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.kind),episode)</visible>
+                            <font>font18</font>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                            <textcolor>FFFFFFFF</textcolor>
+                            <scroll condition="Control.HasFocus(4003)">true</scroll>
+                            <label>$INFO[ListItem.Label]</label>
                         </control>
                         <control type="textbox">
-                            <left>0</left>
-                            <top>190</top>
-                            <width>250</width>
-                            <height>120</height>
+                            <left>10</left>
+                            <top>220</top>
+                            <width>288</width>
+                            <height>52</height>
+                            <visible>String.IsEqual(ListItem.Property(cleanui.kind),episode)</visible>
                             <font>font16</font>
                             <textcolor>CCFFFFFF</textcolor>
+                            <autoscroll>false</autoscroll>
                             <label>$INFO[ListItem.Plot]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),landscape) | String.IsEqual(ListItem.Property(cleanui.rail_style),episode)</visible>
                         </control>
+                    </focusedlayout>
+                    <focusedlayout width="212" height="328" condition="![String.IsEqual(Window.Property(cleanui.detail.rail3.style),landscape) | String.IsEqual(Window.Property(cleanui.detail.rail3.style),episode) | String.IsEqual(Window.Property(cleanui.detail.rail3.style),brand)]">
                         <control type="image">
-                            <left>0</left>
-                            <top>0</top>
-                            <width>258</width>
-                            <height>149</height>
-                            <bordersize>4</bordersize>
-                            <bordertexture colordiffuse="FFFFFFFF">rounded-border.png</bordertexture>
-                            <texture colordiffuse="00FFFFFF">white.png</texture>
-                            <visible>Control.HasFocus(4003) + String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
-                        </control>
-                        <control type="image">
-                            <left>4</left>
+                            <left>6</left>
                             <top>4</top>
-                            <width>250</width>
-                            <height>141</height>
-                            <colordiffuse>FF191919</colordiffuse>
-                            <texture diffuse="rounded-mask.png">white.png</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <width>200</width>
+                            <height>296</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
-                            <left>4</left>
+                            <left>6</left>
                             <top>4</top>
-                            <width>250</width>
-                            <height>141</height>
-                            <aspectratio align="center" aligny="center">scale</aspectratio>
-                            <texture background="true" diffuse="rounded-mask.png">$INFO[ListItem.Property(cleanui.brand_background)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + !String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <width>200</width>
+                            <height>296</height>
+                            <visible>Control.HasFocus(4003)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="FF71B8F2">white.png</texture>
                         </control>
                         <control type="image">
-                            <left>14</left>
-                            <top>19</top>
-                            <width>230</width>
-                            <height>110</height>
-                            <aspectratio align="center" aligny="center">keep</aspectratio>
-                            <texture background="true">$INFO[ListItem.Property(cleanui.brand_logo)]</texture>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand) + String.IsEqual(ListItem.Property(cleanui.brand_has_logo),true)</visible>
+                            <left>10</left>
+                            <top>8</top>
+                            <width>192</width>
+                            <height>288</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
+                        </control>
+                        <control type="image">
+                            <left>10</left>
+                            <top>252</top>
+                            <width>192</width>
+                            <height>44</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
+                            <aspectratio>scale</aspectratio>
+                            <texture colordiffuse="DC121212">white.png</texture>
                         </control>
                         <control type="label">
-                            <left>0</left>
-                            <top>148</top>
-                            <width>250</width>
-                            <height>30</height>
+                            <left>16</left>
+                            <top>256</top>
+                            <width>180</width>
+                            <height>34</height>
+                            <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
-                            <textcolor>FFFFFFFF</textcolor>
                             <align>center</align>
-                            <scroll>true</scroll>
+                            <aligny>center</aligny>
+                            <textcolor>FFFFFFFF</textcolor>
+                            <scroll condition="Control.HasFocus(4003)">true</scroll>
                             <label>$INFO[ListItem.Label]</label>
-                            <visible>String.IsEqual(ListItem.Property(cleanui.rail_style),brand)</visible>
                         </control>
                     </focusedlayout>
                 </control>
+                <visible>String.IsEqual(Window.Property(cleanui.detail.rail3.visible),true)</visible>
             </control>
         </control>
     </controls>

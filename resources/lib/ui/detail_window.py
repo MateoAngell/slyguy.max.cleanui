@@ -23,6 +23,7 @@ class DetailWindow(xbmcgui.WindowXMLDialog):
             self._reset_properties()
             self._set_hero()
             self._populate_rails()
+            self._configure_navigation()
             if not self._restore_state():
                 self._focus_best()
         except Exception:
@@ -111,6 +112,11 @@ class DetailWindow(xbmcgui.WindowXMLDialog):
         focus_id = state.get('focus_id', -1)
 
         try:
+            # Visibility conditions are evaluated by Kodi's render loop.
+            # Use the populated model here, including actions that may have
+            # disappeared since this screen was last open.
+            if focus_id not in self._rail_ids() + self._action_ids():
+                return False
             control = self.getControl(focus_id)
             if (
                 C.CONTROL_RAIL_FIRST
@@ -261,6 +267,8 @@ class DetailWindow(xbmcgui.WindowXMLDialog):
 
             visible_property = '{}.detail.rail{}.visible'.format(p, i)
             title_property = '{}.detail.rail{}.title'.format(p, i)
+            style_property = '{}.detail.rail{}.style'.format(p, i)
+            self.setProperty(style_property, '')
 
             if i >= len(self.screen.rails):
                 self.setProperty(visible_property, 'false')
@@ -338,45 +346,128 @@ class DetailWindow(xbmcgui.WindowXMLDialog):
 
             self.setProperty(visible_property, 'true')
             self.setProperty(title_property, rail.title or '')
+            self.setProperty(style_property, effective_style)
+            # Collapse wide rows to their actual content height. Hidden
+            # groups are also removed from the XML grouplist's layout.
+            wide = effective_style in (
+                C.STYLE_LANDSCAPE, C.STYLE_EPISODE, C.STYLE_BRAND,
+            )
+            try:
+                control.setHeight(280 if wide else 328)
+                self.getControl(6000 + i).setHeight(320 if wide else 368)
+            except (RuntimeError, AttributeError):
+                # Older custom skins can omit the sizing group IDs.
+                pass
+
+    def _rail_ids(self):
+        """Return populated rails without waiting for render visibility."""
+        result = []
+        for i in range(C.MAX_RAILS_DETAIL):
+            cid = C.CONTROL_RAIL_FIRST + i
+            if self.getProperty('{}.detail.rail{}.visible'.format(
+                    C.PROP_PREFIX, i)) != 'true':
+                continue
+            try:
+                if self.getControl(cid).size() > 0:
+                    result.append(cid)
+            except RuntimeError:
+                continue
+        return result
+
+    def _action_ids(self):
+        result = [C.CONTROL_BACK]
+        for name, cid in (
+            ('play_path', C.CONTROL_PLAY),
+            ('trailer_path', C.CONTROL_TRAILER),
+            ('watchlist_action', C.CONTROL_WATCHLIST),
+        ):
+            if self.getProperty('{}.detail.{}'.format(C.PROP_PREFIX, name)):
+                result.append(cid)
+        return result
+
+    def _configure_navigation(self):
+        """Connect real actions and populated rails, skipping empty slots.
+
+        Kodi handles directional input before Python onAction. Set native
+        navigation targets once, rather than moving focus a second time in
+        the action callback or relying on still-pending visibility rules.
+        """
+        rails = self._rail_ids()
+        actions = self._action_ids()
+        self._sync_native_visibility(rails, actions)
+        primary = next((cid for cid in actions if cid != C.CONTROL_BACK),
+                       C.CONTROL_BACK)
+        for index, cid in enumerate(actions):
+            control = self.getControl(cid)
+            control.controlLeft(self.getControl(actions[max(0, index - 1)]))
+            control.controlRight(self.getControl(actions[min(len(actions) - 1, index + 1)]))
+            control.controlUp(control)
+            control.controlDown(self.getControl(rails[0]) if rails else control)
+        for index, cid in enumerate(rails):
+            control = self.getControl(cid)
+            control.controlUp(self.getControl(rails[index - 1] if index else primary))
+            control.controlDown(self.getControl(rails[min(len(rails) - 1, index + 1)]))
+
+    def _sync_native_visibility(self, rails, actions):
+        """Make populated controls focusable before Kodi's first render.
+
+        setFocus queues GUI_MSG_SETFOCUS; Kodi rejects that message if the
+        destination's native visibility still reflects the previous frame.
+        setVisible alone only changes forceHidden. A literal visibility
+        condition also updates the native visible state synchronously.
+        Restore the XML expression afterwards so later property changes
+        continue to control visibility, including reused/empty page slots.
+        """
+        def sync(cid, visible, condition):
+            control = self.getControl(cid)
+            # Clear a stale forceHidden override; m_visible below supplies
+            # the immediate state and the expression owns future frames.
+            control.setVisible(True)
+            control.setVisibleCondition('true' if visible else 'false')
+            control.setVisibleCondition(condition)
+
+        for i in range(C.MAX_RAILS_DETAIL):
+            cid = C.CONTROL_RAIL_FIRST + i
+            condition = 'String.IsEqual(Window.Property({}.detail.rail{}.visible),true)'.format(
+                C.PROP_PREFIX, i)
+            sync(cid, cid in rails, condition)
+            try:
+                sync(6000 + i, cid in rails, condition)
+            except RuntimeError:
+                # Compatibility with a custom skin lacking sizing groups.
+                pass
+        sync(C.CONTROL_BACK, True, 'true')
+        for name, cid in (
+            ('play_path', C.CONTROL_PLAY),
+            ('trailer_path', C.CONTROL_TRAILER),
+            ('watchlist_action', C.CONTROL_WATCHLIST),
+        ):
+            condition = '!String.IsEmpty(Window.Property({}.detail.{}))'.format(
+                C.PROP_PREFIX, name)
+            sync(cid, cid in actions, condition)
 
     def _focus_best(self):
-        """Focus the first visible, populated rail."""
-        for i in range(C.MAX_RAILS_DETAIL):
-            control_id = C.CONTROL_RAIL_FIRST + i
+        """Focus seasons/episodes for a series, or Play for a movie.
+
+        isVisible() can still be false during onInit after setting the XML
+        properties, although the rail has already been populated.
+        """
+        rails = self._rail_ids()
+        actions = self._action_ids()
+        buttons = [cid for cid in actions if cid != C.CONTROL_BACK]
+        if self.screen.screen_type == C.SCREEN_MOVIE:
+            candidates = buttons + rails
+        else:
+            candidates = rails + buttons
+        for control_id in candidates + [C.CONTROL_BACK]:
             try:
                 control = self.getControl(control_id)
-                if control.size() <= 0:
-                    continue
-                if not control.isVisible():
-                    continue
-                if control.getSelectedPosition() < 0:
+                if control_id in rails and control.getSelectedPosition() < 0:
                     control.selectItem(0)
                 self.setFocus(control)
                 return
             except RuntimeError:
                 continue
-
-        p = C.PROP_PREFIX
-        candidates = (
-            ('{}.detail.play_path'.format(p), C.CONTROL_PLAY),
-            ('{}.detail.trailer_path'.format(p), C.CONTROL_TRAILER),
-            ('{}.detail.watchlist_action'.format(p), C.CONTROL_WATCHLIST),
-        )
-        for property_name, control_id in candidates:
-            if not self.getProperty(property_name):
-                continue
-            try:
-                control = self.getControl(control_id)
-                if control.isVisible():
-                    self.setFocus(control)
-                    return
-            except RuntimeError:
-                continue
-
-        try:
-            self.setFocus(self.getControl(C.CONTROL_BACK))
-        except RuntimeError:
-            pass
 
     def _is_duplicate_activation(self, cid):
         try:
@@ -445,30 +536,18 @@ class DetailWindow(xbmcgui.WindowXMLDialog):
             self._close_current_window()
             return
 
-        # Some remotes send SELECT but not onClick
-        if aid in C.ACTION_SELECT:
-            try:
-                cid = self.getFocusId()
-                if cid == C.CONTROL_BACK:
-                    self._close_current_window()
-                    return
-                if (
-                    C.CONTROL_RAIL_FIRST
-                    <= cid
-                    < C.CONTROL_RAIL_FIRST + C.MAX_RAILS_DETAIL
-                ):
-                    if not self._is_duplicate_activation(cid):
-                        self._open_selected(cid)
-                    return
-                # onClick performs duplicate protection for normal buttons.
-                self.onClick(cid)
-            except Exception:
-                self._log_error('onAction.select')
+        # WindowXML delivers native button/list activation through onClick
+        # before its Python onAction callback. Opening a child can take long
+        # enough to outlive the click debounce, so handling SELECT here too
+        # can open the same season twice or pop two pages on Back.
 
     def _open_selected(self, cid):
         try:
             position = self.getControl(cid).getSelectedPosition()
-            card = self.screen.rails[cid - C.CONTROL_RAIL_FIRST].items[position]
+            cards = self.screen.rails[cid - C.CONTROL_RAIL_FIRST].items
+            if position < 0 or position >= len(cards):
+                return
+            card = cards[position]
             if card.kind == 'page' and self.controller:
                 self.controller.open_next_page(card, self)
                 return

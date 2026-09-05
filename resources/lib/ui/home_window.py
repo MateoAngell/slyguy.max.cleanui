@@ -278,6 +278,15 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
                 rail, self.screen_kind
             )
 
+            # Match the row height to the artwork aspect ratio so landscape
+            # rails do not reserve the taller poster rows' empty space.
+            wide = effective_style in ('landscape', 'brand', 'episode')
+            try:
+                self.getControl(6000 + index).setHeight(266 if wide else 362)
+                control.setHeight(220 if wide else 316)
+            except (RuntimeError, AttributeError):
+                pass
+
             list_items = []
             inserted_cards = []
             failed = 0
@@ -335,7 +344,7 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
             )
             self.setProperty(
                 '{}.home.rail{}.style'.format(prefix, index),
-                rail.style or '',
+                effective_style or '',
             )
             self.setProperty(
                 '{}.home.rail{}.visible'.format(prefix, index),
@@ -375,7 +384,7 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
         except RuntimeError:
             pass
 
-    def _selected_card(self, control_id=None):
+    def _selected_card(self, control_id=None, position=None):
         if not self.screen:
             return None
 
@@ -396,12 +405,13 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
 
         rail = self.screen.rails[rail_index]
 
-        try:
-            position = self.getControl(
-                control_id
-            ).getSelectedPosition()
-        except Exception:
-            return None
+        if position is None:
+            try:
+                position = self.getControl(
+                    control_id
+                ).getSelectedPosition()
+            except Exception:
+                return None
 
         if position < 0 or position >= len(rail.items):
             return None
@@ -414,10 +424,6 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
         except Exception:
             return
 
-        card = self._selected_card(control_id)
-        if not card:
-            return
-
         try:
             position = self.getControl(
                 control_id
@@ -425,13 +431,20 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
         except Exception:
             return
 
-        key = (control_id, position)
+        # One selection snapshot for both the card and the deduplication key.
+        # Reading the position twice can associate a card with the next index
+        # while a held remote button is advancing Kodi's native container.
+        card = self._selected_card(control_id, position)
+        if not card:
+            return
+
+        key = (control_id, position, id(card))
 
         if key == self._last_focus_key:
             return
 
-        self._last_focus_key = key
         self._set_hero_from_card(card)
+        self._last_focus_key = key
 
     def _set_hero_from_card(self, card):
         if card.kind == 'page':
@@ -567,97 +580,46 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
             self._refresh_hero_from_focus()
         self._activate_control(control_id)
 
-    def _refresh_hero_for_horizontal_action(self, action_id):
-        """
-        Actualiza el hero al moverse dentro del mismo rail.
-        Kodi no siempre llama a onFocus() cuando solamente cambia la posición
-        seleccionada de un contenedor. Este método no mueve el control: la
-        navegación continúa siendo responsabilidad exclusiva del XML.
-        """
-        if not self.screen:
-            return
-        try:
-            control_id = self.getFocusId()
-        except Exception:
-            return
-        if not (
-            C.CONTROL_RAIL_FIRST
-            <= control_id
-            < C.CONTROL_RAIL_FIRST + C.MAX_RAILS_HOME
-            or control_id == 4101
-        ):
-            return
-        if control_id == 4101:
-            rail_index = 1
-        else:
-            rail_index = control_id - C.CONTROL_RAIL_FIRST
-        if rail_index < 0 or rail_index >= len(self.screen.rails):
-            return
-        rail = self.screen.rails[rail_index]
-        if not rail or not rail.items:
-            return
-        try:
-            position = self.getControl(
-                control_id
-            ).getSelectedPosition()
-        except Exception:
-            return
-        target_position = position
-        if action_id in C.ACTION_LEFT:
-            target_position = position - 1
-        elif action_id in C.ACTION_RIGHT:
-            target_position = position + 1
-        else:
-            return
-        target_position = max(
-            0,
-            min(target_position, len(rail.items) - 1),
-        )
-        if target_position < 0 or target_position >= len(rail.items):
-            return
-        self._last_focus_key = (control_id, target_position)
-        self._set_hero_from_card(rail.items[target_position])
-
     def onAction(self, action):
         action_id = action.getId()
 
         if action_id in C.ACTION_BACK:
-            if (
-                self.screen_kind == C.SCREEN_HOME
-                and self.controller
-            ):
-                self.controller.exit_clean_ui()
-            elif self.controller and self.controller._home_stack:
-                # BACK desde una seccion hermana: recargar la seccion anterior
-                # (reutiliza la ventana, no apila). Vease _open_home_like().
+            if self.controller and self.controller._home_stack:
+                # Category pagination also has screen_kind='home'. Restore
+                # its parent first; only the root Home should exit the add-on.
                 prev, prev_kind = self.controller._home_stack.pop()
                 try:
                     self.replace_screen(prev, prev_kind)
                 except Exception:
                     self._log_error('back_replace')
                 return
+            elif (
+                self.screen_kind == C.SCREEN_HOME
+                and self.controller
+            ):
+                self.controller.exit_clean_ui()
             elif self.controller:
                 self.controller.close_child_window(self)
             else:
                 self.close()
             return
 
-        if (
-            action_id in C.ACTION_LEFT
-            or action_id in C.ACTION_RIGHT
-        ):
-            self._refresh_hero_for_horizontal_action(action_id)
+        # WindowXML::OnAction applies native navigation before invoking Python
+        # (Kodi Nexus/Omega, interfaces/legacy/WindowXML.cpp). The selected
+        # position is already final: applying +/-1 again shows the wrong title.
+        # No sleep, polling thread or delayed callback is needed.
+        # Includes vertical movement, page jumps and mouse selection, for which
+        # Kodi need not emit onFocus when staying within the same container.
+        self._refresh_hero_from_focus()
 
         if action_id in C.ACTION_MENU:
             self._activate_control(C.CONTROL_MENU)
             return
 
-        if action_id in C.ACTION_SELECT:
-            try:
-                self._activate_control(self.getFocusId())
-            except Exception:
-                self._log_error('onAction.select')
-            return
+        # SELECT and mouse clicks are activated exclusively by onClick.
+        # Kodi queues onClick and then onAction for one press; if opening a
+        # screen is slow, a time-based guard expires before that second event
+        # and can reopen it (or activate a different control after replacement).
 
     def _activate_control(self, control_id):
         if control_id == C.CONTROL_PROFILE:

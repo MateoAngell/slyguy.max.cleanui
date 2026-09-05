@@ -5,7 +5,7 @@ from collections import OrderedDict
 from copy import deepcopy
 from functools import wraps
 from time import monotonic
-from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode
+from .artwork import artwork_from_images, normalize_art
 from . import constants as C
 import xbmc
 
@@ -13,7 +13,21 @@ import xbmc
 # HBO Max no expone un endpoint para recuperar metadatos de una película
 # a partir de su ID. Los rows ya cargados se conservan durante la sesión
 # para poder construir posteriormente su detalle.
-def cached_screen(seconds):
+def _copy_screen(value):
+    # Source rows are read-only payloads. Keep their references while copying
+    # mutable presentation state, so a cache hit does not clone the entire
+    # relationship graph behind every visible card.
+    memo = {}
+    if isinstance(value, Screen):
+        cards = ([value.hero] if value.hero else []) + [
+            card for rail in value.rails for card in rail.items]
+        for card in cards:
+            if card.source_item is not None:
+                memo[id(card.source_item)] = card.source_item
+    return deepcopy(value, memo)
+
+
+def cached_screen(seconds, copy_models=True):
     """Bounded per-session cache; windows always receive independent models."""
     def decorate(method):
         @wraps(method)
@@ -23,9 +37,9 @@ def cached_screen(seconds):
             cached = self._cache.get(key)
             if cached and monotonic() - cached[0] < seconds:
                 self._cache.move_to_end(key)
-                return deepcopy(cached[1])
+                return _copy_screen(cached[1]) if copy_models else cached[1]
             result = method(self, *args, **kwargs)
-            self._cache[key] = (monotonic(), deepcopy(result))
+            self._cache[key] = (monotonic(), _copy_screen(result) if copy_models else result)
             self._cache.move_to_end(key)
             while len(self._cache) > 12:
                 self._cache.popitem(last=False)
@@ -160,9 +174,7 @@ class UIRepository(object):
             hero = Card(
                 label=data.get('name') or data.get('title') or str(id),
                 kind=Card.SHOW,
-                art=self._normalize_art(
-                    core.get_art(data.get('images', []))
-                ),
+                art=artwork_from_images(data.get('images', [])),
                 info={
                     'mediatype': 'tvshow',
                     'plot': data.get('longDescription'),
@@ -178,11 +190,11 @@ class UIRepository(object):
         # Build seasons rail
         seasons = []
         for season in sorted(
-            data.get('seasons', []),
-            key=lambda row: row.get('seasonNumber', 0),
+            (row for row in (data.get('seasons') or []) if isinstance(row, dict)),
+            key=self._season_number,
         ):
-            video_count = season.get('videoCountByType', {})
-            if not video_count.get('EPISODE'):
+            video_count = season.get('videoCountByType') or {}
+            if str(video_count.get('EPISODE', '')).strip() == '0':
                 continue
 
             season_number = season.get('seasonNumber')
@@ -259,9 +271,7 @@ class UIRepository(object):
         episodes = self._cards_from_rows(data.get('items', []))
         self._add_next_page(episodes, data, 'season_detail', (show_id, season_id, page + 1))
 
-        show_art = self._normalize_art(
-            core.get_art(series_data.get('images', []))
-        )
+        show_art = artwork_from_images(series_data.get('images', []))
 
         display_name = season_number
         if season_data and season_data.get('displayName') is not None:
@@ -344,7 +354,8 @@ class UIRepository(object):
             data,
             'my-stuff-page-rail-my-list',
         )
-        if collection and collection.get('id'):
+        if (collection and collection.get('id')
+                and (page > 1 or not collection.get('items'))):
             collection = self.api.collection(collection['id'], page=page)
         rows = collection.get('items', []) if collection else []
         cards = self._cards_from_rows(rows, from_watchlist=True)
@@ -390,9 +401,13 @@ class UIRepository(object):
         label = getattr(item, 'label', None)
         path = getattr(item, 'path', None)
         info = dict(getattr(item, 'info', {}) or {})
-        art = self._normalize_art(
-            dict(getattr(item, 'art', {}) or {})
-        )
+        data = self._row_data(row)
+        images = data.get('images') if isinstance(data, dict) else None
+        inherited_art = getattr(item, 'art', {}) or {}
+        parent_show = data.get('show') if isinstance(data, dict) else None
+        if isinstance(parent_show, dict) and parent_show.get('images'):
+            inherited_art = artwork_from_images(parent_show['images'], inherited_art)
+        art = artwork_from_images(images, inherited_art)
         context = list(getattr(item, 'context', []) or [])
 
         if not label:
@@ -517,9 +532,14 @@ class UIRepository(object):
         data = self._row_data(raw_item)
         if not isinstance(data, dict):
             return None
-        data.setdefault('name', data.get('title') or '')
+        data['name'] = data.get('name') or data.get('title') or ''
         if not data['name']:
             return None
+        data['images'] = data.get('images') or []
+        parent_show = data.get('show')
+        if isinstance(parent_show, dict):
+            parent_show['name'] = parent_show.get('name') or parent_show.get('title') or ''
+            parent_show['images'] = parent_show.get('images') or []
 
         item = core.parse_row(
             raw_item,
@@ -545,47 +565,18 @@ class UIRepository(object):
         return card
 
     def _normalize_art(self, art):
-        """Fill in missing art keys with fallbacks."""
-        art = dict(art or {})
-        poster = art.get('poster')
-        thumb = art.get('thumb')
-        fanart = art.get('fanart')
-        banner = art.get('banner')
-        clearlogo = art.get('clearlogo')
-
-        poster = poster or thumb or fanart or banner or ''
-        thumb = thumb or poster or fanart or banner or ''
-        fanart = fanart or banner or thumb or poster or ''
-        banner = banner or fanart or thumb or poster or ''
-        clearlogo = clearlogo or ''
-
-        art.update({
-            'poster': poster,
-            'thumb': thumb,
-            'fanart': fanart,
-            'banner': banner,
-            'clearlogo': clearlogo,
-        })
-        for key, width in (('poster', 360), ('thumb', 600), ('fanart', 1280),
-                           ('banner', 1280), ('clearlogo', 600)):
-            url = art.get(key)
-            if not url:
-                continue
-            parts = urlsplit(url)
-            query = dict(parse_qsl(parts.query, keep_blank_values=True))
-            # Only transform the unsigned image endpoints already resized by
-            # the core parser; never rewrite arbitrary/signed media URLs.
-            if parts.scheme in ('https', 'http') and not any(
-                k.lower() in ('signature', 'sig', 'token', 'policy', 'expires')
-                or k.lower().startswith('x-amz-') for k in query
-            ):
-                query['w'] = str(width)
-                art[key] = urlunsplit(parts._replace(query=urlencode(query)))
-        return art
+        return normalize_art(art)
 
     # ------------------------------------------------------------------
     # Auxiliares
     # ------------------------------------------------------------------
+
+    @staticmethod
+    def _season_number(row):
+        try:
+            return int(row.get('seasonNumber') or 0)
+        except (TypeError, ValueError):
+            return 0
 
     def _rail_from_items(self, items, title, style, rail_id='',
                          from_search=False, from_watchlist=False):
@@ -663,11 +654,11 @@ class UIRepository(object):
                 routes.append(route)
         return routes
 
-    @cached_screen(120)
+    @cached_screen(120, copy_models=False)
     def _route(self, route):
         return self.api.route(route)
 
-    @cached_screen(120)
+    @cached_screen(120, copy_models=False)
     def _collection(self, collection_id):
         return self.api.collection(collection_id)
 
@@ -705,6 +696,7 @@ class UIRepository(object):
         next_offset = None
         # A bounded number of network requests per screen, even for sparse pages.
         scanned = 0
+        fetched = 0
         for index in range(offset, len(rows)):
             row = rows[index]
             collection = row.get('collection') if isinstance(row, dict) else None
@@ -716,6 +708,10 @@ class UIRepository(object):
             scanned += 1
             items = collection.get('items') or []
             if not items and collection.get('id'):
+                if fetched >= 2:
+                    next_offset = index
+                    break
+                fetched += 1
                 try:
                     items = self._collection(collection['id']).get('items') or []
                 except Exception:
