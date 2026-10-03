@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window type="dialog" id="13000">
-    <defaultcontrol>3000</defaultcontrol>
+    <defaultcontrol>3010</defaultcontrol>
     <backgroundcolor>FF000000</backgroundcolor>
     <controls>
+        <!-- Dialog backgroundcolor does not cover the parent Kodi window. -->
+        <control type="image">
+            <left>0</left><top>0</top><width>1920</width><height>1080</height>
+            <aspectratio>stretch</aspectratio>
+            <texture colordiffuse="FF080B0E">white.png</texture>
+        </control>
         <control type="image" id="2000">
             <left>0</left>
             <top>0</top>
@@ -36,6 +42,13 @@
             <textcolor>CCFFFFFF</textcolor>
             <label>$INFO[Window.Property(cleanui.hero.meta)]</label>
         </control>
+        <!-- Startup has no populated rail yet. Keep a local Max surface above
+             every empty control until the profile and Home model are ready. -->
+        <control type="image">
+            <left>0</left><top>0</top><width>1920</width><height>1080</height>
+            <texture colordiffuse="FF080B0E">white.png</texture>
+            <visible>String.IsEqual(Window.Property(cleanui.home.loading),true)</visible>
+        </control>
         <control type="label" id="2002">
             <left>60</left>
             <top>215</top>
@@ -49,26 +62,26 @@
         </control>
         <control type="textbox" id="2004">
             <left>60</left>
-            <top>425</top>
-            <width>920</width>
-            <height>140</height>
-            <font>font24</font>
+            <top>405</top>
+            <width>1100</width>
+            <height>165</height>
+            <font>font20</font>
             <textcolor>C8FFFFFF</textcolor>
             <autoscroll>false</autoscroll>
             <label>$INFO[Window.Property(cleanui.hero.plot)]</label>
         </control>
         <control type="grouplist" id="5100">
             <left>50</left>
-            <top>665</top>
+            <top>600</top>
             <width>1820</width>
-            <height>395</height>
+            <height>500</height>
             <orientation>vertical</orientation>
             <itemgap>8</itemgap>
             <scroll>true</scroll>
             <control type="group" id="6000">
                 <visible>String.IsEqual(Window.Property(cleanui.home.rail0.visible),true)</visible>
                 <width>1820</width>
-                <height>362</height>
+                <height>500</height>
                 <control type="label">
                     <left>0</left>
                     <top>0</top>
@@ -83,7 +96,7 @@
                     <left>0</left>
                     <top>46</top>
                     <width>1820</width>
-                    <height>316</height>
+                    <height>450</height>
                     <onleft>4000</onleft>
                     <onright>4000</onright>
                     <orientation>horizontal</orientation>
@@ -92,7 +105,7 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail0.visible),true)</visible>
                     <onup>3010</onup>
                     <ondown>4001</ondown>
-                    <itemlayout width="308" height="220" condition="String.IsEqual(Window.Property(cleanui.home.rail0.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail0.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail0.style),brand)">
+                    <itemlayout width="368" height="264" condition="String.IsEqual(Window.Property(cleanui.home.rail0.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail0.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail0.style),brand)">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
@@ -155,27 +168,27 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </itemlayout>
-                    <itemlayout width="212" height="316" condition="![String.IsEqual(Window.Property(cleanui.home.rail0.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail0.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail0.style),brand)]">
+                    <itemlayout width="300" height="450" condition="![String.IsEqual(Window.Property(cleanui.home.rail0.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail0.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail0.style),brand)]">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
                             <top>8</top>
-                            <width>192</width>
-                            <height>288</height>
+                            <width>280</width>
+                            <height>420</height>
                             <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
-                            <top>252</top>
-                            <width>192</width>
+                            <top>384</top>
+                            <width>280</width>
                             <height>44</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <aspectratio>scale</aspectratio>
@@ -183,8 +196,8 @@
                         </control>
                         <control type="label">
                             <left>16</left>
-                            <top>256</top>
-                            <width>180</width>
+                            <top>388</top>
+                            <width>268</width>
                             <height>34</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
@@ -195,7 +208,7 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="308" height="220" condition="String.IsEqual(Window.Property(cleanui.home.rail0.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail0.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail0.style),brand)">
+                    <focusedlayout width="368" height="264" condition="String.IsEqual(Window.Property(cleanui.home.rail0.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail0.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail0.style),brand)">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
@@ -267,20 +280,20 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </focusedlayout>
-                    <focusedlayout width="212" height="316" condition="![String.IsEqual(Window.Property(cleanui.home.rail0.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail0.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail0.style),brand)]">
+                    <focusedlayout width="300" height="450" condition="![String.IsEqual(Window.Property(cleanui.home.rail0.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail0.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail0.style),brand)]">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <visible>Control.HasFocus(4000)</visible>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FFFFFFFF">white.png</texture>
@@ -288,15 +301,15 @@
                         <control type="image">
                             <left>10</left>
                             <top>8</top>
-                            <width>192</width>
-                            <height>288</height>
+                            <width>280</width>
+                            <height>420</height>
                             <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
-                            <top>252</top>
-                            <width>192</width>
+                            <top>384</top>
+                            <width>280</width>
                             <height>44</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <aspectratio>scale</aspectratio>
@@ -304,8 +317,8 @@
                         </control>
                         <control type="label">
                             <left>16</left>
-                            <top>256</top>
-                            <width>180</width>
+                            <top>388</top>
+                            <width>268</width>
                             <height>34</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
@@ -321,7 +334,7 @@
             <control type="group" id="6001">
                 <visible>String.IsEqual(Window.Property(cleanui.home.rail1.visible),true)</visible>
                 <width>1820</width>
-                <height>362</height>
+                <height>500</height>
                 <control type="label">
                     <left>0</left>
                     <top>0</top>
@@ -336,7 +349,7 @@
                     <left>0</left>
                     <top>46</top>
                     <width>1820</width>
-                    <height>316</height>
+                    <height>450</height>
                     <onleft>4001</onleft>
                     <onright>4001</onright>
                     <orientation>horizontal</orientation>
@@ -345,7 +358,7 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail1.visible),true)</visible>
                     <onup>4000</onup>
                     <ondown>4002</ondown>
-                    <itemlayout width="308" height="220" condition="String.IsEqual(Window.Property(cleanui.home.rail1.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail1.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail1.style),brand)">
+                    <itemlayout width="368" height="264" condition="String.IsEqual(Window.Property(cleanui.home.rail1.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail1.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail1.style),brand)">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
@@ -408,27 +421,27 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </itemlayout>
-                    <itemlayout width="212" height="316" condition="![String.IsEqual(Window.Property(cleanui.home.rail1.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail1.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail1.style),brand)]">
+                    <itemlayout width="300" height="450" condition="![String.IsEqual(Window.Property(cleanui.home.rail1.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail1.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail1.style),brand)]">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
                             <top>8</top>
-                            <width>192</width>
-                            <height>288</height>
+                            <width>280</width>
+                            <height>420</height>
                             <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
-                            <top>252</top>
-                            <width>192</width>
+                            <top>384</top>
+                            <width>280</width>
                             <height>44</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <aspectratio>scale</aspectratio>
@@ -436,8 +449,8 @@
                         </control>
                         <control type="label">
                             <left>16</left>
-                            <top>256</top>
-                            <width>180</width>
+                            <top>388</top>
+                            <width>268</width>
                             <height>34</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
@@ -448,7 +461,7 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="308" height="220" condition="String.IsEqual(Window.Property(cleanui.home.rail1.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail1.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail1.style),brand)">
+                    <focusedlayout width="368" height="264" condition="String.IsEqual(Window.Property(cleanui.home.rail1.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail1.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail1.style),brand)">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
@@ -520,20 +533,20 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </focusedlayout>
-                    <focusedlayout width="212" height="316" condition="![String.IsEqual(Window.Property(cleanui.home.rail1.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail1.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail1.style),brand)]">
+                    <focusedlayout width="300" height="450" condition="![String.IsEqual(Window.Property(cleanui.home.rail1.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail1.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail1.style),brand)]">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <visible>Control.HasFocus(4001)</visible>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FFFFFFFF">white.png</texture>
@@ -541,15 +554,15 @@
                         <control type="image">
                             <left>10</left>
                             <top>8</top>
-                            <width>192</width>
-                            <height>288</height>
+                            <width>280</width>
+                            <height>420</height>
                             <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
-                            <top>252</top>
-                            <width>192</width>
+                            <top>384</top>
+                            <width>280</width>
                             <height>44</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <aspectratio>scale</aspectratio>
@@ -557,8 +570,8 @@
                         </control>
                         <control type="label">
                             <left>16</left>
-                            <top>256</top>
-                            <width>180</width>
+                            <top>388</top>
+                            <width>268</width>
                             <height>34</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
@@ -574,7 +587,7 @@
             <control type="group" id="6002">
                 <visible>String.IsEqual(Window.Property(cleanui.home.rail2.visible),true)</visible>
                 <width>1820</width>
-                <height>362</height>
+                <height>500</height>
                 <control type="label">
                     <left>0</left>
                     <top>0</top>
@@ -589,7 +602,7 @@
                     <left>0</left>
                     <top>46</top>
                     <width>1820</width>
-                    <height>316</height>
+                    <height>450</height>
                     <onleft>4002</onleft>
                     <onright>4002</onright>
                     <orientation>horizontal</orientation>
@@ -598,7 +611,7 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail2.visible),true)</visible>
                     <onup>4001</onup>
                     <ondown>4003</ondown>
-                    <itemlayout width="308" height="220" condition="String.IsEqual(Window.Property(cleanui.home.rail2.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail2.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail2.style),brand)">
+                    <itemlayout width="368" height="264" condition="String.IsEqual(Window.Property(cleanui.home.rail2.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail2.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail2.style),brand)">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
@@ -661,27 +674,27 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </itemlayout>
-                    <itemlayout width="212" height="316" condition="![String.IsEqual(Window.Property(cleanui.home.rail2.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail2.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail2.style),brand)]">
+                    <itemlayout width="300" height="450" condition="![String.IsEqual(Window.Property(cleanui.home.rail2.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail2.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail2.style),brand)]">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
                             <top>8</top>
-                            <width>192</width>
-                            <height>288</height>
+                            <width>280</width>
+                            <height>420</height>
                             <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
-                            <top>252</top>
-                            <width>192</width>
+                            <top>384</top>
+                            <width>280</width>
                             <height>44</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <aspectratio>scale</aspectratio>
@@ -689,8 +702,8 @@
                         </control>
                         <control type="label">
                             <left>16</left>
-                            <top>256</top>
-                            <width>180</width>
+                            <top>388</top>
+                            <width>268</width>
                             <height>34</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
@@ -701,7 +714,7 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="308" height="220" condition="String.IsEqual(Window.Property(cleanui.home.rail2.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail2.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail2.style),brand)">
+                    <focusedlayout width="368" height="264" condition="String.IsEqual(Window.Property(cleanui.home.rail2.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail2.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail2.style),brand)">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
@@ -773,20 +786,20 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </focusedlayout>
-                    <focusedlayout width="212" height="316" condition="![String.IsEqual(Window.Property(cleanui.home.rail2.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail2.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail2.style),brand)]">
+                    <focusedlayout width="300" height="450" condition="![String.IsEqual(Window.Property(cleanui.home.rail2.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail2.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail2.style),brand)]">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <visible>Control.HasFocus(4002)</visible>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FFFFFFFF">white.png</texture>
@@ -794,15 +807,15 @@
                         <control type="image">
                             <left>10</left>
                             <top>8</top>
-                            <width>192</width>
-                            <height>288</height>
+                            <width>280</width>
+                            <height>420</height>
                             <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
-                            <top>252</top>
-                            <width>192</width>
+                            <top>384</top>
+                            <width>280</width>
                             <height>44</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <aspectratio>scale</aspectratio>
@@ -810,8 +823,8 @@
                         </control>
                         <control type="label">
                             <left>16</left>
-                            <top>256</top>
-                            <width>180</width>
+                            <top>388</top>
+                            <width>268</width>
                             <height>34</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
@@ -827,7 +840,7 @@
             <control type="group" id="6003">
                 <visible>String.IsEqual(Window.Property(cleanui.home.rail3.visible),true)</visible>
                 <width>1820</width>
-                <height>362</height>
+                <height>500</height>
                 <control type="label">
                     <left>0</left>
                     <top>0</top>
@@ -842,7 +855,7 @@
                     <left>0</left>
                     <top>46</top>
                     <width>1820</width>
-                    <height>316</height>
+                    <height>450</height>
                     <onleft>4003</onleft>
                     <onright>4003</onright>
                     <orientation>horizontal</orientation>
@@ -851,7 +864,7 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail3.visible),true)</visible>
                     <onup>4002</onup>
                     <ondown>4004</ondown>
-                    <itemlayout width="308" height="220" condition="String.IsEqual(Window.Property(cleanui.home.rail3.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail3.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail3.style),brand)">
+                    <itemlayout width="368" height="264" condition="String.IsEqual(Window.Property(cleanui.home.rail3.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail3.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail3.style),brand)">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
@@ -914,27 +927,27 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </itemlayout>
-                    <itemlayout width="212" height="316" condition="![String.IsEqual(Window.Property(cleanui.home.rail3.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail3.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail3.style),brand)]">
+                    <itemlayout width="300" height="450" condition="![String.IsEqual(Window.Property(cleanui.home.rail3.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail3.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail3.style),brand)]">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
                             <top>8</top>
-                            <width>192</width>
-                            <height>288</height>
+                            <width>280</width>
+                            <height>420</height>
                             <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
-                            <top>252</top>
-                            <width>192</width>
+                            <top>384</top>
+                            <width>280</width>
                             <height>44</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <aspectratio>scale</aspectratio>
@@ -942,8 +955,8 @@
                         </control>
                         <control type="label">
                             <left>16</left>
-                            <top>256</top>
-                            <width>180</width>
+                            <top>388</top>
+                            <width>268</width>
                             <height>34</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
@@ -954,7 +967,7 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="308" height="220" condition="String.IsEqual(Window.Property(cleanui.home.rail3.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail3.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail3.style),brand)">
+                    <focusedlayout width="368" height="264" condition="String.IsEqual(Window.Property(cleanui.home.rail3.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail3.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail3.style),brand)">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
@@ -1026,20 +1039,20 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </focusedlayout>
-                    <focusedlayout width="212" height="316" condition="![String.IsEqual(Window.Property(cleanui.home.rail3.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail3.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail3.style),brand)]">
+                    <focusedlayout width="300" height="450" condition="![String.IsEqual(Window.Property(cleanui.home.rail3.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail3.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail3.style),brand)]">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <visible>Control.HasFocus(4003)</visible>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FFFFFFFF">white.png</texture>
@@ -1047,15 +1060,15 @@
                         <control type="image">
                             <left>10</left>
                             <top>8</top>
-                            <width>192</width>
-                            <height>288</height>
+                            <width>280</width>
+                            <height>420</height>
                             <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
-                            <top>252</top>
-                            <width>192</width>
+                            <top>384</top>
+                            <width>280</width>
                             <height>44</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <aspectratio>scale</aspectratio>
@@ -1063,8 +1076,8 @@
                         </control>
                         <control type="label">
                             <left>16</left>
-                            <top>256</top>
-                            <width>180</width>
+                            <top>388</top>
+                            <width>268</width>
                             <height>34</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
@@ -1080,7 +1093,7 @@
             <control type="group" id="6004">
                 <visible>String.IsEqual(Window.Property(cleanui.home.rail4.visible),true)</visible>
                 <width>1820</width>
-                <height>362</height>
+                <height>500</height>
                 <control type="label">
                     <left>0</left>
                     <top>0</top>
@@ -1095,7 +1108,7 @@
                     <left>0</left>
                     <top>46</top>
                     <width>1820</width>
-                    <height>316</height>
+                    <height>450</height>
                     <onleft>4004</onleft>
                     <onright>4004</onright>
                     <orientation>horizontal</orientation>
@@ -1104,7 +1117,7 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail4.visible),true)</visible>
                     <onup>4003</onup>
                     <ondown>4005</ondown>
-                    <itemlayout width="308" height="220" condition="String.IsEqual(Window.Property(cleanui.home.rail4.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail4.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail4.style),brand)">
+                    <itemlayout width="368" height="264" condition="String.IsEqual(Window.Property(cleanui.home.rail4.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail4.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail4.style),brand)">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
@@ -1167,27 +1180,27 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </itemlayout>
-                    <itemlayout width="212" height="316" condition="![String.IsEqual(Window.Property(cleanui.home.rail4.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail4.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail4.style),brand)]">
+                    <itemlayout width="300" height="450" condition="![String.IsEqual(Window.Property(cleanui.home.rail4.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail4.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail4.style),brand)]">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
                             <top>8</top>
-                            <width>192</width>
-                            <height>288</height>
+                            <width>280</width>
+                            <height>420</height>
                             <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
-                            <top>252</top>
-                            <width>192</width>
+                            <top>384</top>
+                            <width>280</width>
                             <height>44</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <aspectratio>scale</aspectratio>
@@ -1195,8 +1208,8 @@
                         </control>
                         <control type="label">
                             <left>16</left>
-                            <top>256</top>
-                            <width>180</width>
+                            <top>388</top>
+                            <width>268</width>
                             <height>34</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
@@ -1207,7 +1220,7 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="308" height="220" condition="String.IsEqual(Window.Property(cleanui.home.rail4.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail4.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail4.style),brand)">
+                    <focusedlayout width="368" height="264" condition="String.IsEqual(Window.Property(cleanui.home.rail4.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail4.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail4.style),brand)">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
@@ -1279,20 +1292,20 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </focusedlayout>
-                    <focusedlayout width="212" height="316" condition="![String.IsEqual(Window.Property(cleanui.home.rail4.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail4.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail4.style),brand)]">
+                    <focusedlayout width="300" height="450" condition="![String.IsEqual(Window.Property(cleanui.home.rail4.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail4.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail4.style),brand)]">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <visible>Control.HasFocus(4004)</visible>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FFFFFFFF">white.png</texture>
@@ -1300,15 +1313,15 @@
                         <control type="image">
                             <left>10</left>
                             <top>8</top>
-                            <width>192</width>
-                            <height>288</height>
+                            <width>280</width>
+                            <height>420</height>
                             <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
-                            <top>252</top>
-                            <width>192</width>
+                            <top>384</top>
+                            <width>280</width>
                             <height>44</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <aspectratio>scale</aspectratio>
@@ -1316,8 +1329,8 @@
                         </control>
                         <control type="label">
                             <left>16</left>
-                            <top>256</top>
-                            <width>180</width>
+                            <top>388</top>
+                            <width>268</width>
                             <height>34</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
@@ -1333,7 +1346,7 @@
             <control type="group" id="6005">
                 <visible>String.IsEqual(Window.Property(cleanui.home.rail5.visible),true)</visible>
                 <width>1820</width>
-                <height>362</height>
+                <height>500</height>
                 <control type="label">
                     <left>0</left>
                     <top>0</top>
@@ -1348,7 +1361,7 @@
                     <left>0</left>
                     <top>46</top>
                     <width>1820</width>
-                    <height>316</height>
+                    <height>450</height>
                     <onleft>4005</onleft>
                     <onright>4005</onright>
                     <orientation>horizontal</orientation>
@@ -1357,7 +1370,7 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail5.visible),true)</visible>
                     <onup>4004</onup>
                     <ondown>4006</ondown>
-                    <itemlayout width="308" height="220" condition="String.IsEqual(Window.Property(cleanui.home.rail5.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail5.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail5.style),brand)">
+                    <itemlayout width="368" height="264" condition="String.IsEqual(Window.Property(cleanui.home.rail5.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail5.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail5.style),brand)">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
@@ -1420,27 +1433,27 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </itemlayout>
-                    <itemlayout width="212" height="316" condition="![String.IsEqual(Window.Property(cleanui.home.rail5.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail5.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail5.style),brand)]">
+                    <itemlayout width="300" height="450" condition="![String.IsEqual(Window.Property(cleanui.home.rail5.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail5.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail5.style),brand)]">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
                             <top>8</top>
-                            <width>192</width>
-                            <height>288</height>
+                            <width>280</width>
+                            <height>420</height>
                             <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
-                            <top>252</top>
-                            <width>192</width>
+                            <top>384</top>
+                            <width>280</width>
                             <height>44</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <aspectratio>scale</aspectratio>
@@ -1448,8 +1461,8 @@
                         </control>
                         <control type="label">
                             <left>16</left>
-                            <top>256</top>
-                            <width>180</width>
+                            <top>388</top>
+                            <width>268</width>
                             <height>34</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
@@ -1460,7 +1473,7 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="308" height="220" condition="String.IsEqual(Window.Property(cleanui.home.rail5.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail5.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail5.style),brand)">
+                    <focusedlayout width="368" height="264" condition="String.IsEqual(Window.Property(cleanui.home.rail5.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail5.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail5.style),brand)">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
@@ -1532,20 +1545,20 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </focusedlayout>
-                    <focusedlayout width="212" height="316" condition="![String.IsEqual(Window.Property(cleanui.home.rail5.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail5.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail5.style),brand)]">
+                    <focusedlayout width="300" height="450" condition="![String.IsEqual(Window.Property(cleanui.home.rail5.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail5.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail5.style),brand)]">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <visible>Control.HasFocus(4005)</visible>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FFFFFFFF">white.png</texture>
@@ -1553,15 +1566,15 @@
                         <control type="image">
                             <left>10</left>
                             <top>8</top>
-                            <width>192</width>
-                            <height>288</height>
+                            <width>280</width>
+                            <height>420</height>
                             <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
-                            <top>252</top>
-                            <width>192</width>
+                            <top>384</top>
+                            <width>280</width>
                             <height>44</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <aspectratio>scale</aspectratio>
@@ -1569,8 +1582,8 @@
                         </control>
                         <control type="label">
                             <left>16</left>
-                            <top>256</top>
-                            <width>180</width>
+                            <top>388</top>
+                            <width>268</width>
                             <height>34</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
@@ -1586,7 +1599,7 @@
             <control type="group" id="6006">
                 <visible>String.IsEqual(Window.Property(cleanui.home.rail6.visible),true)</visible>
                 <width>1820</width>
-                <height>362</height>
+                <height>500</height>
                 <control type="label">
                     <left>0</left>
                     <top>0</top>
@@ -1601,7 +1614,7 @@
                     <left>0</left>
                     <top>46</top>
                     <width>1820</width>
-                    <height>316</height>
+                    <height>450</height>
                     <onleft>4006</onleft>
                     <onright>4006</onright>
                     <orientation>horizontal</orientation>
@@ -1610,7 +1623,7 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail6.visible),true)</visible>
                     <onup>4005</onup>
                     <ondown>4007</ondown>
-                    <itemlayout width="308" height="220" condition="String.IsEqual(Window.Property(cleanui.home.rail6.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail6.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail6.style),brand)">
+                    <itemlayout width="368" height="264" condition="String.IsEqual(Window.Property(cleanui.home.rail6.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail6.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail6.style),brand)">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
@@ -1673,27 +1686,27 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </itemlayout>
-                    <itemlayout width="212" height="316" condition="![String.IsEqual(Window.Property(cleanui.home.rail6.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail6.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail6.style),brand)]">
+                    <itemlayout width="300" height="450" condition="![String.IsEqual(Window.Property(cleanui.home.rail6.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail6.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail6.style),brand)]">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
                             <top>8</top>
-                            <width>192</width>
-                            <height>288</height>
+                            <width>280</width>
+                            <height>420</height>
                             <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
-                            <top>252</top>
-                            <width>192</width>
+                            <top>384</top>
+                            <width>280</width>
                             <height>44</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <aspectratio>scale</aspectratio>
@@ -1701,8 +1714,8 @@
                         </control>
                         <control type="label">
                             <left>16</left>
-                            <top>256</top>
-                            <width>180</width>
+                            <top>388</top>
+                            <width>268</width>
                             <height>34</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
@@ -1713,7 +1726,7 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="308" height="220" condition="String.IsEqual(Window.Property(cleanui.home.rail6.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail6.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail6.style),brand)">
+                    <focusedlayout width="368" height="264" condition="String.IsEqual(Window.Property(cleanui.home.rail6.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail6.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail6.style),brand)">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
@@ -1785,20 +1798,20 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </focusedlayout>
-                    <focusedlayout width="212" height="316" condition="![String.IsEqual(Window.Property(cleanui.home.rail6.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail6.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail6.style),brand)]">
+                    <focusedlayout width="300" height="450" condition="![String.IsEqual(Window.Property(cleanui.home.rail6.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail6.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail6.style),brand)]">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <visible>Control.HasFocus(4006)</visible>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FFFFFFFF">white.png</texture>
@@ -1806,15 +1819,15 @@
                         <control type="image">
                             <left>10</left>
                             <top>8</top>
-                            <width>192</width>
-                            <height>288</height>
+                            <width>280</width>
+                            <height>420</height>
                             <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
-                            <top>252</top>
-                            <width>192</width>
+                            <top>384</top>
+                            <width>280</width>
                             <height>44</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <aspectratio>scale</aspectratio>
@@ -1822,8 +1835,8 @@
                         </control>
                         <control type="label">
                             <left>16</left>
-                            <top>256</top>
-                            <width>180</width>
+                            <top>388</top>
+                            <width>268</width>
                             <height>34</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
@@ -1839,7 +1852,7 @@
             <control type="group" id="6007">
                 <visible>String.IsEqual(Window.Property(cleanui.home.rail7.visible),true)</visible>
                 <width>1820</width>
-                <height>362</height>
+                <height>500</height>
                 <control type="label">
                     <left>0</left>
                     <top>0</top>
@@ -1854,7 +1867,7 @@
                     <left>0</left>
                     <top>46</top>
                     <width>1820</width>
-                    <height>316</height>
+                    <height>450</height>
                     <onleft>4007</onleft>
                     <onright>4007</onright>
                     <orientation>horizontal</orientation>
@@ -1862,8 +1875,10 @@
                     <focusposition>0</focusposition>
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail7.visible),true)</visible>
                     <onup>4006</onup>
-                    <ondown>3000</ondown>
-                    <itemlayout width="308" height="220" condition="String.IsEqual(Window.Property(cleanui.home.rail7.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail7.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail7.style),brand)">
+                    <!-- Do not wrap from the final rail to the top menu: that
+                         loses the user's current rail and selection. -->
+                    <ondown>4007</ondown>
+                    <itemlayout width="368" height="264" condition="String.IsEqual(Window.Property(cleanui.home.rail7.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail7.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail7.style),brand)">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
@@ -1926,27 +1941,27 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </itemlayout>
-                    <itemlayout width="212" height="316" condition="![String.IsEqual(Window.Property(cleanui.home.rail7.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail7.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail7.style),brand)]">
+                    <itemlayout width="300" height="450" condition="![String.IsEqual(Window.Property(cleanui.home.rail7.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail7.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail7.style),brand)]">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
                             <top>8</top>
-                            <width>192</width>
-                            <height>288</height>
+                            <width>280</width>
+                            <height>420</height>
                             <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
-                            <top>252</top>
-                            <width>192</width>
+                            <top>384</top>
+                            <width>280</width>
                             <height>44</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <aspectratio>scale</aspectratio>
@@ -1954,8 +1969,8 @@
                         </control>
                         <control type="label">
                             <left>16</left>
-                            <top>256</top>
-                            <width>180</width>
+                            <top>388</top>
+                            <width>268</width>
                             <height>34</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
@@ -1966,7 +1981,7 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="308" height="220" condition="String.IsEqual(Window.Property(cleanui.home.rail7.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail7.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail7.style),brand)">
+                    <focusedlayout width="368" height="264" condition="String.IsEqual(Window.Property(cleanui.home.rail7.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail7.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail7.style),brand)">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
@@ -2038,20 +2053,20 @@
                             <label>$INFO[ListItem.Label]</label>
                         </control>
                     </focusedlayout>
-                    <focusedlayout width="212" height="316" condition="![String.IsEqual(Window.Property(cleanui.home.rail7.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail7.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail7.style),brand)]">
+                    <focusedlayout width="300" height="450" condition="![String.IsEqual(Window.Property(cleanui.home.rail7.style),landscape) | String.IsEqual(Window.Property(cleanui.home.rail7.style),episode) | String.IsEqual(Window.Property(cleanui.home.rail7.style),brand)]">
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FF242424">white.png</texture>
                         </control>
                         <control type="image">
                             <left>6</left>
                             <top>4</top>
-                            <width>200</width>
-                            <height>296</height>
+                            <width>288</width>
+                            <height>428</height>
                             <visible>Control.HasFocus(4007)</visible>
                             <aspectratio>scale</aspectratio>
                             <texture colordiffuse="FFFFFFFF">white.png</texture>
@@ -2059,15 +2074,15 @@
                         <control type="image">
                             <left>10</left>
                             <top>8</top>
-                            <width>192</width>
-                            <height>288</height>
+                            <width>280</width>
+                            <height>420</height>
                             <aspectratio>scale</aspectratio>
                             <texture background="true">$INFO[ListItem.Property(cleanui.display_art)]</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
-                            <top>252</top>
-                            <width>192</width>
+                            <top>384</top>
+                            <width>280</width>
                             <height>44</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <aspectratio>scale</aspectratio>
@@ -2075,8 +2090,8 @@
                         </control>
                         <control type="label">
                             <left>16</left>
-                            <top>256</top>
-                            <width>180</width>
+                            <top>388</top>
+                            <width>268</width>
                             <height>34</height>
                             <visible>!String.IsEqual(ListItem.Property(cleanui.kind),movie) + !String.IsEqual(ListItem.Property(cleanui.kind),show) + !String.IsEqual(ListItem.Property(cleanui.kind),episode) + !String.IsEqual(ListItem.Property(cleanui.kind),video)</visible>
                             <font>font18</font>
@@ -2099,16 +2114,13 @@
             <texture background="true">$INFO[Window.Property(cleanui.hero.logo)]</texture>
             <visible>!String.IsEmpty(Window.Property(cleanui.hero.logo))</visible>
         </control>
-        <control type="label">
+        <control type="image">
             <left>60</left>
-            <top>24</top>
-            <width>220</width>
-            <height>65</height>
-            <font>font32</font>
-            <label>HBO max</label>
-            <textcolor>FFFFFFFF</textcolor>
-            <aligny>center</aligny>
-            <scroll>false</scroll>
+            <top>16</top>
+            <width>120</width>
+            <height>90</height>
+            <aspectratio>keep</aspectratio>
+            <texture>hbo-max-logo.png</texture>
         </control>
         <control type="button" id="3010">
             <left>510</left>
@@ -2123,7 +2135,7 @@
             <focusedcolor>FFFFFFFF</focusedcolor>
             <texturefocus>transparent.png</texturefocus>
             <texturenofocus>transparent.png</texturenofocus>
-            <onleft>3000</onleft>
+            <onleft>3003</onleft>
             <onright>3010</onright>
             <ondown>4000</ondown>
         </control>
@@ -2149,7 +2161,7 @@
             <focusedcolor>FFFFFFFF</focusedcolor>
             <texturefocus>transparent.png</texturefocus>
             <texturenofocus>transparent.png</texturenofocus>
-            <onleft>3000</onleft>
+            <onleft>3003</onleft>
             <onright>3010</onright>
             <ondown>4000</ondown>
         </control>
@@ -2175,7 +2187,7 @@
             <focusedcolor>FFFFFFFF</focusedcolor>
             <texturefocus>transparent.png</texturefocus>
             <texturenofocus>transparent.png</texturenofocus>
-            <onleft>3000</onleft>
+            <onleft>3003</onleft>
             <onright>3010</onright>
             <ondown>4000</ondown>
         </control>
@@ -2201,7 +2213,7 @@
             <focusedcolor>FFFFFFFF</focusedcolor>
             <texturefocus>transparent.png</texturefocus>
             <texturenofocus>transparent.png</texturenofocus>
-            <onleft>3000</onleft>
+            <onleft>3003</onleft>
             <onright>3010</onright>
             <ondown>4000</ondown>
             <visible>String.IsEqual(Window.Property(cleanui.nav.hbo),true)</visible>
@@ -2228,7 +2240,7 @@
             <focusedcolor>FFFFFFFF</focusedcolor>
             <texturefocus>transparent.png</texturefocus>
             <texturenofocus>transparent.png</texturenofocus>
-            <onleft>3000</onleft>
+            <onleft>3003</onleft>
             <onright>3010</onright>
             <ondown>4000</ondown>
             <visible>String.IsEqual(Window.Property(cleanui.nav.kids),true)</visible>
@@ -2243,7 +2255,7 @@
             <visible>Control.HasFocus(3014) | String.IsEqual(Window.Property(cleanui.section),kids)</visible>
         </control>
         <control type="button" id="3011">
-            <left>1370</left>
+            <left>1494</left>
             <top>24</top>
             <width>130</width>
             <height>64</height>
@@ -2255,12 +2267,12 @@
             <focusedcolor>FFFFFFFF</focusedcolor>
             <texturefocus>transparent.png</texturefocus>
             <texturenofocus>transparent.png</texturenofocus>
-            <onleft>3000</onleft>
+            <onleft>3003</onleft>
             <onright>3010</onright>
             <ondown>4000</ondown>
         </control>
         <control type="image">
-            <left>1370</left>
+            <left>1494</left>
             <top>88</top>
             <width>130</width>
             <height>3</height>
@@ -2269,7 +2281,7 @@
             <visible>Control.HasFocus(3011) | String.IsEqual(Window.Property(cleanui.section),search)</visible>
         </control>
         <control type="button" id="3012">
-            <left>1510</left>
+            <left>1634</left>
             <top>24</top>
             <width>135</width>
             <height>64</height>
@@ -2281,12 +2293,12 @@
             <focusedcolor>FFFFFFFF</focusedcolor>
             <texturefocus>transparent.png</texturefocus>
             <texturenofocus>transparent.png</texturenofocus>
-            <onleft>3000</onleft>
+            <onleft>3003</onleft>
             <onright>3010</onright>
             <ondown>4000</ondown>
         </control>
         <control type="image">
-            <left>1510</left>
+            <left>1634</left>
             <top>88</top>
             <width>135</width>
             <height>3</height>
@@ -2295,7 +2307,7 @@
             <visible>Control.HasFocus(3012) | String.IsEqual(Window.Property(cleanui.section),watchlist)</visible>
         </control>
         <control type="button" id="3003">
-            <left>1660</left>
+            <left>1784</left>
             <top>24</top>
             <width>76</width>
             <height>64</height>
@@ -2307,12 +2319,12 @@
             <focusedcolor>FFFFFFFF</focusedcolor>
             <texturefocus>transparent.png</texturefocus>
             <texturenofocus>transparent.png</texturenofocus>
-            <onleft>3000</onleft>
+            <onleft>3012</onleft>
             <onright>3010</onright>
             <ondown>4000</ondown>
         </control>
         <control type="image">
-            <left>1660</left>
+            <left>1784</left>
             <top>88</top>
             <width>76</width>
             <height>3</height>
@@ -2320,34 +2332,8 @@
             <texture>white.png</texture>
             <visible>Control.HasFocus(3003) | String.IsEqual(Window.Property(cleanui.section),profile)</visible>
         </control>
-        <control type="button" id="3000">
-            <left>1770</left>
-            <top>24</top>
-            <width>70</width>
-            <height>64</height>
-            <font>font24</font>
-            <label>⋯</label>
-            <align>center</align>
-            <aligny>center</aligny>
-            <textcolor>FFDDDDDD</textcolor>
-            <focusedcolor>FFFFFFFF</focusedcolor>
-            <texturefocus>transparent.png</texturefocus>
-            <texturenofocus>transparent.png</texturenofocus>
-            <onleft>3000</onleft>
-            <onright>3010</onright>
-            <ondown>4000</ondown>
-        </control>
         <control type="image">
-            <left>1770</left>
-            <top>88</top>
-            <width>70</width>
-            <height>3</height>
-            <aspectratio>stretch</aspectratio>
-            <texture>white.png</texture>
-            <visible>Control.HasFocus(3000) | String.IsEqual(Window.Property(cleanui.section),menu)</visible>
-        </control>
-        <control type="image">
-            <left>1668</left>
+            <left>1792</left>
             <top>28</top>
             <width>60</width>
             <height>60</height>
@@ -2355,7 +2341,7 @@
             <texture diffuse="circle-mask.png" background="true">$INFO[Window.Property(cleanui.profile.avatar)]</texture>
         </control>
         <control type="image">
-            <left>1665</left>
+            <left>1789</left>
             <top>25</top>
             <width>66</width>
             <height>66</height>

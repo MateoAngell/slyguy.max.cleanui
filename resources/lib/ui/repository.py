@@ -41,7 +41,9 @@ def cached_screen(seconds, copy_models=True):
             result = method(self, *args, **kwargs)
             self._cache[key] = (monotonic(), _copy_screen(result) if copy_models else result)
             self._cache.move_to_end(key)
-            while len(self._cache) > 12:
+            # Keep only the active navigation neighborhood on low-memory TV
+            # hardware. History owns the models required for Back.
+            while len(self._cache) > 6:
                 self._cache.popitem(last=False)
             return result
         return wrapped
@@ -112,7 +114,17 @@ class UIRepository(object):
     @cached_screen(60 * 2)
     def build_collection(self, id, title, page=1):
         data = self.api.collection(id, page=page)
-        cards = self._cards_from_rows(data.get('items', []))
+        rows = data.get('items') or []
+        # Some collection IDs are landing pages containing more collections,
+        # not media. Treating them as posters yields an empty-looking grid.
+        if any(isinstance(row, dict) and row.get('collection') for row in rows):
+            return self._screen_from_page(
+                data,
+                Screen.COLLECTION,
+                title or data.get('title') or '',
+                'collection',
+            )
+        cards = self._cards_from_rows(rows)
         self._add_next_page(cards, data, 'collection', (id, title, page + 1))
         rails = []
         if cards:
@@ -437,6 +449,17 @@ class UIRepository(object):
             return None
 
         mediatype = info.get('mediatype')
+        # Cached/incomplete SlyGuy items may say ``video`` while the source
+        # row still identifies a normal series.  Prefer that authoritative
+        # identity so a series card cannot accidentally start playback.
+        show_type = str((data or {}).get('showType') or '').upper()
+        video_type = str((data or {}).get('videoType') or '').upper()
+        if (
+            mediatype in (None, 'video')
+            and show_type in ('SERIES', 'TOPICAL', 'MINISERIES')
+            and video_type != 'EPISODE'
+        ):
+            mediatype = 'tvshow'
         data = self._row_data(row)
         content_id = data.get('id') if data else None
 
@@ -459,7 +482,7 @@ class UIRepository(object):
             if row:
                 self._raw_items[deeplink_id] = row
                 self._raw_items.move_to_end(deeplink_id)
-                while len(self._raw_items) > 500:
+                while len(self._raw_items) > 160:
                     self._raw_items.popitem(last=False)
 
         elif mediatype == 'tvshow':
@@ -618,7 +641,7 @@ class UIRepository(object):
         )
 
     def _cards_from_rows(self, rows, from_search=False,
-                         from_watchlist=False):
+                         from_watchlist=False, limit=None, kind=None):
         cards = []
         self._check_profile()
         for row in rows or []:
@@ -631,8 +654,10 @@ class UIRepository(object):
             except (KeyError, TypeError, ValueError, AttributeError):
                 xbmc.log('[CLEANUI] Skipped incomplete catalog item', xbmc.LOGWARNING)
                 continue
-            if card is not None:
+            if card is not None and (kind is None or card.kind == kind):
                 cards.append(card)
+                if limit is not None and len(cards) >= limit:
+                    break
         return cards
 
     @staticmethod
@@ -756,7 +781,10 @@ class UIRepository(object):
             scanned += 1
             items = collection.get('items') or []
             if not items and collection.get('id'):
-                if fetched >= 2:
+                # Max often supplies Home as lightweight category references.
+                # Resolve enough of them to fill the visible TV rails instead
+                # of exposing only the first two categories.
+                if fetched >= C.MAX_RAILS_HOME - 1:
                     next_offset = index
                     break
                 fetched += 1
@@ -765,10 +793,9 @@ class UIRepository(object):
                 except Exception:
                     xbmc.log('[CLEANUI] Collection unavailable', xbmc.LOGWARNING)
                     continue
-            # Preview a bounded number of cards; full collections remain reachable.
-            cards = self._cards_from_rows(items[:20])
-            if kind:
-                cards = [card for card in cards if card.kind == kind]
+            # Filter first, then cap the preview.  Capping before filtering can
+            # make a valid category look empty when its first rows are promos.
+            cards = self._cards_from_rows(items, limit=20, kind=kind)
             if not cards:
                 continue
             component = (collection.get('component') or {}).get('id')
@@ -795,7 +822,10 @@ class UIRepository(object):
         route = selected or (routes[0] if routes else None)
         if not route:
             return Screen(Screen.COLLECTION, title=title, screen_kind=screen_kind)
-        return self.build_route_page(route, 0, None if selected else kind, title, screen_kind)
+        # A sparse dedicated route is still the service's Series/Movies page.
+        # Do not substitute Home: that mixes categories and hides its order.
+        return self.build_route_page(route, 0, None if selected else kind,
+                                     title, screen_kind)
 
 # Alias para compatibilidad con el controlador
 Repository = UIRepository

@@ -1,5 +1,6 @@
 """Finish Kodi directory requests independently of the visual script."""
 import json
+import time
 import uuid
 from urllib.parse import quote, unquote
 
@@ -9,6 +10,7 @@ import xbmcgui
 from slyguy import plugin
 
 RUNNING = 'MaxCleanUI.Running'
+RUNNING_SINCE = 'MaxCleanUI.RunningSince'
 METHODS = {'open_home', 'open_movie', 'open_show', 'open_season', 'open_search'}
 
 
@@ -16,14 +18,18 @@ def run(method, *args):
     if method not in METHODS:
         raise ValueError('Unsupported Clean UI entry')
     owner = xbmcgui.Window(10000)
-    folder = plugin.Folder(cacheToDisc=False)
-    # Re-enter the UI, never special://home (Kodi's internal addon files).
-    folder.add_item(label='Abrir HBO Max Clean UI',
-                    path='plugin://slyguy.max.cleanui/', bookmark=False)
-    if owner.getProperty(RUNNING):
+    # Complete the directory request silently; the UI opens automatically.
+    folder = plugin.Folder(cacheToDisc=False, no_items_label=None, show_news=False)
+    active = owner.getProperty(RUNNING)
+    # The controller remains alive while Kodi owns playback and its own
+    # windows are intentionally closed.  Visibility is therefore not a
+    # liveness check: clearing this token here can start a second profile UI
+    # on top of a returning detail screen.  launch() owns token cleanup.
+    if active:
         return folder
     token = uuid.uuid4().hex
     owner.setProperty(RUNNING, token)
+    owner.setProperty(RUNNING_SINCE, str(time.time()))
     payload = quote(json.dumps([method, args, token]), safe='')
     # Run the addon library extension by ID so Kodi supplies its dependency
     # paths and addon identity. Running a loose .py loses that context.
@@ -34,6 +40,7 @@ def run(method, *args):
     except Exception:
         if owner.getProperty(RUNNING) == token:
             owner.clearProperty(RUNNING)
+            owner.clearProperty(RUNNING_SINCE)
         raise
     return folder
 
@@ -52,8 +59,6 @@ def launch(payload):
         core.before_dispatch()
         from .controller import UIController
         controller = UIController()
-        if method == 'open_home' and not controller.select_start_profile():
-            return
         getattr(controller, method)(*args)
     finally:
         try:
@@ -62,3 +67,4 @@ def launch(payload):
         finally:
             if owner.getProperty(RUNNING) == token:
                 owner.clearProperty(RUNNING)
+                owner.clearProperty(RUNNING_SINCE)

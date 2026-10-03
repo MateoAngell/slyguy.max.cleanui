@@ -40,24 +40,34 @@ class ProfileWindow(xbmcgui.WindowXMLDialog):
             self.close()
 
     def onAction(self, action):
-        if action.getId() in C.ACTION_BACK:
+        action_id = action.getId()
+        if action_id in C.ACTION_BACK:
             self.close()
 
 
-def choose_profile(addon_path):
+def available_profiles():
+    """Return service profiles in the shape used by both profile UIs."""
     import resources.lib.plugin as core
-    if userdata.get('kid_lockdown', False):
-        return False
     with gui.busy():
         profiles = [dict(p) for p in core.api.profiles() if p.get('id')]
     for profile in profiles:
         profile['_avatar'] = ((profile.get('avatar') or {}).get('avatarImage') or {}).get('src') or ''
-    if not profiles:
+    return profiles
+
+
+def choose_profile(addon_path, profile=None):
+    import resources.lib.plugin as core
+    if userdata.get('kid_lockdown', False):
         return False
-    window = ProfileWindow('ui_profiles.xml', addon_path, 'Default', '1080i', profiles=profiles)
-    window.doModal()
-    selected = window.selected
-    del window
+    selected = profile
+    if selected is None:
+        profiles = available_profiles()
+        if not profiles:
+            return False
+        window = ProfileWindow('ui_profiles.xml', addon_path, 'Default', '1080i', profiles=profiles)
+        window.doModal()
+        selected = window.selected
+        del window
     if selected is None:
         return False
     if selected.get('id') != (userdata.get('profile') or {}).get('id'):

@@ -14,10 +14,10 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
         self.controller = kw.pop('controller', None)
         self.screen = kw.pop('screen', None)
         self.screen_kind = kw.pop('screen_kind', 'home')
+        self.initial_loader = kw.pop('initial_loader', None)
         super(HomeWindow, self).__init__(*a, **kw)
         self._last_focus_key = None
         self._last_activation = None
-        self._menu_block_until = 0
         self._profile_block_until = 0
 
     def onInit(self):
@@ -25,6 +25,13 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
         # no aquí: retirarla en onInit dejaría la ventana de Vídeos expuesta
         # durante los frames en que la nueva ventana aún no se compone.
         try:
+            if self.screen is None and self.initial_loader:
+                self.setProperty('cleanui.home.loading', 'true')
+                self.screen = self.initial_loader()
+                self.setProperty('cleanui.home.loading', '')
+                if self.screen is None:
+                    self.close()
+                    return
             self._populate()
             if not self._restore_state():
                 self._focus_first()
@@ -32,6 +39,7 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
             self._last_focus_key = None
             self._refresh_hero_from_focus()
         except Exception:
+            self.setProperty('cleanui.home.loading', '')
             self._log_error('onInit')
             if self.controller:
                 self.controller.end_transition()
@@ -191,7 +199,7 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
             self.setProperty('cleanui.nav.' + key, 'true' if key in targets else 'false')
         header = [C.CONTROL_HOME, C.CONTROL_SERIES, C.CONTROL_MOVIES]
         header += [cid for key, cid in (('hbo', C.CONTROL_HBO), ('kids', C.CONTROL_KIDS)) if key in targets]
-        header += [C.CONTROL_SEARCH, C.CONTROL_MY_LIST, C.CONTROL_PROFILE, C.CONTROL_MENU]
+        header += [C.CONTROL_SEARCH, C.CONTROL_MY_LIST, C.CONTROL_PROFILE]
         for i, cid in enumerate(header):
             try:
                 control = self.getControl(cid)
@@ -264,12 +272,6 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
             except RuntimeError:
                 pass
 
-        # 4101 sustituye a 4001 fuera de Home.
-        try:
-            self.getControl(4101).reset()
-        except RuntimeError:
-            pass
-
         if not self.screen:
             return
 
@@ -303,8 +305,8 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
             # rails do not reserve the taller poster rows' empty space.
             wide = effective_style in ('landscape', 'brand', 'episode')
             try:
-                self.getControl(6000 + index).setHeight(266 if wide else 362)
-                control.setHeight(220 if wide else 316)
+                self.getControl(6000 + index).setHeight(310 if wide else 500)
+                control.setHeight(264 if wide else 450)
             except (RuntimeError, AttributeError):
                 pass
 
@@ -401,7 +403,7 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
             except RuntimeError:
                 continue
         try:
-            self.setFocus(self.getControl(C.CONTROL_MENU))
+            self.setFocus(self.getControl(C.CONTROL_PROFILE))
         except RuntimeError:
             pass
 
@@ -491,23 +493,9 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
         # Algunas tarjetas no incluyen fondo propio. No dejar el fondo vacío
         # porque una ventana modal transparente puede mostrar la pantalla
         # padre con sus rails como si fuese una imagen estática.
-        if not fanart and self.screen and self.screen.hero:
-            fallback_art = self.screen.hero.art or {}
-            fanart = (
-                fallback_art.get('fanart')
-                or fallback_art.get('fanart1')
-                or fallback_art.get('banner')
-                or fallback_art.get('thumb')
-                or fallback_art.get('keyart')
-                or fallback_art.get('poster')
-                or ''
-            )
+        # Do not borrow another card's artwork when this card has no fanart.
         # Si la pantalla ya tiene un fondo válido, conservarlo antes que
         # establecer una textura vacía.
-        if not fanart:
-            fanart = self.getProperty(
-                '{}.hero.fanart'.format(prefix)
-            ) or ''
         self.setProperty(
             '{}.hero.fanart'.format(prefix),
             fanart,
@@ -592,15 +580,28 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
         self._refresh_hero_from_focus()
 
     def onClick(self, control_id):
-        if (
+        is_rail = (
             C.CONTROL_RAIL_FIRST
             <= control_id
             < C.CONTROL_RAIL_FIRST + C.MAX_RAILS_HOME
             or control_id == 4101
-        ):
+        )
+        is_header = control_id in (
+            C.CONTROL_HOME, C.CONTROL_SERIES, C.CONTROL_MOVIES,
+            C.CONTROL_HBO, C.CONTROL_KIDS, C.CONTROL_SEARCH,
+            C.CONTROL_MY_LIST, C.CONTROL_PROFILE,
+        )
+        if is_rail:
             self._last_focus_key = None
             self._refresh_hero_from_focus()
-        self._activate_control(control_id)
+        if is_rail or is_header:
+            # Kodi emits onClick for the control that the remote actually
+            # activated.  Do not also consume ACTION_SELECT: it is the same
+            # physical press and can arrive after focus has moved.
+            self._activate_control(
+                control_id,
+                card=self._selected_card(control_id) if is_rail else None,
+            )
 
     def onAction(self, action):
         action_id = action.getId()
@@ -634,16 +635,11 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
         # Kodi need not emit onFocus when staying within the same container.
         self._refresh_hero_from_focus()
 
-        if action_id in C.ACTION_MENU:
-            self._activate_control(C.CONTROL_MENU)
-            return
+        # onClick owns activation.  onAction only observes navigation/back;
+        # handling ACTION_SELECT here as well caused duplicate and phantom
+        # opens when Kodi delivered both callbacks for one remote press.
 
-        # SELECT and mouse clicks are activated exclusively by onClick.
-        # Kodi queues onClick and then onAction for one press; if opening a
-        # screen is slow, a time-based guard expires before that second event
-        # and can reopen it (or activate a different control after replacement).
-
-    def _activate_control(self, control_id):
+    def _activate_control(self, control_id, card=None):
         if control_id in (C.CONTROL_HOME, C.CONTROL_SEARCH, C.CONTROL_MY_LIST,
                           C.CONTROL_HBO, C.CONTROL_KIDS):
             if not self.controller or self._is_duplicate_activation(control_id):
@@ -668,8 +664,7 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
             # usado para confirmar el perfil cuando Home recupera el control.
             self._profile_block_until = now + 1.0
             try:
-                if self.controller:
-                    self.controller.select_profile(self)
+                self._open_profile_menu()
             finally:
                 # Bloquear tanto el onClick tardío como el SELECT residual.
                 finished_at = time.monotonic()
@@ -694,7 +689,8 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
                 self.controller.open_series(self)
             return
 
-        if control_id == C.CONTROL_MENU:
+        # Kept defensive for legacy skin callbacks; current XML has no menu control.
+        if False and control_id == C.CONTROL_MENU:
             now = time.monotonic()
             if now < self._menu_block_until:
                 return
@@ -726,7 +722,7 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
         if self._is_duplicate_activation(control_id):
             return
 
-        card = self._selected_card(control_id)
+        card = card or self._selected_card(control_id)
 
         if not card:
             return
@@ -746,6 +742,16 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
         try:
             if card.kind == 'page' and self.controller:
                 self.controller.open_next_page(card, self)
+                return
+            # A cached/incomplete row can carry a playable path while still
+            # identifying a show.  Identity wins: open its detail screen.
+            if (
+                card.show_id
+                and not card.season_id
+                and card.kind == C.KIND_VIDEO
+                and self.controller
+            ):
+                self.controller.open_show(card.show_id)
                 return
             if card.kind in (C.KIND_EPISODE, C.KIND_VIDEO):
                 self._play(card.play_path)
@@ -832,6 +838,29 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
             )
         )
 
+    def _open_profile_menu(self):
+        """Mirror Max's avatar menu using only SlyGuy-backed actions."""
+        if not self.controller:
+            return
+        from .profile_window import available_profiles
+        from .choice_window import choose
+        profiles = available_profiles()
+        if not profiles:
+            return
+        options = [profile.get('profileName') or '' for profile in profiles]
+        options += ['Ajustes', 'Cerrar sesión']
+        choice = choose(self.controller.addon_path, 'Perfil', options)
+        if choice < 0:
+            return
+        if choice < len(profiles):
+            self.controller.select_profile(self, profiles[choice])
+            return
+        if choice == len(profiles):
+            xbmc.executebuiltin('Addon.OpenSettings(slyguy.max.cleanui)')
+            return
+        import resources.lib.plugin as core
+        self.controller.run_plugin_after_close(core.plugin.url_for(core.logout))
+
     def _open_menu(self):
         options = [
             'Buscar',
@@ -897,10 +926,6 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
                 ).reset()
             except Exception:
                 pass
-        try:
-            self.getControl(4101).reset()
-        except Exception:
-            pass
         for name in (
             'hero.title',
             'hero.fanart',

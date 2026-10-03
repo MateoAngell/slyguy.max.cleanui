@@ -17,6 +17,9 @@ class ChoiceWindow(xbmcgui.WindowXMLDialog):
         self.setFocus(control)
 
     def onClick(self, cid):
+        self._activate_click(cid)
+
+    def _activate_click(self, cid):
         if cid == 4100:
             index = self.getControl(cid).getSelectedPosition()
             if 0 <= index < len(self.options):
@@ -24,7 +27,8 @@ class ChoiceWindow(xbmcgui.WindowXMLDialog):
                 self.close()
 
     def onAction(self, action):
-        if action.getId() in C.ACTION_BACK:
+        action_id = action.getId()
+        if action_id in C.ACTION_BACK:
             self.close()
 
 

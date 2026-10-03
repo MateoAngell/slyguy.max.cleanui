@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window type="dialog" id="13002">
-    <defaultcontrol>4100</defaultcontrol>
     <backgroundcolor>FF080B0E</backgroundcolor>
     <controls>
+        <!-- Dialog backgroundcolor does not cover the parent Kodi window. -->
+        <control type="image">
+            <left>0</left><top>0</top><width>1920</width><height>1080</height>
+            <aspectratio>stretch</aspectratio>
+            <texture colordiffuse="FF080B0E">white.png</texture>
+        </control>
         <control type="image">
             <left>0</left>
             <top>0</top>

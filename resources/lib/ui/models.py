@@ -87,3 +87,4 @@ class Screen(object):
 
     def __repr__(self):
         return '<Screen type={} rails={}>'.format(self.screen_type, len(self.rails))
+

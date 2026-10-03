@@ -502,6 +502,11 @@ class DetailWindow(xbmcgui.WindowXMLDialog):
             self.close()
 
     def onClick(self, cid):
+        # Native click is the sole activation path.  Kodi calls onAction for
+        # the same remote press too; dispatching both can open a second page.
+        self._activate_click(cid)
+
+    def _activate_click(self, cid):
         if cid == 1004:
             seasons = getattr(self.screen, 'season_choices', [])
             if not seasons or not self.controller:
@@ -554,10 +559,8 @@ class DetailWindow(xbmcgui.WindowXMLDialog):
             self._close_current_window()
             return
 
-        # WindowXML delivers native button/list activation through onClick
-        # before its Python onAction callback. Opening a child can take long
-        # enough to outlive the click debounce, so handling SELECT here too
-        # can open the same season twice or pop two pages on Back.
+        # Do not dispatch ACTION_SELECT.  It accompanies onClick for a native
+        # control activation and would duplicate a slow child transition.
 
     def _open_selected(self, cid):
         try:

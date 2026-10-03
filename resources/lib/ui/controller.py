@@ -68,6 +68,7 @@ class UIController(object):
         self._closing_all_windows = False
         self._quit_issued = False
         self._transition_release_target = None
+        self._playback_generation = 0
 
     def _show_error(self, context):
         error = traceback.format_exc()
@@ -241,6 +242,15 @@ class UIController(object):
                 self._windows.remove(window)
         # Este código está fuera del finally para no ocultar excepciones.
         if self._windows:
+            if (
+                self._closing_all_windows
+                and self._pending_playback
+                and len(self._windows) == 1
+                and isinstance(self._windows[0], HomeWindow)
+            ):
+                self._closing_all_windows = False
+                self._drain_pending_playback()
+                return
             # La hija terminó su doModal(), pero no se retira la cortina
             # todavía. Kodi debe devolver foco a la ventana padre; onFocus() de
             # esa ventana notificará al controlador y liberará la cortina sin
@@ -409,8 +419,10 @@ class UIController(object):
             'path': path,
             'screens': screens,
         }
-
-        self.begin_transition()
+        # Close every Clean UI modal before handing the path to Kodi. Keeping
+        # a dialog alive here can leave video playing underneath the old
+        # cover/detail window on slower devices. The captured screen models
+        # are restored after playback without another network request.
         self._close_all_windows()
         return True
 
@@ -566,361 +578,37 @@ class UIController(object):
                 break
             xbmc.sleep(100)
 
-    def _run_player(self, path):
-        player = xbmc.Player()
-        monitor = xbmc.Monitor()
-        safe_path = path.replace('"', '\\"')
+    def _log_resource_counts(self, stage, saved_screens=None):
+        # One summary per transition, no titles, URLs, account data or timers.
+        import threading
+        screens = [getattr(w, 'screen', None) for w in self._windows]
+        screens.extend(entry[0] for entry in self._home_stack)
+        screens.extend(saved_screens or [])
+        screens.extend((self._pending_playback or {}).get('screens') or [])
+        if self._restored_stack:
+            screens.extend(self._restored_stack)
+        unique = {id(s): s for s in screens if s is not None}
+        cards = {id(card) for screen in unique.values()
+                 for rail in getattr(screen, 'rails', []) for card in rail.items}
+        xbmc.log('[CLEANUI][RESOURCES] {} windows={} screens={} cards={} threads={} cache={}'.format(
+            stage, len(self._windows), len(unique), len(cards),
+            threading.active_count(), len(getattr(self.repository, '_cache', {}))), xbmc.LOGDEBUG)
 
-        xbmc.log(
-            '[CLEANUI] Todas las ventanas se cerraron; '
-            'preparando reproduccion: {}'.format(safe_path),
-            xbmc.LOGINFO,
-        )
-
-        playback_started = False
-
+    def _run_player(self, path, screens=None):
+        from .playback import observe_playback
+        self._log_resource_counts('before_playback', screens)
         try:
-            xbmc.sleep(100)
-
-            self._close_busy_dialogs(
-                'antes de PlayMedia',
-                write_log=False,
+            return observe_playback(
+                path, on_started=self.end_transition,
+                cancelled=lambda: self.exit_requested,
             )
-
-            xbmc.log(
-                '[CLEANUI] Ejecutando PlayMedia(plugin://...)',
-                xbmc.LOGINFO,
-            )
-
-            xbmc.executebuiltin(
-                'PlayMedia("{}",0)'.format(safe_path),
-                True,
-            )
-
-            # Wait for Kodi's resume dialog and plugin resolution themselves.
-            # Cancel returns without a player; do not wait another 60 seconds.
-            if not self._player_is_playing(player):
-                xbmc.log('[CLEANUI] PlayMedia terminó sin reproducción; '
-                         'restaurando la pantalla guardada', xbmc.LOGINFO)
-                return False
-
-            video_ready_ticks = 0
-            first_video_tick = None
-            fullscreen_ready = False
-            fullscreen_attempts = 0
-            next_fullscreen_attempt = 0
-
-            for tick in range(600):
-                if monitor.abortRequested():
-                    return False
-
-                try:
-                    playing_video = player.isPlayingVideo()
-                    playing = playing_video or player.isPlaying()
-                except Exception:
-                    playing_video = False
-                    playing = False
-
-                has_video = xbmc.getCondVisibility('Player.HasVideo')
-
-                fullscreen_visible = xbmc.getCondVisibility(
-                    'Window.IsVisible(fullscreenvideo)'
-                )
-
-                video_ready = playing_video or (playing and has_video)
-
-                if video_ready:
-                    video_ready_ticks += 1
-                else:
-                    video_ready_ticks = 0
-
-                if video_ready and fullscreen_visible:
-                    playback_started = True
-                    fullscreen_ready = True
-                    break
-
-                if video_ready_ticks >= 3:
-                    playback_started = True
-
-                    if first_video_tick is None:
-                        first_video_tick = tick
-                        next_fullscreen_attempt = tick + 5
-                        xbmc.log(
-                            '[CLEANUI] Kodi confirma video real; '
-                            'esperando fullscreenvideo',
-                            xbmc.LOGINFO,
-                        )
-
-                    if (
-                        not fullscreen_visible
-                        and fullscreen_attempts < 2
-                        and tick >= next_fullscreen_attempt
-                    ):
-                        fullscreen_attempts += 1
-                        xbmc.log(
-                            '[CLEANUI] Solicitando fullscreenvideo '
-                            '(intento {}/2)'.format(fullscreen_attempts),
-                            xbmc.LOGINFO,
-                        )
-                        xbmc.executebuiltin(
-                            'ActivateWindow(fullscreenvideo)'
-                        )
-                        next_fullscreen_attempt = tick + 30
-
-                if (
-                    first_video_tick is not None
-                    and tick - first_video_tick >= 120
-                ):
-                    xbmc.log(
-                        '[CLEANUI] El video comenzo pero fullscreenvideo '
-                        'no pudo hacerse visible',
-                        xbmc.LOGWARNING,
-                    )
-                    break
-
-                xbmc.sleep(100)
-
-            if not fullscreen_ready:
-                if (
-                    self._player_is_playing(player)
-                    or self._player_has_media()
-                ):
-                    self._stop_player_safely(
-                        player,
-                        'fullscreenvideo no disponible durante el arranque',
-                    )
-                else:
-                    xbmc.log(
-                        '[CLEANUI] La reproduccion no comenzo dentro '
-                        'del tiempo limite',
-                        xbmc.LOGWARNING,
-                    )
-                return False
-
-            xbmc.log(
-                '[CLEANUI] fullscreenvideo visible y disponible para el mando',
-                xbmc.LOGINFO,
-            )
-
-            self.end_transition()
-
-            self._close_busy_dialogs(
-                'fullscreenvideo visible',
-                write_log=True,
-            )
-
-            hidden_since = None
-            last_recovery = 0.0
-            recovery_attempts = 0
-            stopped_ticks = 0
-            closing_transition_started = False
-            next_busy_check = time.monotonic() + 5.0
-            prev_state = None
-
-            while not monitor.abortRequested():
-                try:
-                    playing_video = player.isPlayingVideo()
-                    playing = playing_video or player.isPlaying()
-                except Exception:
-                    playing_video = False
-                    playing = False
-
-                has_video = xbmc.getCondVisibility('Player.HasVideo')
-                has_audio = xbmc.getCondVisibility('Player.HasAudio')
-                has_media = (
-                    xbmc.getCondVisibility('Player.HasMedia')
-                    or has_video
-                    or has_audio
-                )
-                fullscreen_visible = xbmc.getCondVisibility(
-                    'Window.IsVisible(fullscreenvideo)'
-                )
-
-                current_state = (
-                    playing,
-                    playing_video,
-                    has_media,
-                    has_video,
-                    has_audio,
-                    fullscreen_visible,
-                )
-
-                if current_state != prev_state:
-                    xbmc.log(
-                        '[CLEANUI] Estado de reproduccion: '
-                        'playing={} playing_video={} has_media={} '
-                        'has_video={} has_audio={} fullscreen={}'.format(
-                            playing,
-                            playing_video,
-                            has_media,
-                            has_video,
-                            has_audio,
-                            fullscreen_visible,
-                        ),
-                        xbmc.LOGINFO,
-                    )
-                    prev_state = current_state
-
-                # Después de detener el vídeo, Android TV puede conservar
-                # Player.HasMedia=True durante bastante tiempo. Lo importante es que
-                # ya no esté reproduciendo y fullscreenvideo haya desaparecido.
-                if not playing and not fullscreen_visible:
-                    if not closing_transition_started:
-                        # Cubrir Videos desde la primera señal de cierre. Las
-                        # muestras siguientes confirman que no fue transitoria.
-                        self.begin_transition()
-                        closing_transition_started = True
-                    stopped_ticks += 1
-                else:
-                    if closing_transition_started:
-                        # Falso positivo transitorio: el reproductor volvió.
-                        self.end_transition()
-                        closing_transition_started = False
-                    stopped_ticks = 0
-
-                if playing and not fullscreen_visible:
-                    now = time.monotonic()
-                    if hidden_since is None:
-                        hidden_since = now
-                    hidden_for = now - hidden_since
-                    if (
-                        recovery_attempts < 2
-                        and hidden_for >= (1.0 if recovery_attempts == 0 else 4.0)
-                        and now - last_recovery >= 2.0
-                    ):
-                        recovery_attempts += 1
-                        last_recovery = now
-                        xbmc.log(
-                            '[CLEANUI] Video oculto; recuperando '
-                            'fullscreenvideo ({}/2)'.format(recovery_attempts),
-                            xbmc.LOGINFO,
-                        )
-                        xbmc.executebuiltin(
-                            'ActivateWindow(fullscreenvideo)'
-                        )
-                    if hidden_for >= 8.0:
-                        xbmc.log(
-                            '[CLEANUI] No se pudo recuperar fullscreenvideo; '
-                            'deteniendo antes de restaurar Clean UI',
-                            xbmc.LOGWARNING,
-                        )
-                        self._stop_player_safely(
-                            player,
-                            'video oculto detras de la interfaz',
-                        )
-                        break
-                else:
-                    hidden_since = None
-                    recovery_attempts = 0
-
-                if stopped_ticks >= 2:
-                    xbmc.log(
-                        '[CLEANUI] Reproductor cerrado; iniciando restauracion',
-                        xbmc.LOGINFO,
-                    )
-                    break
-
-                now = time.monotonic()
-                if now >= next_busy_check:
-                    next_busy_check = now + 5.0
-                    if (
-                        fullscreen_visible
-                        and (playing or has_media)
-                        and self._busy_dialog_visible()
-                    ):
-                        self._close_busy_dialogs(
-                            'vigilancia durante reproduccion',
-                            write_log=False,
-                        )
-
-                xbmc.sleep(100)
-
-            return playback_started
-
-        except Exception:
-            if (
-                self._player_is_playing(player)
-                or self._player_has_media()
-            ):
-                self._stop_player_safely(
-                    player,
-                    'excepcion dentro de _run_player',
-                )
-            raise
-
         finally:
-            self._close_busy_dialogs(
-                'salida del reproductor',
-                write_log=False,
-            )
+            self._log_resource_counts('after_playback', screens)
 
     def _wait_before_restore(self):
-        """
-        Espera brevemente a que fullscreenvideo desaparezca.
-        No bloquea la restauración durante 10-20 segundos por propiedades
-        Player.HasMedia obsoletas, algo frecuente en Android TV.
-        """
-        player = xbmc.Player()
-        monitor = xbmc.Monitor()
-        xbmc.log(
-            '[CLEANUI] Comprobando cierre del reproductor antes de restaurar',
-            xbmc.LOGINFO,
-        )
-
-        clean_ticks = 0
-        stopped_ticks = 0
-        # Máximo aproximado: 1 segundo.
-        for unused in range(10):
-            if monitor.abortRequested():
-                return False
-
-            playing = self._player_is_playing(player)
-            fullscreen_visible = xbmc.getCondVisibility(
-                'Window.IsVisible(fullscreenvideo)'
-            )
-
-            # El reproductor ya no reproduce y fullscreenvideo desapareció.
-            if not playing and not fullscreen_visible:
-                stopped_ticks += 1
-            else:
-                stopped_ticks = 0
-
-            # Player.HasMedia puede quedar obsoleto en Android TV. Dos muestras
-            # sin reproducción y sin fullscreenvideo bastan para restaurar.
-            if not playing and not fullscreen_visible:
-                clean_ticks += 1
-            else:
-                clean_ticks = 0
-
-            if clean_ticks >= 2:
-                break
-
-            xbmc.sleep(100)
-
-        self._close_busy_dialogs(
-            'antes de restaurar navegacion',
-            write_log=False,
-        )
-
-        if monitor.abortRequested():
-            return False
-
-        # Al vencer el timeout, no restaurar encima de un reproductor aún activo.
-        if playing or fullscreen_visible:
-            xbmc.log(
-                '[CLEANUI] Timeout de restauracion: el reproductor sigue '
-                'activo (playing={}, fullscreen={}); no se restaura'.format(
-                    playing, fullscreen_visible
-                ),
-                xbmc.LOGWARNING,
-            )
-            return False
-
-        xbmc.log(
-            '[CLEANUI] Cierre comprobado; restaurando interfaz inmediatamente',
-            xbmc.LOGINFO,
-        )
-        return True
+        # observe_playback already received a terminal event. Do not inspect
+        # fullscreen or close global Kodi dialogs during restoration.
+        return not xbmc.Monitor().abortRequested()
 
     def _drain_pending_playback(self):
         if self._processing_playback:
@@ -948,7 +636,7 @@ class UIController(object):
                 )
 
                 try:
-                    self._run_player(path)
+                    self._run_player(path, screens)
                 except Exception:
                     xbmc.log(
                         '[CLEANUI] Error durante la reproduccion:\n{}'.format(
@@ -1124,20 +812,21 @@ class UIController(object):
     def open_home(self):
         try:
             timer = PerfTimer('open_home')
-            with gui.busy():
-                screen = self.repository.build_home()
-            timer.mark('build_home')
-
+            # Profile selection must complete before Home exists.  Closing a
+            # nested modal can otherwise pass its SELECT event to Home's first
+            # focused card.
+            if not self.select_start_profile():
+                return False
             window = HomeWindow(
                 'uihome.xml',
                 self.addon_path,
                 'Default',
                 '1080i',
                 controller=self,
-                screen=screen,
+                screen=None,
                 screen_kind='home',
+                initial_loader=self._load_initial_home,
             )
-
             self._show_window(window)
             timer.mark('window_closed')
             del window
@@ -1146,6 +835,11 @@ class UIController(object):
         except Exception:
             self._show_error('open_home')
             return False
+
+    def _load_initial_home(self):
+        with gui.busy():
+            screen = self.repository.build_home()
+        return screen
 
     def select_start_profile(self):
         from slyguy import userdata
@@ -1308,7 +1002,7 @@ class UIController(object):
             source_window=source_window,
         )
 
-    def select_profile(self, source_window=None):
+    def select_profile(self, source_window=None, profile=None):
         """Open SlyGuy's profile selector and rebuild the current Home."""
         if self._selecting_profile:
             xbmc.log(
@@ -1330,7 +1024,8 @@ class UIController(object):
                 xbmc.LOGINFO,
             )
             from .profile_window import choose_profile
-            changed = choose_profile(self.addon_path)
+            changed = (choose_profile(self.addon_path, profile=profile)
+                       if profile is not None else choose_profile(self.addon_path))
             current_profile_id = (userdata.get('profile') or {}).get('id', '')
             if changed is False:
                 xbmc.log(
