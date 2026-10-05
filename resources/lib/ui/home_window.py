@@ -7,6 +7,7 @@ import xbmcgui
 from . import constants as C
 from .adapter import UIAdapter
 from slyguy import userdata
+from . import effects
 
 
 class HomeWindow(xbmcgui.WindowXMLDialog):
@@ -21,6 +22,7 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
         self._profile_block_until = 0
 
     def onInit(self):
+        effects.prepare(self)
         # La cortina la retira el controlador vía onFocus() (handshake de foco),
         # no aquí: retirarla en onInit dejaría la ventana de Vídeos expuesta
         # durante los frames en que la nueva ventana aún no se compone.
@@ -70,7 +72,25 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
             self._focus_first()
         self._last_focus_key = None
         self._refresh_hero_from_focus()
+        effects.animate(self, (5100,))
         return True
+
+    def reset_navigation(self):
+        """Return to the initial Home focus without rebuilding its catalogue."""
+        if self.screen_kind != 'home' or not self.screen:
+            return
+        self.screen._cleanui_window_state = {}
+        self._last_focus_key = None
+        self._last_activation = None
+        for index in range(min(len(self.screen.rails), C.MAX_RAILS_HOME)):
+            try:
+                control = self.getControl(self._rail_control_id(index))
+                if control.size() > 0:
+                    control.selectItem(0)
+            except RuntimeError:
+                continue
+        self._focus_first()
+        self._refresh_hero_from_focus()
 
     def capture_state(self):
         if not self.screen:
@@ -467,6 +487,7 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
             return
 
         self._set_hero_from_card(card)
+        effects.animate(self, (2002, 2003, 2004, 2005))
         self._last_focus_key = key
 
     def _set_hero_from_card(self, card):
@@ -848,9 +869,12 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
         if not profiles:
             return
         options = [profile.get('profileName') or '' for profile in profiles]
-        options += ['Ajustes', 'Cerrar sesión']
+        options += ['Ajustes', 'Cerrar sesión', effects.label()]
         choice = choose(self.controller.addon_path, 'Perfil', options)
         if choice < 0:
+            return
+        if choice == len(profiles) + 2:
+            effects.toggle(self)
             return
         if choice < len(profiles):
             self.controller.select_profile(self, profiles[choice])

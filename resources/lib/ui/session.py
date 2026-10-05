@@ -20,6 +20,9 @@ def run(method, *args):
     owner = xbmcgui.Window(10000)
     # Complete the directory request silently; the UI opens automatically.
     folder = plugin.Folder(cacheToDisc=False, no_items_label=None, show_news=False)
+    # A visual script is not a directory. Abort the directory result silently
+    # so Kodi keeps the launching listing instead of pushing an empty folder.
+    folder.display = plugin.resolve
     active = owner.getProperty(RUNNING)
     # The controller remains alive while Kodi owns playback and its own
     # windows are intentionally closed.  Visibility is therefore not a
@@ -53,17 +56,30 @@ def launch(payload):
     if owner.getProperty(RUNNING) != token:
         return
     controller = None
+    startup = None
     try:
+        if method == 'open_home':
+            from . import intro
+            startup = intro.start(xbmcaddon.Addon().getAddonInfo('path'))
         from resources.lib import plugin as core
         # Use the original initializer, as the plugin dispatcher does.
         core.before_dispatch()
+        if startup and startup.cancelled:
+            return
         from .controller import UIController
         controller = UIController()
         getattr(controller, method)(*args)
     finally:
         try:
+            if startup:
+                startup.close()
             if controller:
                 controller.end_transition()
+            # Closing the base restores its previous Videos host. Navigation
+            # must follow that close, never run underneath the still-open base.
+            # Estuary launches tiles from its Add-ons hub (1100), not Videos.
+            target = '1100' if xbmc.getSkinDir() == 'skin.estuary' else 'Home'
+            xbmc.executebuiltin('ReplaceWindow({})'.format(target), True)
         finally:
             if owner.getProperty(RUNNING) == token:
                 owner.clearProperty(RUNNING)

@@ -71,6 +71,8 @@
             <label>$INFO[Window.Property(cleanui.hero.plot)]</label>
         </control>
         <control type="grouplist" id="5100">
+            <animation effect="fade" start="65" end="100" time="150" condition="String.IsEqual(Window.Property(cleanui.motion),true)">WindowOpen</animation>
+            <animation effect="slide" start="0,8" end="0,0" time="150" tween="cubic" easing="out" condition="String.IsEqual(Window.Property(cleanui.motion),true)">WindowOpen</animation>
             <left>50</left>
             <top>600</top>
             <width>1820</width>
@@ -93,6 +95,7 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail0.visible),true)</visible>
                 </control>
                 <control type="fixedlist" id="4000">
+            <animation effect="fade" start="90" end="100" time="100" condition="String.IsEqual(Window.Property(cleanui.motion),true)">Focus</animation>
                     <left>0</left>
                     <top>46</top>
                     <width>1820</width>
@@ -346,6 +349,7 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail1.visible),true)</visible>
                 </control>
                 <control type="fixedlist" id="4001">
+            <animation effect="fade" start="90" end="100" time="100" condition="String.IsEqual(Window.Property(cleanui.motion),true)">Focus</animation>
                     <left>0</left>
                     <top>46</top>
                     <width>1820</width>
@@ -599,6 +603,7 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail2.visible),true)</visible>
                 </control>
                 <control type="fixedlist" id="4002">
+            <animation effect="fade" start="90" end="100" time="100" condition="String.IsEqual(Window.Property(cleanui.motion),true)">Focus</animation>
                     <left>0</left>
                     <top>46</top>
                     <width>1820</width>
@@ -852,6 +857,7 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail3.visible),true)</visible>
                 </control>
                 <control type="fixedlist" id="4003">
+            <animation effect="fade" start="90" end="100" time="100" condition="String.IsEqual(Window.Property(cleanui.motion),true)">Focus</animation>
                     <left>0</left>
                     <top>46</top>
                     <width>1820</width>
@@ -1105,6 +1111,7 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail4.visible),true)</visible>
                 </control>
                 <control type="fixedlist" id="4004">
+            <animation effect="fade" start="90" end="100" time="100" condition="String.IsEqual(Window.Property(cleanui.motion),true)">Focus</animation>
                     <left>0</left>
                     <top>46</top>
                     <width>1820</width>
@@ -1358,6 +1365,7 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail5.visible),true)</visible>
                 </control>
                 <control type="fixedlist" id="4005">
+            <animation effect="fade" start="90" end="100" time="100" condition="String.IsEqual(Window.Property(cleanui.motion),true)">Focus</animation>
                     <left>0</left>
                     <top>46</top>
                     <width>1820</width>
@@ -1611,6 +1619,7 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail6.visible),true)</visible>
                 </control>
                 <control type="fixedlist" id="4006">
+            <animation effect="fade" start="90" end="100" time="100" condition="String.IsEqual(Window.Property(cleanui.motion),true)">Focus</animation>
                     <left>0</left>
                     <top>46</top>
                     <width>1820</width>
@@ -1864,6 +1873,7 @@
                     <visible>String.IsEqual(Window.Property(cleanui.home.rail7.visible),true)</visible>
                 </control>
                 <control type="fixedlist" id="4007">
+            <animation effect="fade" start="90" end="100" time="100" condition="String.IsEqual(Window.Property(cleanui.motion),true)">Focus</animation>
                     <left>0</left>
                     <top>46</top>
                     <width>1820</width>
@@ -2338,7 +2348,7 @@
             <width>60</width>
             <height>60</height>
             <aspectratio>keep</aspectratio>
-            <texture diffuse="circle-mask.png" background="true">$INFO[Window.Property(cleanui.profile.avatar)]</texture>
+            <texture diffuse="circle-hd.png" background="true">$INFO[Window.Property(cleanui.profile.avatar)]</texture>
         </control>
         <control type="image">
             <left>1789</left>
@@ -2346,7 +2356,7 @@
             <width>66</width>
             <height>66</height>
             <aspectratio>keep</aspectratio>
-            <texture>profile-focus-ring.png</texture>
+            <texture>profile-ring-hd.png</texture>
             <visible>Control.HasFocus(3003)</visible>
         </control>
     </controls>

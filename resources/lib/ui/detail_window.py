@@ -6,6 +6,7 @@ import xbmcgui
 
 from .adapter import UIAdapter
 from . import constants as C
+from . import effects
 
 
 class DetailWindow(xbmcgui.WindowXMLDialog):
@@ -16,6 +17,7 @@ class DetailWindow(xbmcgui.WindowXMLDialog):
         self._last_activation = None
 
     def onInit(self):
+        effects.prepare(self)
         # La cortina la retira el controlador vía onFocus() (handshake de foco),
         # no aquí: retirarla en onInit dejaría la ventana de Vídeos expuesta
         # durante los frames en que la nueva ventana aún no se compone.
@@ -26,6 +28,7 @@ class DetailWindow(xbmcgui.WindowXMLDialog):
             self._configure_navigation()
             if not self._restore_state():
                 self._focus_best()
+            effects.animate(self, (2002, 2003, 2004, 2005, 5000))
         except Exception:
             self._log_error('onInit')
             if self.controller:

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <backgroundcolor>FF080B0E</backgroundcolor>
+    <controls>
+        <control type="image">
+            <left>0</left><top>0</top><width>1920</width><height>1080</height>
+            <texture>white.png</texture><colordiffuse>FF080B0E</colordiffuse>
+        </control>
+        <control type="videowindow" id="2">
+            <left>0</left><top>0</top><width>1920</width><height>1080</height>
+            <visible>String.IsEqual(Window.Property(cleanui.intro.visible),true)</visible>
+        </control>
+    </controls>
+</window>

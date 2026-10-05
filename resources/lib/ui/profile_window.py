@@ -1,7 +1,10 @@
 """TV profile picker; authentication and PIN remain in SlyGuy's core."""
+import contextlib
 import xbmcgui
 from slyguy import userdata, gui
 from . import constants as C
+from . import effects
+from . import intro
 
 
 class ProfileWindow(xbmcgui.WindowXMLDialog):
@@ -11,6 +14,7 @@ class ProfileWindow(xbmcgui.WindowXMLDialog):
         super(ProfileWindow, self).__init__(*args, **kwargs)
 
     def onInit(self):
+        effects.prepare(self)
         control = self.getControl(4100)
         control.reset()
         current = (userdata.get('profile') or {}).get('id')
@@ -48,7 +52,7 @@ class ProfileWindow(xbmcgui.WindowXMLDialog):
 def available_profiles():
     """Return service profiles in the shape used by both profile UIs."""
     import resources.lib.plugin as core
-    with gui.busy():
+    with contextlib.nullcontext() if intro.loading() else gui.busy():
         profiles = [dict(p) for p in core.api.profiles() if p.get('id')]
     for profile in profiles:
         profile['_avatar'] = ((profile.get('avatar') or {}).get('avatarImage') or {}).get('src') or ''
@@ -62,6 +66,8 @@ def choose_profile(addon_path, profile=None):
     selected = profile
     if selected is None:
         profiles = available_profiles()
+        if not intro.finish():
+            return False
         if not profiles:
             return False
         window = ProfileWindow('ui_profiles.xml', addon_path, 'Default', '1080i', profiles=profiles)

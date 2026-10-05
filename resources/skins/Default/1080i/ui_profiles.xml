@@ -29,6 +29,8 @@
             <align>center</align>
         </control>
         <control type="list" id="4100">
+            <animation effect="fade" start="65" end="100" time="150" condition="String.IsEqual(Window.Property(cleanui.motion),true)">WindowOpen</animation>
+            <animation effect="slide" start="0,8" end="0,0" time="150" tween="cubic" easing="out" condition="String.IsEqual(Window.Property(cleanui.motion),true)">WindowOpen</animation>
             <left>260</left>
             <top>380</top>
             <width>1400</width>
@@ -42,11 +44,11 @@
             <itemlayout width="280" height="330">
                 <control type="image">
                     <left>30</left>
-                    <top>10</top>
+                    <top>16</top>
                     <width>220</width>
                     <height>220</height>
                     <aspectratio>keep</aspectratio>
-                    <texture diffuse="circle-mask.png" background="true">$INFO[ListItem.Art(thumb)]</texture>
+                    <texture diffuse="circle-hd.png" background="true">$INFO[ListItem.Art(thumb)]</texture>
                 </control>
                 <control type="label">
                     <left>10</left>
@@ -64,19 +66,19 @@
             <focusedlayout width="280" height="330">
                 <control type="image">
                     <left>30</left>
-                    <top>10</top>
+                    <top>16</top>
                     <width>220</width>
                     <height>220</height>
                     <aspectratio>keep</aspectratio>
-                    <texture diffuse="circle-mask.png" background="true">$INFO[ListItem.Art(thumb)]</texture>
+                    <texture diffuse="circle-hd.png" background="true">$INFO[ListItem.Art(thumb)]</texture>
                 </control>
                 <control type="image">
-                    <left>24</left>
+                    <left>18</left>
                     <top>4</top>
-                    <width>232</width>
-                    <height>232</height>
+                    <width>244</width>
+                    <height>244</height>
                     <aspectratio>keep</aspectratio>
-                    <texture>profile-focus-ring.png</texture>
+                    <texture>profile-ring-hd.png</texture>
                     <visible>Control.HasFocus(4100)</visible>
                 </control>
                 <control type="label">

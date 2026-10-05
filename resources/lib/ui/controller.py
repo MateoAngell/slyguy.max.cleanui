@@ -110,7 +110,7 @@ class UIController(object):
 
     def _finish_exit_if_ready(self):
         """
-        Sale del addon (a la home de Kodi) únicamente cuando ya no queda ningún
+        Termina la UI únicamente cuando ya no queda ningún
         WindowDialog Clean UI dentro de doModal(). NO cierra Kodi.
         """
         if not self.exit_requested:
@@ -122,25 +122,14 @@ class UIController(object):
         self._quit_issued = True
         self._closing_all_windows = False
         self._transition_release_target = None
-        # Todos los WindowXMLDialog Clean UI ya abandonaron doModal(). La ventana
-        # activa subyacente es Videos (host del pluginsource). ReplaceWindow
-        # sustituye ese host en la pila en vez de dejarlo debajo de Home, evitando
-        # que quede visible el directorio del plugin ("Abrir Disney Clean UI").
+        # All modal children are closed. The entry owner still owns the base.
         self.end_transition()
         xbmc.log(
             '[CLEANUI] Todas las ventanas Clean UI terminaron; '
-            'reemplazando Videos por Home',
+            'entregando salida al propietario de la sesión',
             xbmc.LOGINFO,
         )
-        try:
-            xbmc.executebuiltin('ReplaceWindow(Home)')
-        except Exception:
-            xbmc.log(
-                '[CLEANUI] Error reemplazando Videos por Home:\n{}'.format(
-                    traceback.format_exc()
-                ),
-                xbmc.LOGERROR,
-            )
+        # The session owner closes its normal base before restoring Kodi.
         return True
 
     def notify_window_focused(self, window):
@@ -210,6 +199,8 @@ class UIController(object):
 
     def _show_window(self, window):
         self._windows.append(window)
+        if xbmc.getCondVisibility("!String.IsEmpty(Window(10000).Property(cleanui.diagnostics.owner))"):
+            self._log_resource_counts('window_open')
         # En la última fase de restauración tras cerrar fullscreenvideo, la
         # nueva ventana será la superficie Clean UI que debe sustituir a la
         # cortina. Se libera al recibir su onFocus(), no por temporización.
@@ -240,6 +231,8 @@ class UIController(object):
                     )
             if window in self._windows:
                 self._windows.remove(window)
+            if xbmc.getCondVisibility("!String.IsEmpty(Window(10000).Property(cleanui.diagnostics.owner))"):
+                self._log_resource_counts('window_closed')
         # Este código está fuera del finally para no ocultar excepciones.
         if self._windows:
             if (
@@ -256,6 +249,8 @@ class UIController(object):
             # esa ventana notificará al controlador y liberará la cortina sin
             # sleep fijo.
             if not self._closing_all_windows:
+                if isinstance(window, DetailWindow) and isinstance(self._windows[-1], HomeWindow):
+                    self._windows[-1].reset_navigation()
                 self._transition_release_target = self._windows[-1]
                 xbmc.log(
                     '[CLEANUI] Esperando foco de la ventana padre antes '
@@ -359,6 +354,8 @@ class UIController(object):
                 screen.screen_kind
                 or ('home' if screen.screen_type == 'home' else 'collection')
             )
+            if screen_kind == 'home':
+                screen._cleanui_window_state = {}
             window = HomeWindow(
                 'uihome.xml',
                 self.addon_path,
@@ -593,6 +590,15 @@ class UIController(object):
         xbmc.log('[CLEANUI][RESOURCES] {} windows={} screens={} cards={} threads={} cache={}'.format(
             stage, len(self._windows), len(unique), len(cards),
             threading.active_count(), len(getattr(self.repository, '_cache', {}))), xbmc.LOGDEBUG)
+        try:
+            import json
+            import time
+            counts = dict(stage=stage, windows=len(self._windows), screens=len(unique),
+                          cards=len(cards), threads=threading.active_count(),
+                          cache=len(getattr(self.repository, '_cache', {})), time=time.time())
+            xbmcgui.Window(10000).setProperty('cleanui.resources.slyguy.max.cleanui', json.dumps(counts))
+        except Exception:
+            pass
 
     def _run_player(self, path, screens=None):
         from .playback import observe_playback
@@ -815,7 +821,12 @@ class UIController(object):
             # Profile selection must complete before Home exists.  Closing a
             # nested modal can otherwise pass its SELECT event to Home's first
             # focused card.
-            if not self.select_start_profile():
+            from . import intro
+            try:
+                selected = self.select_start_profile()
+            finally:
+                ready = intro.finish()
+            if not selected or not ready:
                 return False
             window = HomeWindow(
                 'uihome.xml',
