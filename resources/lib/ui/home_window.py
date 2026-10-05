@@ -880,7 +880,7 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
             self.controller.select_profile(self, profiles[choice])
             return
         if choice == len(profiles):
-            xbmc.executebuiltin('Addon.OpenSettings(slyguy.max.cleanui)')
+            self._open_settings()
             return
         import resources.lib.plugin as core
         self.controller.run_plugin_after_close(core.plugin.url_for(core.logout))
@@ -919,9 +919,7 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
             return
 
         if choice == 3:
-            xbmc.executebuiltin(
-                'Addon.OpenSettings(slyguy.max.cleanui)'
-            )
+            self._open_settings()
             return
 
         if choice == 4:
@@ -934,6 +932,22 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
                         path.replace('"', '\\"')
                     )
                 )
+
+    def _open_settings(self):
+        """Use SlyGuy's existing categories/actions over the current window."""
+        from slyguy.settings.types import Category
+        history = [Category.get(0)]
+        while history:
+            category = history[-1]
+            children = list(category.categories)
+            options = children + list(category.settings)
+            choice = xbmcgui.Dialog().select(category.label, [item.label for item in options])
+            if choice < 0:
+                history.pop()
+            elif choice < len(children):
+                history.append(children[choice])
+            elif choice < len(options):
+                options[choice].on_select()
 
     def release_resources(self):
         """Libera referencias a ListItem y texturas al cerrar la ventana.
