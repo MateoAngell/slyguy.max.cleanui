@@ -54,5 +54,7 @@ def _deploy_keymap():
 
 _deploy_keymap()
 
-from resources.lib.plugin import plugin
-plugin.dispatch()
+from resources.lib.ui.entry import intercept_root
+if not intercept_root():
+    from resources.lib.plugin import plugin
+    plugin.dispatch()

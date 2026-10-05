@@ -23,7 +23,7 @@ def run(method, *args):
     # A visual script is not a directory. Abort the directory result silently
     # so Kodi keeps the launching listing instead of pushing an empty folder.
     folder.display = plugin.resolve
-    active = owner.getProperty(RUNNING)
+    active = owner.getProperty(RUNNING) or owner.getProperty(xbmcaddon.Addon().getAddonInfo('id') + '.LaunchOwner')
     # The controller remains alive while Kodi owns playback and its own
     # windows are intentionally closed.  Visibility is therefore not a
     # liveness check: clearing this token here can start a second profile UI
@@ -31,6 +31,8 @@ def run(method, *args):
     if active:
         return folder
     token = uuid.uuid4().hex
+    from .entry import capture_origin
+    owner.setProperty(RUNNING + '.Origin', json.dumps(capture_origin()))
     owner.setProperty(RUNNING, token)
     owner.setProperty(RUNNING_SINCE, str(time.time()))
     payload = quote(json.dumps([method, args, token]), safe='')
@@ -78,9 +80,10 @@ def launch(payload):
             # Closing the base restores its previous Videos host. Navigation
             # must follow that close, never run underneath the still-open base.
             # Estuary launches tiles from its Add-ons hub (1100), not Videos.
-            target = '1100' if xbmc.getSkinDir() == 'skin.estuary' else 'Home'
-            xbmc.executebuiltin('ReplaceWindow({})'.format(target), True)
+            from .entry import restore_origin
+            restore_origin(json.loads(owner.getProperty(RUNNING + '.Origin') or '{}'))
         finally:
             if owner.getProperty(RUNNING) == token:
                 owner.clearProperty(RUNNING)
                 owner.clearProperty(RUNNING_SINCE)
+                owner.clearProperty(RUNNING + '.Origin')

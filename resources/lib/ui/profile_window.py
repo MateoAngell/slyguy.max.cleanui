@@ -65,7 +65,7 @@ def choose_profile(addon_path, profile=None):
         return False
     selected = profile
     if selected is None:
-        profiles = available_profiles()
+        profiles = intro.prepare_profiles(available_profiles)
         if not intro.finish():
             return False
         if not profiles:

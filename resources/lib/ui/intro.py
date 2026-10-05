@@ -1,9 +1,7 @@
-"""Play the supplied local intro only while the first profiles are loading.
-
-Kodi decodes it in its native video control; no Python worker, image cache,
-minimum duration or catalogue prefetch is needed. The base survives the clip.
-"""
+"""Own one complete local intro and one discardable profile preparation."""
 import os
+import threading
+import time
 
 import xbmc
 import xbmcgui
@@ -22,6 +20,7 @@ class IntroPlayer(xbmc.Player):
         self.requested = False
         self.closed = False
         self.ended = False
+        self.started = False
 
     def current_file(self):
         try:
@@ -49,6 +48,7 @@ class IntroPlayer(xbmc.Player):
             self.stop()
 
     def onAVStarted(self):
+        self.started = True
         # Guard a callback queued before cancellation, not a later film.
         if self.closed and _same_file(self.current_file(), self.path):
             self.stop()
@@ -71,7 +71,7 @@ class IntroWindow(xbmcgui.WindowXML):
     def onAction(self, action):
         if action.getId() in (9, 10, 92) and not self.startup.ready:
             self.startup.cancelled = True
-            self.startup.finish()
+            self.startup.abort()
 
 
 class Startup:
@@ -79,6 +79,7 @@ class Startup:
         self.cancelled = False
         self.ready = False
         self.player = None
+        self.worker = None
         self.window = IntroWindow('ui_intro.xml', addon_path, 'Default', '1080i', startup=self)
         self.window.show()
         try:
@@ -89,10 +90,66 @@ class Startup:
             self.window.setProperty('cleanui.intro.visible', 'true' if self.player.requested else '')
         except Exception:
             # Optional presentation must never prevent the existing UI opening.
+            self.abort()
             self.finish()
             xbmc.log('[CLEANUI] Intro unavailable; continuing without it', xbmc.LOGWARNING)
 
+    def abort(self):
+        if self.player:
+            self.player.finish()
+        if self.window:
+            self.window.setProperty('cleanui.intro.visible', '')
+
+    def load(self, prepare):
+        """Only profile data runs off-thread; no worker touches GUI controls."""
+        if self.ready:
+            return prepare()
+        if self.worker is not None:
+            raise RuntimeError('Startup preparation already active')
+        result = {}
+        done = threading.Event()
+        def run():
+            try:
+                value = prepare()
+                if not self.cancelled:
+                    result['value'] = value
+            except Exception as error:
+                if not self.cancelled:
+                    result['error'] = error
+            finally:
+                done.set()
+        self.worker = threading.Thread(target=run, name='CleanUIProfiles', daemon=True)
+        self.worker.start()
+        monitor = xbmc.Monitor()
+        while not done.is_set():
+            if self.cancelled or monitor.waitForAbort(0.05):
+                self.cancelled = True
+                self.abort()
+                # Keep this service session owned until its sole API call ends.
+                # No new launch can race an abandoned profile request.
+                while not done.is_set() and not monitor.waitForAbort(0.1):
+                    pass
+                return None
+        self.worker.join()
+        self.worker = None
+        if self.cancelled:
+            return None
+        if 'error' in result:
+            raise result['error']
+        return result.get('value')
+
     def finish(self):
+        # Profile readiness does not stop the clip. Pump Kodi callbacks until
+        # its natural end, cancellation or playback failure.
+        monitor = xbmc.Monitor()
+        deadline = time.monotonic() + 30.0
+        while self.player and self.player.requested and not self.player.ended:
+            if self.cancelled or monitor.waitForAbort(0.05):
+                self.cancelled = True
+                break
+            if time.monotonic() >= deadline:
+                xbmc.log('[CLEANUI] Intro failed to finish; continuing', xbmc.LOGWARNING)
+                break
         self.ready = True
         try:
             self.window.setProperty('cleanui.intro.visible', '')
@@ -109,7 +166,9 @@ class Startup:
         global _active
         if self.window is None:
             return
-        self.finish()
+        self.abort()
+        self.ready = True
+        self.player = None
         try:
             self.window.close()
         except Exception:
@@ -124,7 +183,7 @@ class Startup:
 def start(addon_path):
     global _active
     if _active is not None:
-        raise RuntimeError('Startup already owned')
+        return _active
     _active = Startup(addon_path)
     return _active
 
@@ -135,3 +194,7 @@ def finish():
 
 def loading():
     return _active is not None and not _active.ready
+
+
+def prepare_profiles(prepare):
+    return _active.load(prepare) if loading() else prepare()
