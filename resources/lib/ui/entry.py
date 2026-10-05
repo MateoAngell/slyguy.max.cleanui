@@ -2,7 +2,7 @@
 import json
 import sys
 import uuid
-from urllib.parse import quote, unquote
+from urllib.parse import unquote
 
 import xbmc
 import xbmcaddon
@@ -55,39 +55,87 @@ def intercept_root():
     import xbmcplugin
     if len(sys.argv) < 3 or sys.argv[2].strip('?') or sys.argv[0].rstrip('/').count('/') != 2:
         return False
-    addon = xbmcaddon.Addon().getAddonInfo('id')
-    owner = xbmcgui.Window(10000)
-    key = addon + '.LaunchOwner'
     origin = capture_origin()
-    # Complete the native request before RunScript: no empty plugin folder.
+    # Finish the directory before activating our normal window. Continue in
+    # this interpreter: a second RunScript leaves Kodi visible between hosts.
     xbmcplugin.endOfDirectory(int(sys.argv[1]), succeeded=False, cacheToDisc=False)
-    if (owner.getProperty(key) or owner.getProperty('MaxCleanUI.Running')
-            or owner.getProperty('DisneyPlusCleanUI.Running')):
-        return True
-    token = uuid.uuid4().hex
-    owner.setProperty(key, token)
-    payload = quote(json.dumps(dict(token=token, origin=origin)), safe='')
-    xbmc.log('[CLEANUI][ENTRY] launch window={} focus={}'.format(origin['window'], origin['focus']), xbmc.LOGINFO)
-    try:
-        xbmc.executebuiltin('RunScript("{}","{}")'.format(addon, payload))
-    except Exception:
-        owner.clearProperty(key)
-        raise
+    launch_root(origin=origin)
     return True
 
 
-def launch_root(payload):
-    data = json.loads(unquote(payload))
+def repair_root_favourite(addon):
+    """Replace only this add-on's root shortcut through Kodi, with a backup."""
+    import xbmcvfs
+    from urllib.parse import urlsplit
+
+    def rpc(method, params):
+        response = json.loads(xbmc.executeJSONRPC(json.dumps(dict(
+            jsonrpc='2.0', id=1, method=method, params=params))))
+        if 'error' in response:
+            raise RuntimeError('Favourite update rejected')
+        return response.get('result')
+
+    addon_id = addon.getAddonInfo('id')
+    try:
+        favourites = rpc('Favourites.GetFavourites', dict(properties=[
+            'path', 'window', 'windowparameter', 'thumbnail']))['favourites']
+        targets = []
+        for favourite in favourites:
+            path = urlsplit(favourite.get('windowparameter') or '')
+            if (favourite.get('type') == 'window' and path.scheme == 'plugin'
+                    and path.netloc == addon_id and path.path in ('', '/')
+                    and not path.query and not path.fragment):
+                targets.append(favourite)
+        if len(targets) != 1:
+            return False
+        # Do not toggle a separately created direct favourite or other routes.
+        if any(f.get('type') == 'script' and
+               f.get('path') in (addon_id, 'script://' + addon_id)
+               for f in favourites):
+            return False
+        original = targets[0]
+        profile = addon.getAddonInfo('profile')
+        xbmcvfs.mkdirs(profile)
+        backup = profile.rstrip('/\\') + '/favourites-before-direct-' + uuid.uuid4().hex + '.xml'
+        if not xbmcvfs.copy('special://profile/favourites.xml', backup):
+            return False
+        direct = dict(title=original['title'], type='script', path=addon_id,
+                      thumbnail=original.get('thumbnail') or '')
+        # Create first. If creation fails the original remains untouched.
+        rpc('Favourites.AddFavourite', direct)
+        try:
+            rpc('Favourites.AddFavourite', {k: original[k] for k in
+                ('title', 'type', 'window', 'windowparameter', 'thumbnail') if k in original})
+        except Exception:
+            rpc('Favourites.AddFavourite', direct)  # rollback our new shortcut
+            raise
+        xbmc.log('[CLEANUI][ENTRY] Root favourite now opens the UI directly', xbmc.LOGINFO)
+        return True
+    except Exception:
+        xbmc.log('[CLEANUI][ENTRY] Favourite unchanged; directory entry remains available', xbmc.LOGWARNING)
+        return False
+
+
+def launch_root(payload=None, origin=None):
     addon = xbmcaddon.Addon()
     owner = xbmcgui.Window(10000)
     key = addon.getAddonInfo('id') + '.LaunchOwner'
-    if owner.getProperty(key) != data['token']:
-        return
-    from . import intro
+    if payload:
+        data = json.loads(unquote(payload))
+        if owner.getProperty(key) != data['token']:
+            return
+    else:
+        if (owner.getProperty(key) or owner.getProperty('MaxCleanUI.Running')
+                or owner.getProperty('DisneyPlusCleanUI.Running')):
+            return
+        data = dict(token=uuid.uuid4().hex, origin=origin or capture_origin())
+        owner.setProperty(key, data['token'])
     startup = None
     login = False
     try:
+        from . import intro
         startup = intro.start(addon.getAddonInfo('path'))
+        repair_root_favourite(addon)
         from resources.lib import plugin as core
         core.before_dispatch()
         if not core.api.logged_in:

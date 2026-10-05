@@ -58,6 +58,14 @@ class IntroTests(unittest.TestCase):
             self.assertFalse(module.loading()); startup.close(); startup.close()
             self.assertEqual(events.count('close'), 1); self.assertIsNone(module._active)
 
+    def test_black_base_precedes_clip_and_start_is_idempotent(self):
+        for module, source, events, hook in self.modules():
+            startup = module.start(str(source))
+            self.assertEqual(events[0], 'base')
+            self.assertIs(module.start(str(source)), startup)
+            self.assertEqual(sum(isinstance(e, tuple) for e in events), 1)
+            startup.player.onPlayBackEnded(); startup.finish(); startup.close()
+
     def test_clip_ends_before_slow_profiles_base_survives(self):
         for module, source, events, hook in self.modules():
             startup = module.start(str(source)); released = threading.Event()

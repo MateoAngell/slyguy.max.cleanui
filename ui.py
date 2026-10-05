@@ -8,9 +8,9 @@ if ROOT not in sys.path:
 
 if __name__ == '__main__':
     from urllib.parse import unquote
-    if unquote(sys.argv[1]).startswith('{'):
+    if len(sys.argv) < 2 or unquote(sys.argv[1]).startswith('{'):
         from resources.lib.ui.entry import launch_root
-        launch_root(sys.argv[1])
+        launch_root(sys.argv[1] if len(sys.argv) > 1 else None)
     else:
         from resources.lib.ui.session import launch
         launch(sys.argv[1])
