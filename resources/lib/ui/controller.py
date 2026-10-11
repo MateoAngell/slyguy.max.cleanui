@@ -18,9 +18,20 @@ class PerfTimer(object):
     def __init__(self, name):
         self.name = name
         self.started = time.monotonic()
+        try:
+            from .diagnostics import emit
+            emit('load_start')
+        except Exception:
+            pass
 
     def mark(self, stage):
         elapsed = (time.monotonic() - self.started) * 1000.0
+        try:
+            from .diagnostics import emit
+            if stage != 'window_closed':
+                emit('load_end', elapsed_ms=elapsed)
+        except Exception:
+            pass
         xbmc.log(
             '[CLEANUI][PERF] {} {}: {:.1f} ms'.format(
                 self.name,
@@ -71,6 +82,11 @@ class UIController(object):
         self._playback_generation = 0
 
     def _show_error(self, context):
+        try:
+            from .diagnostics import emit
+            emit('ui_error')
+        except Exception:
+            pass
         error = traceback.format_exc()
 
         xbmc.log(
@@ -597,6 +613,8 @@ class UIController(object):
                           cards=len(cards), threads=threading.active_count(),
                           cache=len(getattr(self.repository, '_cache', {})), time=time.time())
             xbmcgui.Window(10000).setProperty('cleanui.resources.slyguy.max.cleanui', json.dumps(counts))
+            from .diagnostics import emit
+            emit(stage, **{k: v for k, v in counts.items() if k != 'stage'})
         except Exception:
             pass
 

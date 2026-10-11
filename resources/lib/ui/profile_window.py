@@ -66,6 +66,11 @@ def choose_profile(addon_path, profile=None):
     selected = profile
     if selected is None:
         profiles = intro.prepare_profiles(available_profiles)
+        try:
+            from .diagnostics import emit
+            emit('profiles_ready', count=len(profiles or []))
+        except Exception:
+            pass
         if not intro.finish():
             return False
         if not profiles:

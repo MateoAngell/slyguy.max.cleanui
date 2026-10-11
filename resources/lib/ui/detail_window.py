@@ -505,6 +505,11 @@ class DetailWindow(xbmcgui.WindowXMLDialog):
             self.close()
 
     def onClick(self, cid):
+        try:
+            from .diagnostics import emit
+            emit('click', control=cid)
+        except Exception:
+            pass
         # Native click is the sole activation path.  Kodi calls onAction for
         # the same remote press too; dispatching both can open a second page.
         self._activate_click(cid)
@@ -557,6 +562,11 @@ class DetailWindow(xbmcgui.WindowXMLDialog):
 
     def onAction(self, action):
         aid = action.getId()
+        try:
+            from .diagnostics import direction
+            direction(aid)
+        except Exception:
+            pass
 
         if aid in C.ACTION_BACK:
             self._close_current_window()

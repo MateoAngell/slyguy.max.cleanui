@@ -135,6 +135,12 @@ def launch_root(payload=None, origin=None):
     try:
         from . import intro
         startup = intro.start(addon.getAddonInfo('path'))
+        try:
+            from .diagnostics import emit
+            emit('session_start')
+            emit('intro_start')
+        except Exception:
+            pass
         repair_root_favourite(addon)
         from resources.lib import plugin as core
         core.before_dispatch()
@@ -157,9 +163,19 @@ def launch_root(payload=None, origin=None):
             if startup:
                 startup.close()
             restore_origin(data['origin'])
+            try:
+                from .diagnostics import emit
+                emit('origin_restored')
+            except Exception:
+                pass
         finally:
             if owner.getProperty(key) == data['token']:
                 owner.clearProperty(key)
+            try:
+                from .diagnostics import emit
+                emit('session_end')
+            except Exception:
+                pass
         if login:
             # This query bypasses the visual launcher and retains SlyGuy login.
             xbmc.executebuiltin('ActivateWindow(Videos,"plugin://{}/?_cleanui_native=1",return)'.format(addon.getAddonInfo('id')))

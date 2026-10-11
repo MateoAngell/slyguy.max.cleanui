@@ -626,6 +626,11 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
 
     def onAction(self, action):
         action_id = action.getId()
+        try:
+            from .diagnostics import direction
+            direction(action_id)
+        except Exception:
+            pass
 
         if action_id in C.ACTION_BACK:
             if self.controller and self.controller._home_stack:
@@ -661,6 +666,11 @@ class HomeWindow(xbmcgui.WindowXMLDialog):
         # opens when Kodi delivered both callbacks for one remote press.
 
     def _activate_control(self, control_id, card=None):
+        try:
+            from .diagnostics import emit
+            emit('activation', control=control_id)
+        except Exception:
+            pass
         if control_id in (C.CONTROL_HOME, C.CONTROL_SEARCH, C.CONTROL_MY_LIST,
                           C.CONTROL_HBO, C.CONTROL_KIDS):
             if not self.controller or self._is_duplicate_activation(control_id):

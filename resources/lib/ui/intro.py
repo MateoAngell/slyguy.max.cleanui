@@ -150,6 +150,12 @@ class Startup:
             if time.monotonic() >= deadline:
                 xbmc.log('[CLEANUI] Intro failed to finish; continuing', xbmc.LOGWARNING)
                 break
+        try:
+            from .diagnostics import emit
+            if not self.ready:
+                emit('intro_end', cancelled=self.cancelled)
+        except Exception:
+            pass
         self.ready = True
         try:
             self.window.setProperty('cleanui.intro.visible', '')
